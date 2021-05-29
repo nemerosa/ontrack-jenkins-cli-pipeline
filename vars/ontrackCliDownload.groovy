@@ -4,7 +4,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 import hudson.FilePath
 
-def call(Map<String,?> params = [:]) {
+def call(Map<String, ?> params = [:]) {
     // Loqging
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
     boolean tracing = ParamUtils.getBooleanParam(params, "tracing", false)
@@ -44,8 +44,7 @@ def call(Map<String,?> params = [:]) {
     FilePath target = directory.child(executable)
     // Downloading
     logger("Downloading $path into $target")
-    URL url = new URL(path)
-    target.copyFrom(url)
+    target.copyFrom(new URL(url))
     logger("Target at ${target} is ${target.length()} bytes")
     // Makes the file executable
     target.chmod(0700)
