@@ -26,4 +26,9 @@ def call(Map<String,?> params = [:]) {
         println("[cli-download] OS name = ${os.name}")
         println("[cli-download] OS arch = ${os.arch}")
     }
+    // Gets the download path to the Cli
+    String url = Cli.getDownloadUrl(os, version)
+    if (logging) {
+        println("[cli-download] CLI URL = $url")
+    }
 }

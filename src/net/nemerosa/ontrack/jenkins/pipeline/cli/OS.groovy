@@ -26,4 +26,15 @@ class OS {
     String getArch() {
         return arch
     }
+
+    /**
+     * Extension (for Windows)
+     */
+    String getExtension() {
+        if (name == 'windows') {
+            return '.exe'
+        } else {
+            return ''
+        }
+    }
 }
