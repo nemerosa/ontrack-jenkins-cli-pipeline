@@ -15,8 +15,8 @@ class Cli {
         String jvmArch = System.getProperty("os.arch")
 
         if (logger) {
-            logger("[cli] JVM OS Name = $jvmName")
-            logger("[cli] JVM OS Arch = $jvmArch")
+            logger("JVM OS Name = $jvmName")
+            logger("JVM OS Arch = $jvmArch")
         }
 
         String name = ''

@@ -1,7 +1,8 @@
 import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
 import net.nemerosa.ontrack.jenkins.pipeline.cli.OS
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
-import net.nemerosa.ontrack.jenkins.pipeline.utils.Tools
+
+import hudson.FilePath
 
 def call(Map<String,?> params = [:]) {
     // Loqging
@@ -36,17 +37,29 @@ def call(Map<String,?> params = [:]) {
     if (logging) {
         println("[ontrack-cli-download] CLI URL = $url")
     }
-    // Downloading into a temporary directory and setting the path
-    String directory = Tools.download(url, executable, logger)
+
+    // FilePath interface must be used for download
+    FilePath directory = workspace.createTempDir('ontrack-cli', null)
+    // Target file
+    FilePath target = directory.child(executable)
+    // Downloading
+    logger("Downloading $path into $target")
+    URL url = new URL(path)
+    target.copyFrom(url)
+    logger("Target at ${target} is ${target.length()} bytes")
+    // Makes the file executable
+    target.chmod(0700)
+
+    // Logging
     if (logging && tracing) {
-        println("[ontrack-cli-download] CLI downloaded at $directory/$executable")
+        println("[ontrack-cli-download] CLI downloaded at $target")
     }
     // Exporting the different environment variables
-    env.ONTRACK_CLI_DIR = directory
+    env.ONTRACK_CLI_DIR = directory.remote
     env.ONTRACK_CLI_NAME = executable
-    env.ONTRACK_CLI = "$directory/$executable" as String
+    env.ONTRACK_CLI = "${directory.remote}/$executable" as String
     // Path completion
-    env.PATH = env.PATH + System.getProperty('path.separator') + directory
+    env.PATH = env.PATH + System.getProperty('path.separator') + directory.remote
     if (logging && tracing) {
         println("[ontrack-cli-download] New PATH ${env.PATH}")
     }
