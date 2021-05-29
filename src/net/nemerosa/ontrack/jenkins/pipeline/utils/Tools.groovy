@@ -19,7 +19,7 @@ class Tools {
         // Downloading
         logger("Downloading $path into ${target.absolutePath}")
         URL url = new URL(path)
-        url.bytes >> target
+        target.bytes = url.bytes
         logger("Target at ${target.absolutePath} is ${target.size()} bytes")
         // OK
         return tmp.absolutePath
