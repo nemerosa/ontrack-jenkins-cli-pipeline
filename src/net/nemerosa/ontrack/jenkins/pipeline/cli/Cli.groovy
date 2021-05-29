@@ -53,4 +53,16 @@ class Cli {
             return "https://github.com/nemerosa/ontrack-cli/releases/latest/download/ontrack-cli-${os.name}-${os.arch}${os.extension}"
         }
     }
+
+    /**
+     * Calls the CLI and returns the output
+     *
+     * @param dsl Pipeline DSL
+     * @param logger Logger used to debug information
+     * @param params List of parameters
+     * @return Standard output of the command
+     */
+    static String call(def dsl, Closure logger, String... params) {
+        logger("Calling the CLI with $params arguments...")
+    }
 }

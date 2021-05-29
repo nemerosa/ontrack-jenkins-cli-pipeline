@@ -18,3 +18,12 @@ The following environment variables are created:
 * `ONTRACK_CLI_DIR` - absolute path to the directory where the CLI was downloaded
 * `ONTRACK_CLI_NAME` - name of the Ontrack CLI executable file (including any Windows extension)
 * `ONTRACK_CLI` - absolute path to the Ontrack CLI
+
+The `PATH` environment variable is appended with the `ONTRACK_CLI_DIR` path.
+
+### Example
+
+```groovy
+ontrackCliDownload()
+sh 'ontrack-cli version --cli'
+```

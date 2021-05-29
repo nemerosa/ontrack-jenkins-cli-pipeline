@@ -4,7 +4,7 @@ This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), 
 
 ### Parameters
 
-#### General parameters
+#### General CLI parameters
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
@@ -13,6 +13,14 @@ This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), 
 | `logging` | boolean | `false` | Set to `true` to display debug / logging information while performing the setup operations. |
 | `tracing` | boolean | `false` | Set to `true` to display debug / low level information while performing the setup operations. |
 
+#### Ontrack connection parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `url` | String | _Required_ or value of the `ONTRACK_URL` environment variable | URL to your Ontrack installation. If `ONTRACK_URL` is available as an environment variable, it will be used. |
+| `credentialsId` | String | `ONTRACK_TOKEN` | ID of the Jenkins credentials which contains the authentication token to Ontrack |
+| `name` | String | `prod` | Name of the configuration to create to hold the connection parameters.
+
 ### Outputs
 
 The following environment variables are created:
@@ -20,3 +28,26 @@ The following environment variables are created:
 * `ONTRACK_CLI_DIR` - absolute path to the directory where the CLI was downloaded
 * `ONTRACK_CLI_NAME` - name of the Ontrack CLI executable file (including any Windows extension)
 * `ONTRACK_CLI` - absolute path to the Ontrack CLI
+
+### Example
+
+Assuming `ONTRACK_URL` is defined and that you can use the `ONTRACK_TOKEN` credentials, setting up Ontrack in your pipeline is as simple as:
+
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage("Setup") {
+            steps {
+                ontrackSetup()
+            }
+        }
+    }
+}
+```
+
+This will:
+
+* download and set the Ontrack CLI in the PATH
+* create a connection to Ontrack using the URL defined as `ONTRACK_URL` and the token available in `ONTRACK_TOKEN`
+
