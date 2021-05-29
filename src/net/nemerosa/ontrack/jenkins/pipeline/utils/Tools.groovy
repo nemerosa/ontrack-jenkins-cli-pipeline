@@ -21,6 +21,8 @@ class Tools {
         URL url = new URL(path)
         target.bytes = url.bytes
         logger("Target at ${target.absolutePath} is ${target.size()} bytes")
+        // Makes the file executable
+        target.executable = true
         // OK
         return tmp.absolutePath
     }
