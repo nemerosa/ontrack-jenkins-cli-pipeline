@@ -9,6 +9,7 @@ pipeline {
         stage("Setup") {
             steps {
                 ontrackSetup(logging: true, tracing: true)
+                sh 'ontrack-cli version --client'
             }
         }
 

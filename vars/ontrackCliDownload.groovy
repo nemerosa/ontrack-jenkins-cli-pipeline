@@ -41,4 +41,9 @@ def call(Map<String,?> params = [:]) {
     if (logging && tracing) {
         println("[ontrack-cli-download] CLI downloaded at $directory/$executable")
     }
+    // Path completion
+    env.PATH = env.PATH + System.getProperty('path.separator') + directory
+    if (logging && tracing) {
+        println("[ontrack-cli-download] New PATH ${env.PATH}")
+    }
 }
