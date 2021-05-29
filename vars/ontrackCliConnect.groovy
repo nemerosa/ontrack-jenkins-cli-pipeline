@@ -1,3 +1,6 @@
+import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
+import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
+
 def call(Map<String, ?> params = [:]) {
 
     String url = ParamUtils.getParam(params, 'url', env.ONTRACK_URL as String)
