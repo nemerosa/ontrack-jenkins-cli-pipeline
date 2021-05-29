@@ -14,7 +14,7 @@ pipeline {
                 sh 'echo $ONTRACK_CLI'
                 sh 'echo $PATH'
                 sh 'ls -lrt $ONTRACK_CLI_DIR'
-                sh 'ontrack-cli version --client'
+                sh 'ontrack-cli version --cli'
             }
         }
 
