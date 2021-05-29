@@ -65,7 +65,7 @@ class Cli {
     static String call(def dsl, Closure logger, String... params) {
         String cli = dsl.env.ONTRACK_CLI_NAME as String
         logger("Calling the $cli CLI with $params arguments...")
-        String script = (cli + params).join(' ')
+        String script = cli + ' ' + params.toList().join(' ')
         return dsl.sh(script: script, returnStdout: true).trim()
     }
 }
