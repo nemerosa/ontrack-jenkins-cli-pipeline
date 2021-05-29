@@ -19,24 +19,18 @@ class Cli {
             logger("[cli] JVM OS Arch = $jvmArch")
         }
 
-        String name
+        String name = ''
         String arch = jvmArch
 
         // OS name conversion
-        if (jvmName.toLowerCase().indexOf('mac') || jvmName.toLowerCase().indexOf('darwin') >= 0) {
-            if (logger) {
-                logger("Detected Darwin")
-            }
+        if (jvmName.toLowerCase().indexOf('mac') >= 0 || jvmName.toLowerCase().indexOf('darwin') >= 0) {
+            logger("Detected Darwin")
             name = 'darwin'
         } else if (jvmName.toLowerCase().indexOf('win') >= 0) {
-            if (logger) {
-                logger("Detected Windows")
-            }
+            logger("Detected Windows")
             name = 'windows'
         } else if (jvmName.toLowerCase().indexOf('linux') >= 0) {
-            if (logger) {
-                logger("Detected Linux")
-            }
+            logger("Detected Linux")
             name = 'linux'
         } else {
             throw new RuntimeException("Unsupported OS name: $jvmName")
