@@ -39,6 +39,8 @@ def call(Map<String, ?> params = [:]) {
     }
 
     // Current workspace
+    logger("Raw build - ${currentBuild.rawBuild}")
+    logger("Raw build class - ${currentBuild.rawBuild.getClass()}")
     FilePath workspace = currentBuild.rawBuild.workspace as FilePath
     // FilePath interface must be used for download
     FilePath directory = workspace.createTempDir('ontrack-cli', null)
