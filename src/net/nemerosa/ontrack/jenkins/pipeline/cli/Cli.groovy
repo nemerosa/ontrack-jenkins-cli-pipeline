@@ -8,7 +8,6 @@ class Cli {
     /**
      * Gets information about the OS.
      *
-     * @param logger Logger to use (null if no logging is needed)
      * @return OS information
      */
     static OS getOS(Closure logger = {}) {
@@ -25,16 +24,23 @@ class Cli {
 
         // OS name conversion
         if (jvmName.toLowerCase().indexOf('mac') || jvmName.toLowerCase().indexOf('darwin') >= 0) {
+            if (logger) {
+                logger("Detected Darwin")
+            }
             name = 'darwin'
         } else if (jvmName.toLowerCase().indexOf('win') >= 0) {
+            if (logger) {
+                logger("Detected Windows")
+            }
             name = 'windows'
         } else if (jvmName.toLowerCase().indexOf('linux') >= 0) {
+            if (logger) {
+                logger("Detected Linux")
+            }
             name = 'linux'
         } else {
             throw new RuntimeException("Unsupported OS name: $jvmName")
         }
-
-        // OS arch conversion
 
         // OK
         return new OS(name, arch)

@@ -8,7 +8,7 @@ pipeline {
 
         stage("Setup") {
             steps {
-                ontrackSetup(logging: true)
+                ontrackSetup(logging: true, tracing: true)
             }
         }
 

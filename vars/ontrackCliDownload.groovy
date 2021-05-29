@@ -5,6 +5,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 def call(Map<String,?> params = [:]) {
     // Loqging
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
+    boolean tracing = ParamUtils.getBooleanParam(params, "tracing", false)
     // Version to download
     String version = ParamUtils.getConditionalParam(params, "version", false, null)
     if (logging) {
@@ -16,7 +17,7 @@ def call(Map<String,?> params = [:]) {
     }
     // Logger
     Closure logger = {}
-    if (logging) {
+    if (logging && tracing) {
         logger = { println("[cli-download] $it") }
     }
     // Gets the OS & Arch for the CLI
