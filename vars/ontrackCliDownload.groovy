@@ -1,3 +1,5 @@
+import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
+import net.nemerosa.ontrack.jenkins.pipeline.cli.OS
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String,?> params = [:]) {
@@ -11,5 +13,16 @@ def call(Map<String,?> params = [:]) {
         } else {
             println("[cli-download] Version = latest")
         }
+    }
+    // Logger
+    Closure logger = {}
+    if (logging) {
+        logger = { println("[cli-download] $it") }
+    }
+    // Gets the OS & Arch for the CLI
+    OS os = Cli.getOS(logger)
+    if (logging) {
+        println("[cli-download] OS name = ${os.name}")
+        println("[cli-download] OS arch = ${os.arch}")
     }
 }
