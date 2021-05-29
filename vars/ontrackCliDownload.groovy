@@ -41,6 +41,10 @@ def call(Map<String,?> params = [:]) {
     if (logging && tracing) {
         println("[ontrack-cli-download] CLI downloaded at $directory/$executable")
     }
+    // Exporting the different environment variables
+    env.ONTRACK_CLI_DIR = directory
+    env.ONTRACK_CLI_NAME = executable
+    env.ONTRACK_CLI = "$directory/$executable" as String
     // Path completion
     env.PATH = env.PATH + System.getProperty('path.separator') + directory
     if (logging && tracing) {

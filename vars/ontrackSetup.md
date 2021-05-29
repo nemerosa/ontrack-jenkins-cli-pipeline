@@ -12,3 +12,11 @@ This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), 
 | `executable` | String | `ontrack-cli` | Name of the Ontrack CLI executable to put in the path |
 | `logging` | boolean | `false` | Set to `true` to display debug / logging information while performing the setup operations. |
 | `tracing` | boolean | `false` | Set to `true` to display debug / low level information while performing the setup operations. |
+
+### Outputs
+
+The following environment variables are created:
+
+* `ONTRACK_CLI_DIR` - absolute path to the directory where the CLI was downloaded
+* `ONTRACK_CLI_NAME` - name of the Ontrack CLI executable file (including any Windows extension)
+* `ONTRACK_CLI` - absolute path to the Ontrack CLI

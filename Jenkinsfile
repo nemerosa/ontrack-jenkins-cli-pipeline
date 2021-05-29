@@ -10,6 +10,7 @@ pipeline {
             steps {
                 ontrackSetup(logging: true, tracing: true)
                 sh 'echo $PATH'
+                sh 'ls -lrt $ONTRACK_CLI_DIR'
                 sh 'ontrack-cli version --client'
             }
         }
