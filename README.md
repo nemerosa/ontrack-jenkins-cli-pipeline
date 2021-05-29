@@ -55,4 +55,13 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 ## Steps
 
-* [`ontrackSetup`](vars/ontrackSetup.md) - setting up Ontrack in your pipeline
+### General setup
+
+* [`ontrackSetup`](vars/ontrackSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from connection to initializing project and branch in Ontrack for your pipeline.
+
+### Technical steps
+
+> Those steps are used internally and will seldom be called directly.
+
+* [`ontrackCliDownload`](vars/ontrackCliDownload.md) - downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli) and sets it into the path
+* [`ontrackCliConnect`](vars/ontrackCliConnect.md) - creates a connection configuration for the Ontrack CLI, based on provided information or the environment
