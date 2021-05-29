@@ -38,6 +38,8 @@ def call(Map<String, ?> params = [:]) {
         println("[ontrack-cli-download] CLI URL = $url")
     }
 
+    // Current workspace
+    FilePath workspace = currentBuild.rawBuild.workspace as FilePath
     // FilePath interface must be used for download
     FilePath directory = workspace.createTempDir('ontrack-cli', null)
     // Target file
