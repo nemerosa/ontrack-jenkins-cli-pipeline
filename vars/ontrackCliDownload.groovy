@@ -38,29 +38,30 @@ def call(Map<String, ?> params = [:]) {
         println("[ontrack-cli-download] CLI URL = $url")
     }
 
-    // Temporary directory
-    String directoryPath = pwd(tmp: true)
-    // Directory
-    File directory = new File(directoryPath)
+    // Gets the current workspace
+    FilePath workspace = getContext hudson.FilePath
+    logger("Workspace $workspace")
+    // FilePath interface must be used for download
+    FilePath directory = workspace.createTempDir('ontrack-cli', null)
     // Target file
-    File target = new File(directory, executable)
+    FilePath target = directory.child(executable)
     // Downloading
     logger("Downloading $path into $target")
-    target.bytes = new URL(url).bytes
-    logger("Target at ${target} is ${target.size()} bytes")
+    target.copyFrom(new URL(url))
+    logger("Target at ${target} is ${target.length()} bytes")
     // Makes the file executable
-    target.executable = true
+    target.chmod(0700)
 
     // Logging
     if (logging && tracing) {
         println("[ontrack-cli-download] CLI downloaded at $target")
     }
     // Exporting the different environment variables
-    env.ONTRACK_CLI_DIR = directory.absolutePath
+    env.ONTRACK_CLI_DIR = directory.remote
     env.ONTRACK_CLI_NAME = executable
-    env.ONTRACK_CLI = "${directory.absolutePath}/$executable" as String
+    env.ONTRACK_CLI = "${directory.remote}/$executable" as String
     // Path completion
-    env.PATH = env.PATH + System.getProperty('path.separator') + directory.absolutePath
+    env.PATH = env.PATH + System.getProperty('path.separator') + directory.remote
     if (logging && tracing) {
         println("[ontrack-cli-download] New PATH ${env.PATH}")
     }
