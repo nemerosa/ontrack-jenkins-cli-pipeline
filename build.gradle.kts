@@ -38,4 +38,7 @@ dependencies {
     implementation("org.jenkins-ci.plugins.workflow:workflow-cps:2.19@jar")
     implementation("org.jenkins-ci.plugins.workflow:workflow-step-api:2.12@jar")
     implementation("org.jenkins-ci.plugins.pipeline-stage-view:pipeline-rest-api:2.10@jar")
+    implementation("org.jenkins-ci.plugins:pipeline-graph-analysis:1.1@jar")
+    implementation("org.jenkins-ci.plugins:structs:1.17@jar")
+    implementation("javax.servlet:javax.servlet-api:3.1.0")
 }
