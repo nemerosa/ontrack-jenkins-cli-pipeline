@@ -20,6 +20,11 @@ pipeline {
                         --console plain
                 '''
             }
+            post {
+                always {
+                    ontrackCliValidate(stamp: 'BUILD')
+                }
+            }
         }
 
     }
