@@ -8,7 +8,6 @@ pipeline {
 
         stage("Setup") {
             steps {
-                sh 'env'
                 ontrackCliSetup(logging: true)
                 sh 'ontrack-cli version --cli'
                 sh 'ontrack-cli config list'
