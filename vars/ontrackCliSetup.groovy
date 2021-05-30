@@ -50,6 +50,6 @@ def call(Map<String, ?> params = [:]) {
             setupArgs += "--auto-create-pl=false"
         }
 
-        Cli.call(this, logger, *setupArgs)
+        Cli.call(this, logger, setupArgs)
     }
 }

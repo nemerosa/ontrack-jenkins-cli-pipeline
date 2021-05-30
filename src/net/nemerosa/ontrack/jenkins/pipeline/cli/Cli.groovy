@@ -63,6 +63,18 @@ class Cli {
      * @return Standard output of the command
      */
     static String call(def dsl, Closure logger, String... params) {
+        return call(dsl, logger, params.toList())
+    }
+
+    /**
+     * Calls the CLI and returns the output
+     *
+     * @param dsl Pipeline DSL
+     * @param logger Logger used to debug information
+     * @param params List of parameters
+     * @return Standard output of the command
+     */
+    static String call(def dsl, Closure logger, List<String> params) {
         String cli = dsl.env.ONTRACK_CLI_NAME as String
         logger("Calling the $cli CLI with $params arguments...")
         String script = cli + ' ' + params.toList().join(' ')
