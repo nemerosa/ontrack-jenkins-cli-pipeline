@@ -8,7 +8,7 @@ pipeline {
 
         stage("Setup") {
             steps {
-                ontrackSetup(logging: true)
+                ontrackCliSetup(logging: true)
                 sh 'ontrack-cli version --cli'
                 sh 'ontrack-cli config list'
             }

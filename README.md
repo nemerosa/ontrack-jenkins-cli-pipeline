@@ -39,7 +39,7 @@ pipeline {
     stages {
         stage("Setup") {
             steps {
-                ontrackSetup()
+                ontrackCliSetup()
             }
         }
     }
@@ -57,7 +57,7 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 ### General setup
 
-* [`ontrackSetup`](vars/ontrackSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from connection to initializing project and branch in Ontrack for your pipeline.
+* [`ontrackCliSetup`](vars/ontrackCliSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from connection to initializing project and branch in Ontrack for your pipeline.
 
 ### Technical steps
 

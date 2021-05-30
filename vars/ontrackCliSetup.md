@@ -1,4 +1,4 @@
-## [`ontrackSetup`](ontrackSetup.groovy)
+## [`ontrackCliSetup`](ontrackCliSetup.groovy)
 
 This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), puts it on the `PATH` for being used by other steps, configures its connection and performs some basic setup in Ontrack for your very pipeline.
 
@@ -25,9 +25,13 @@ This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), 
 
 The following environment variables are created:
 
+* `ONTRACK_PROJECT_NAME` - the name of the project in Ontrack
+* `ONTRACK_BRANCH_NAME` - the name of the branch in Ontrack
 * `ONTRACK_CLI_DIR` - absolute path to the directory where the CLI was downloaded
 * `ONTRACK_CLI_NAME` - name of the Ontrack CLI executable file (including any Windows extension)
 * `ONTRACK_CLI` - absolute path to the Ontrack CLI
+
+The `PATH` environment variable is appended with the `ONTRACK_CLI_DIR` path.
 
 ### Example
 
@@ -39,7 +43,7 @@ pipeline {
     stages {
         stage("Setup") {
             steps {
-                ontrackSetup()
+                ontrackCliSetup()
             }
         }
     }
