@@ -13,6 +13,15 @@ pipeline {
             }
         }
 
+        stage("Build") {
+            steps {
+                sh '''
+                    ./gradlew test \\
+                        --console plain
+                '''
+            }
+        }
+
     }
 
 }
