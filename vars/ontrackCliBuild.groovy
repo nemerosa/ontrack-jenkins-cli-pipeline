@@ -9,6 +9,8 @@ def call(Map<String, ?> params = [:]) {
     String release = ParamUtils.getConditionalParam(params, "release", false, null)
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
 
+    env.ONTRACK_BUILD_NAME = name
+
     Closure logger = {}
     if (logging) {
         logger = {
