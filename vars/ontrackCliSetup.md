@@ -4,6 +4,16 @@ This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), 
 
 ### Parameters
 
+#### Setup parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `project` | String | _Computed_ | Name of the Ontrack project. If not provided, it'll be computed from the `GIT_URL` environment variable. The result will be stored into the `ONTRACK_PROJECT_NAME` environment variable. |
+| `branch` | String | _Computed_ | Name of the Ontrack branch. If not provided, it'll be computed from the `BRANCH_NAME` environment variable. The result will be stored into the `ONTRACK_BRANCH_NAME` environment variable. |
+| `setup` | boolean | `true` | Performs the setup of the project and the branch in Ontrack, based on the provided information. It's enabled by default but can be disabled if you prefer to do this yourself using the Ontrack CLI directly. |
+| `autoValidationStamps` | String | _None_ | This option allows the setup of the automatic creation of validation stamps for all branches in the Ontrack project. See [auto validation stamps](#auto-validation-stamps) for the possible values. |
+| `autoPromotionLevels` | boolean | _None_ | This option allows the setup of the automatic creation of promotion levels for all branches in the Ontrack project. |
+
 #### General CLI parameters
 
 | Parameter | Type | Default | Description |
@@ -20,6 +30,14 @@ This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), 
 | `url` | String | _Required_ or value of the `ONTRACK_URL` environment variable | URL to your Ontrack installation. If `ONTRACK_URL` is available as an environment variable, it will be used. |
 | `credentialsId` | String | `ONTRACK_TOKEN` | ID of the Jenkins credentials which contains the authentication token to Ontrack |
 | `name` | String | `prod` | Name of the configuration to create to hold the connection parameters.
+
+### Auto validation stamps
+
+The `autoValidationStamps` parameter can have the following values:
+
+* `true` - auto creation of validation stamps based on predefined validation stamps
+* `force` - auto creation even if no predefined validation stamp if defined (they will be created)
+* any other value - disable the auto creation of validation stamps
 
 ### Outputs
 
