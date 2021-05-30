@@ -13,6 +13,15 @@ sourceSets {
             }
         }
     }
+    test {
+        withConvention(GroovySourceSet::class) {
+            groovy {
+                setSrcDirs(listOf(
+                    "test"
+                ))
+            }
+        }
+    }
 }
 
 repositories {
