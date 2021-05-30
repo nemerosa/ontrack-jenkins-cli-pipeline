@@ -13,6 +13,10 @@ This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), 
 | `setup` | boolean | `true` | Performs the setup of the project and the branch in Ontrack, based on the provided information. It's enabled by default but can be disabled if you prefer to do this yourself using the Ontrack CLI directly. |
 | `autoValidationStamps` | String | _None_ | This option allows the setup of the automatic creation of validation stamps for all branches in the Ontrack project. See [auto validation stamps](#auto-validation-stamps) for the possible values. |
 | `autoPromotionLevels` | boolean | _None_ | This option allows the setup of the automatic creation of promotion levels for all branches in the Ontrack project. |
+| `scm` | String | Value of `ONTRACK_SCM` or `github` | Type of SCM for this project. See [SCM Configuration](#scm-configuration) for more information. |
+| `scmIndexation` | int | `30` | SCM indexation interval in minutes. Set to 0 to disable. |
+| `scmConfiguration` | String | Value of `ONTRACK_SCM_CONFIG` or `github.com` | Name of the SCM configuration in Ontrack holding connection information about the SCM. |
+| `scmIssues` | String | Value of `ONTRACK_SCM_ISSUES` | ID of the issue service to use for mapping issues to commits in Ontrack. Can be provided explicitely, though the `ONTRACK_SCM_ISSUES` environment variable. If not defined, and if using GitHub or GitHub, defaults to `self` (meaning that the GitHub or GitLab issues are used). |
 
 #### General CLI parameters
 
@@ -38,6 +42,19 @@ The `autoValidationStamps` parameter can have the following values:
 * `true` - auto creation of validation stamps based on predefined validation stamps
 * `force` - auto creation even if no predefined validation stamp if defined (they will be created)
 * any other value - disable the auto creation of validation stamps
+
+### SCM configuration
+
+The `scm` parameter defines which type of SCM (GitHub, GitLab, Bitbucket, etc.) must be associated with your pipeline.
+
+By default, if not provided, the value will be `github` or the value stored in the `ONTRACK_SCM` environment variable.
+
+Possible values are:
+
+* `github` - default
+* `gitlab`
+* `bitbucket`
+* `git` - for a generic Git support
 
 ### Outputs
 
