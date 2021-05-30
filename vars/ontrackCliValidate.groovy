@@ -14,7 +14,7 @@ def call(Map<String, ?> params = [:]) {
     Closure logger = {}
     if (logging) {
         logger = {
-            println("[ontrack-cli-build] $it")
+            println("[ontrack-cli-validate] $it")
         }
     }
 
