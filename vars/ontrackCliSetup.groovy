@@ -76,7 +76,9 @@ def call(Map<String, ?> params = [:]) {
             throw new RuntimeException("SCM not supported: $scm")
         }
 
-        // TODO Branch Git configuration
+        // Branch Git configuration
+
+        Cli.call(this, logger, ['branch', 'set-property', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, 'git', '--git-branch', env.BRANCH_NAME])
 
         // TODO Auto promotion configuration
 
