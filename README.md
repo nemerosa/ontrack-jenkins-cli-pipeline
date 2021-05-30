@@ -52,7 +52,15 @@ pipeline {
     stages {
         stage("Setup") {
             steps {
+                // Ontrack connection & branch setup
                 ontrackCliSetup()
+            }
+        }
+        stage("Preparation") {
+            steps {
+                // Computing a version in VERSION
+                // Ontrack build entry creation
+                ontrackCliBuild(release: env.VERSION)
             }
         }
     }
@@ -71,6 +79,10 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 ### General setup
 
 * [`ontrackCliSetup`](vars/ontrackCliSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from connection to initializing project and branch in Ontrack for your pipeline.
+
+### Creating Ontrack items
+
+* [`ontrackCliBuild`](vars/ontrackCliBuild.md) - creates an Ontrack build entry based on current information
 
 ### Technical steps
 
