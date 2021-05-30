@@ -27,6 +27,19 @@ You can also use the Jenkins management UI to register this library:
 
 ![Library UI](docs/ontrack-jenkins-cli-pipeline-install-ui.png)
 
+## Setup
+
+The [steps](#steps) provided by this library, in order to avoid redundant configuration, rely on predefined environment variables and credentials.
+
+> Those environment variables and credentials are not _strictly_ required but they will ease the use of the Ontrack steps.
+
+In most of the cases, you just need to define:
+
+* `ONTRACK_URL` - URL to Ontrack
+* `ONTRACK_TOKEN` - secret text credentials entry containing the authentication token used to connect to Ontrack
+
+See [`ontrackCliSetup`](vars/ontrackCliSetup.md) for more information.
+
 ## Usage
 
 In your `Jenkinsfile`, declare the version of the pipeline library you want to use and start using the [steps](#steps) provided by the library. For example:
