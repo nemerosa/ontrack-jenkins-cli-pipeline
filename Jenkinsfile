@@ -8,7 +8,7 @@ pipeline {
 
         stage("Setup") {
             steps {
-                ontrackCliSetup(logging: true)
+                ontrackCliSetup(logging: true, autoValidationStamps: true)
                 ontrackCliBuild()
             }
         }
