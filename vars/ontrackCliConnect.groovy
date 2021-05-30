@@ -16,6 +16,6 @@ def call(Map<String, ?> params = [:]) {
     }
 
     withCredentials([string(credentialsId: credentialsId, variable: 'ONTRACK_TOKEN')]) {
-        Cli.call(this, logger, "config", "create", name, url, "--token", env.ONTRACK_TOKEN)
+        Cli.call(this, logger, "config", "create", name, url, "--token", env.ONTRACK_TOKEN, "--override")
     }
 }
