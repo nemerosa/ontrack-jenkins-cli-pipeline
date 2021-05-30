@@ -1,3 +1,4 @@
+import net.nemerosa.ontrack.jenkins.pipeline.utils.JenkinsUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
 
@@ -18,9 +19,19 @@ def call(Map<String, ?> params = [:]) {
     }
 
     List<String> args = ['validate', '--project', project, '--branch', branch, '--build', build, '--validation', stamp]
-    if (status) {
+
+    // Computing the status if needed
+    String actualStatus = status
+    if (!actualStatus) {
+        logger("No status is provided, computing status...")
+        actualStatus = JenkinsUtils.getValidationRunStatusFromStage(this)
+        logger("Computed status: $actualStatus")
+    }
+
+    // Setting up the status
+    if (actualStatus) {
         args += '--status'
-        args += status
+        args += actualStatus
     }
 
     Cli.call(this, logger, args)
