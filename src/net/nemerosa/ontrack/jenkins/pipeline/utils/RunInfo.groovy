@@ -59,12 +59,6 @@ class RunInfo {
 
     @Override
     String toString() {
-        return "RunInfo{" +
-                "sourceType='" + sourceType + '\'' +
-                ", sourceUri='" + sourceUri + '\'' +
-                ", triggerType='" + triggerType + '\'' +
-                ", triggerData='" + triggerData + '\'' +
-                ", runTime=" + runTime +
-                '}'.toString()
+        return "RunInfo{sourceType='$sourceType', sourceUri='$sourceUri', triggerType='$triggerType', triggerData='$triggerData', runTime=$runTime}".toString()
     }
 }
