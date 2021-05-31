@@ -8,14 +8,8 @@ def call(Map<String, ?> params = [:]) {
     String name = ParamUtils.getParam(params, "name", "prod")
 
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
-    Closure logger = {}
-    if (logging) {
-        logger = {
-            println("[ontrack-cli-connect] $it")
-        }
-    }
 
     withCredentials([string(credentialsId: credentialsId, variable: 'ONTRACK_TOKEN')]) {
-        Cli.call(this, logger, "config", "create", name, url, "--token", env.ONTRACK_TOKEN, "--override")
+        Cli.call(this, logging, "config", "create", name, url, "--token", env.ONTRACK_TOKEN, "--override")
     }
 }

@@ -88,6 +88,6 @@ def call(Map<String, ?> params = [:]) {
 
     // Actual CLI call with all arguments
 
-    Cli.call(this, logger, args)
+    Cli.call(this, logging, args)
 
 }

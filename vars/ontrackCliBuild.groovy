@@ -11,19 +11,12 @@ def call(Map<String, ?> params = [:]) {
 
     env.ONTRACK_BUILD_NAME = name
 
-    Closure logger = {}
-    if (logging) {
-        logger = {
-            println("[ontrack-cli-build] $it")
-        }
-    }
-
     List<String> args = ['build', 'setup', '--project', project, '--branch', branch, '--build', name]
     if (release) {
         args += '--release'
         args += release
     }
 
-    Cli.call(this, logger, args)
+    Cli.call(this, logging, args)
 
 }

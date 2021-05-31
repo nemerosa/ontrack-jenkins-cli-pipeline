@@ -54,7 +54,7 @@ def call(Map<String, ?> params = [:]) {
             setupArgs += "--auto-create-pl=false"
         }
 
-        Cli.call(this, logger, setupArgs)
+        Cli.call(this, logging, setupArgs)
 
         // Git configuration for the project & branch
 
@@ -71,14 +71,14 @@ def call(Map<String, ?> params = [:]) {
 
             String issueService = ParamUtils.getParam(params, "scmIssues",  env.ONTRACK_SCM_ISSUES ?: 'self')
 
-            Cli.call(this, logger, ['project', 'set-property', '--project', env.ONTRACK_PROJECT_NAME, 'github', '--configuration', scmConfig, '--repository', "${owner}/${repository}", '--indexation', scmIndexation, '--issue-service', issueService])
+            Cli.call(this, logging, ['project', 'set-property', '--project', env.ONTRACK_PROJECT_NAME, 'github', '--configuration', scmConfig, '--repository', "${owner}/${repository}", '--indexation', scmIndexation, '--issue-service', issueService])
         } else {
             throw new RuntimeException("SCM not supported: $scm")
         }
 
         // Branch Git configuration
 
-        Cli.call(this, logger, ['branch', 'set-property', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, 'git', '--git-branch', env.BRANCH_NAME])
+        Cli.call(this, logging, ['branch', 'set-property', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, 'git', '--git-branch', env.BRANCH_NAME])
 
         // TODO Auto promotion configuration
 
