@@ -26,11 +26,11 @@ pipeline {
                         stamp: 'BUILD',
                         logging: true,
                         dataType: 'net.nemerosa.ontrack.extension.general.validation.TestSummaryValidationDataType',
-                        data: {
+                        data: [
                             passed : 15,
                             skipped: 8,
                             failed : 1,
-                        }
+                        ]
                     )
                 }
             }
