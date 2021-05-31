@@ -13,6 +13,10 @@ def call(Map<String, ?> params = [:]) {
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
     boolean tracing = ParamUtils.getBooleanParam(params, "tracing", false)
 
+    String dataType = ParamUtils.getConditionalParam(params, "dataType", false, null)
+    boolean dataValidation = ParamUtils.getBooleanParam(params, "dataValidation", true)
+    Object data = params.data
+
     Closure logger = {}
     if (logging) {
         logger = { msg ->
@@ -30,9 +34,11 @@ def call(Map<String, ?> params = [:]) {
     // Computing the status if needed
     String actualStatus = status
     if (!actualStatus) {
-        logger("No status is provided, computing status...")
-        actualStatus = JenkinsUtils.getValidationRunStatusFromStage(this)
-        logger("Computed status: $actualStatus")
+        if (!dataType || !dataValidation) {
+            logger("No status is provided, computing status...")
+            actualStatus = JenkinsUtils.getValidationRunStatusFromStage(this)
+            logger("Computed status: $actualStatus")
+        }
     }
 
     // Setting up the status
@@ -66,6 +72,19 @@ def call(Map<String, ?> params = [:]) {
             args += runInfo.triggerData
         }
     }
+
+    // Data
+
+    if (dataType) {
+        if (!data) throw new RuntimeException("dataType is provided but data is missing.")
+        args += '--data-type'
+        args += dataType
+        String dataJson = writeJSON(json: data, pretty: false, returnText: true)
+        args += '--data'
+        args += "'$dataJson'".toString()
+    }
+
+    // Actual CLI call with all arguments
 
     Cli.call(this, logger, args)
 
