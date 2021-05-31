@@ -84,6 +84,7 @@ def call(Map<String, ?> params = [:]) {
         String dataJson = JSONSerializer.toJSON(data)
         args += '--data'
         args += "'$dataJson'".toString()
+        tracer("Args: $args")
     }
 
     // Actual CLI call with all arguments
