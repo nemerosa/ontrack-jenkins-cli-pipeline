@@ -42,7 +42,7 @@ class JenkinsUtils {
         }
     }
 
-    static RunInfo getRunInfo(def dsl) throws IOException, InterruptedException {
+    static RunInfo getRunInfo(def dsl, Closure logger) throws IOException, InterruptedException {
         // Gets the associated run
         Run run = dsl.getContext Run
         if (run == null) {
@@ -87,7 +87,7 @@ class JenkinsUtils {
         }
 
         // Adaptation
-        adaptRunInfo(dsl, runInfo)
+        adaptRunInfo(dsl, runInfo, logger)
         // Run info if not empty
         if (runInfo.isEmpty()) {
             return null
@@ -96,19 +96,30 @@ class JenkinsUtils {
         }
     }
 
-    private static void adaptRunInfo(def dsl, RunInfo runInfo) {
+    private static void adaptRunInfo(def dsl, RunInfo runInfo, Closure logger) {
         // Gets the (current) duration of the stage
         FlowNode flowNode = dsl.getContext FlowNode
         if (flowNode != null) {
-            Long durationMilliSeconds = getTiming(flowNode)
+            Long durationMilliSeconds = getTiming(flowNode, logger)
             if (durationMilliSeconds != null) {
                 runInfo.runTime = durationMilliSeconds / 1000
             }
         }
     }
 
-    private static Long getTiming(FlowNode node) {
+    private static Long getTiming(FlowNode node, Closure logger) {
         Long runTime = getExecutionTimeMs(node)
+        String id = node.getId()
+        if (node instanceof StepNode) {
+            StepDescriptor descriptor = ((StepNode) node).getDescriptor()
+            if (descriptor != null) {
+                id = descriptor.getId()
+            }
+        }
+        logger("[timing]node=${node.displayName}")
+        logger("[timing]type=${node.getClass().getName()}")
+        logger("[timing]id=${id}")
+        logger("[timing]runTime=${runTime}")
         if (node instanceof StepNode) {
             StepNode stepNode = (StepNode) node
             StepDescriptor stepDescriptor = stepNode.getDescriptor()
@@ -124,7 +135,7 @@ class JenkinsUtils {
                 }
             }
         }
-        return getTiming(node.getParents())
+        return getTiming(node.getParents(), logger)
     }
 
     private static Long getExecutionTimeMs(FlowNode node) {
@@ -137,9 +148,9 @@ class JenkinsUtils {
         }
     }
 
-    private static Long getTiming(List<FlowNode> nodes) {
+    private static Long getTiming(List<FlowNode> nodes, Closure logger) {
         for (FlowNode node : nodes) {
-            Long durationMilliSeconds = getTiming(node)
+            Long durationMilliSeconds = getTiming(node, logger)
             if (durationMilliSeconds != null) {
                 return durationMilliSeconds
             }
