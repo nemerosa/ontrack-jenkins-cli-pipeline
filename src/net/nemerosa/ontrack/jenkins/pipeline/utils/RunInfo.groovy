@@ -55,4 +55,16 @@ class RunInfo {
                 triggerData == null &&
                 runTime == null
     }
+
+
+    @Override
+    public String toString() {
+        return "RunInfo{" +
+                "sourceType='" + sourceType + '\'' +
+                ", sourceUri='" + sourceUri + '\'' +
+                ", triggerType='" + triggerType + '\'' +
+                ", triggerData='" + triggerData + '\'' +
+                ", runTime=" + runTime +
+                '}';
+    }
 }

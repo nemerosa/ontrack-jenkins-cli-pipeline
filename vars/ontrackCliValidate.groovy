@@ -43,6 +43,7 @@ def call(Map<String, ?> params = [:]) {
 
     // Run info
     RunInfo runInfo = JenkinsUtils.getRunInfo(this, tracer)
+    tracer("Run info = $runInfo")
     if (runInfo != null && !runInfo.isEmpty()) {
         addArg(args, runInfo.runTime, '--run-time')
         addArg(args, runInfo.sourceType, '--source-type')
