@@ -78,15 +78,15 @@ class Cli {
         String cli = dsl.env.ONTRACK_CLI_NAME as String
         String script = cli + ' ' + params.toList().join(' ')
 
-        String loggingSet = 'set +x'
+        String header = '#!/bin/bash -e'
         if (logging) {
-            loggingSet = 'set -x'
+            header += ' -x'
+        } else {
+            header += ' +x'
         }
 
         String bash = """\
-            #!/bin/bash
-            set -e
-            $loggingSet
+            $header
             
             $script
         """
