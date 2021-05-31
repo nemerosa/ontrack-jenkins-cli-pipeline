@@ -76,7 +76,6 @@ class Cli {
      */
     static String call(def dsl, boolean logging, List<String> params) {
         String cli = dsl.env.ONTRACK_CLI_NAME as String
-        logging("Calling the $cli CLI with $params arguments...")
         String script = cli + ' ' + params.toList().join(' ')
 
         String loggingSet = 'set +x'
