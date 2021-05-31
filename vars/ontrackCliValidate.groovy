@@ -3,6 +3,8 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.RunInfo
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
 
+import net.sf.json.JSONSerializer
+
 def call(Map<String, ?> params = [:]) {
 
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
@@ -79,7 +81,7 @@ def call(Map<String, ?> params = [:]) {
         if (!data) throw new RuntimeException("dataType is provided but data is missing.")
         args += '--data-type'
         args += dataType
-        String dataJson = writeJSON(json: data, returnText: true)
+        String dataJson = JSONSerializer.toJSON(data)
         args += '--data'
         args += "'$dataJson'".toString()
     }
