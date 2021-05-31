@@ -79,7 +79,7 @@ def call(Map<String, ?> params = [:]) {
         if (!data) throw new RuntimeException("dataType is provided but data is missing.")
         args += '--data-type'
         args += dataType
-        String dataJson = writeJSON(json: data, pretty: false, returnText: true)
+        String dataJson = writeJSON(json: data, returnText: true)
         args += '--data'
         args += "'$dataJson'".toString()
     }
