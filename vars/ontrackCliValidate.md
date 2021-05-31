@@ -14,6 +14,7 @@ This step creates a validation run for the current Ontrack build, using the curr
 | `stamp` | String | _Required_ | Name of the validation stamp to set |
 | `status` | String | _None_ | Status of the validation. See the [validation](#validation) section below. |
 | `logging` | boolean | `false` | Set to `true` to display debug / logging information while performing the operation. |
+| `tracing` | boolean | `false` | Set to `true` to display low level information while performing the operation. |
 
 ### Validation
 

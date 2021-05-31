@@ -11,12 +11,18 @@ def call(Map<String, ?> params = [:]) {
     String stamp = ParamUtils.getParam(params, "stamp")
     String status = ParamUtils.getConditionalParam(params, "status", false, null)
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
+    boolean tracing = ParamUtils.getBooleanParam(params, "tracing", false)
 
     Closure logger = {}
     if (logging) {
         logger = {
             println("[ontrack-cli-validate] $it")
         }
+    }
+
+    Closure tracer = {}
+    if (logging && tracing) {
+        tracer = logger
     }
 
     List<String> args = ['validate', '--project', project, '--branch', branch, '--build', build, '--validation', stamp]
@@ -36,7 +42,7 @@ def call(Map<String, ?> params = [:]) {
     }
 
     // Run info
-    RunInfo runInfo = JenkinsUtils.getRunInfo(this, logger)
+    RunInfo runInfo = JenkinsUtils.getRunInfo(this, tracer)
     if (runInfo != null && !runInfo.isEmpty()) {
         addArg(args, runInfo.runTime, '--run-time')
         addArg(args, runInfo.sourceType, '--source-type')
