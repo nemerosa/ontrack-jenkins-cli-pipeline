@@ -58,13 +58,13 @@ class RunInfo {
 
 
     @Override
-    public String toString() {
+    String toString() {
         return "RunInfo{" +
                 "sourceType='" + sourceType + '\'' +
                 ", sourceUri='" + sourceUri + '\'' +
                 ", triggerType='" + triggerType + '\'' +
                 ", triggerData='" + triggerData + '\'' +
                 ", runTime=" + runTime +
-                '}';
+                '}'.toString()
     }
 }
