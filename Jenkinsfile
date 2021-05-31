@@ -22,17 +22,7 @@ pipeline {
             }
             post {
                 always {
-                    ontrackCliValidate(
-                        stamp: 'BUILD',
-                        logging: true,
-                        tracing: true,
-                        dataType: 'net.nemerosa.ontrack.extension.general.validation.TestSummaryValidationDataType',
-                        data: [
-                            passed : 15,
-                            skipped: 8,
-                            failed : 1,
-                        ]
-                    )
+                    ontrackCliValidate(stamp: 'BUILD')
                 }
             }
         }
