@@ -45,20 +45,28 @@ def call(Map<String, ?> params = [:]) {
     RunInfo runInfo = JenkinsUtils.getRunInfo(this, tracer)
     tracer("Run info = ${runInfo.toString()}")
     if (runInfo != null && !runInfo.isEmpty()) {
-        addArg(args, runInfo.runTime, '--run-time')
-        addArg(args, runInfo.sourceType, '--source-type')
-        addArg(args, runInfo.sourceUri, '--source-uri')
-        addArg(args, runInfo.triggerType, '--trigger-type')
-        addArg(args, runInfo.triggerData, '--trigger-data')
+        if (runInfo.runTime != null) {
+            args += '--run-time'
+            args += runInfo.runTime
+        }
+        if (runInfo.sourceType != null) {
+            args += '--source-type'
+            args += runInfo.sourceType
+        }
+        if (runInfo.sourceUri != null) {
+            args += '--source-uri'
+            args += runInfo.sourceUri
+        }
+        if (runInfo.triggerType != null) {
+            args += '--trigger-type'
+            args += runInfo.triggerType
+        }
+        if (runInfo.triggerData != null) {
+            args += '--trigger-data'
+            args += runInfo.triggerData
+        }
     }
 
     Cli.call(this, logger, args)
 
-}
-
-private void addArg(List<String> args, Object value, String name) {
-    if (value != null) {
-        args += name
-        args += value.toString()
-    }
 }
