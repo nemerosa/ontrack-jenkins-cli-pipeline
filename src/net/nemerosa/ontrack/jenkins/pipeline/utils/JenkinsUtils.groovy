@@ -80,7 +80,6 @@ class JenkinsUtils {
 
         // Gets the duration of this build
         long durationMs = run.getDuration()
-        long durationSeconds;
         if (durationMs > 0) {
             runInfo.runTime = durationMs / 1000L;
         } else {
@@ -110,13 +109,6 @@ class JenkinsUtils {
 
     private static Long getTiming(FlowNode node) {
         Long runTime = getExecutionTimeMs(node)
-        String id = node.getId()
-        if (node instanceof StepNode) {
-            StepDescriptor descriptor = ((StepNode) node).getDescriptor()
-            if (descriptor != null) {
-                id = descriptor.getId()
-            }
-        }
         if (node instanceof StepNode) {
             StepNode stepNode = (StepNode) node
             StepDescriptor stepDescriptor = stepNode.getDescriptor()
