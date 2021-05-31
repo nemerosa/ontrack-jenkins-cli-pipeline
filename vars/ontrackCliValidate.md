@@ -26,4 +26,4 @@ If can also be provided explicitly using the `status` parameter or through data 
 - [x] Validation status
 - [ ] Data
 - [ ] Test results
-- [ ] Run info
+- [x] Run info

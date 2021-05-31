@@ -1,4 +1,5 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.JenkinsUtils
+import net.nemerosa.ontrack.jenkins.pipeline.utils.RunInfo
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
 
@@ -34,6 +35,23 @@ def call(Map<String, ?> params = [:]) {
         args += actualStatus
     }
 
+    // Run info
+    RunInfo runInfo = JenkinsUtils.getRunInfo(this)
+    if (runInfo != null && !runInfo.isEmpty()) {
+        addArg(args, runInfo.runTime, '--run-time')
+        addArg(args, runInfo.sourceType, '--source-type')
+        addArg(args, runInfo.sourceUri, '--source-uri')
+        addArg(args, runInfo.triggerType, '--trigger-type')
+        addArg(args, runInfo.triggerData, '--trigger-data')
+    }
+
     Cli.call(this, logger, args)
 
+}
+
+private void addArg(List<String> args, Object value, String name) {
+    if (value != null) {
+        args += name
+        args += value.toString()
+    }
 }
