@@ -25,6 +25,7 @@ pipeline {
                     ontrackCliValidate(
                         stamp: 'BUILD',
                         logging: true,
+                        tracing: true,
                         dataType: 'net.nemerosa.ontrack.extension.general.validation.TestSummaryValidationDataType',
                         data: [
                             passed : 15,
