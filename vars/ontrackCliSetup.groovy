@@ -105,10 +105,6 @@ def call(Map<String, ?> params = [:]) {
                         vsArgs += '--warning-if-skipped'
                         vsArgs += validation.tests.warningIfSkipped as boolean
                     }
-                    if (validation.chml.warning != null) {
-                        vsArgs += '--warning'
-                        vsArgs += "${validation.chml.warning.level}=${validation.chml.warning.value}"
-                    }
                     Cli.call(this, logging, vsArgs)
                 }
                 // CHML
