@@ -173,7 +173,9 @@ def call(Map<String, ?> params = [:]) {
 
             // Creates all the validations
             validationStamps.each { validation ->
-                Cli.call(this, logging, ['validation', 'setup', 'generic', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', validation])
+                if (!createdValidations.containsKey(validation)) {
+                    Cli.call(this, logging, ['validation', 'setup', 'generic', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', validation])
+                }
             }
 
             // Creates all the promotions
