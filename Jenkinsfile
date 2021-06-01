@@ -22,7 +22,8 @@ pipeline {
             }
             post {
                 always {
-                    ontrackCliValidate(stamp: 'BUILD')
+                    ontrackCliValidateTests(stamp: 'BUILD')
+                    ontrackCliValidateCHML(stamp: 'CHML', critical: 2, high: 13)
                 }
             }
         }

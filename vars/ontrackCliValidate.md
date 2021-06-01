@@ -24,10 +24,3 @@ This step creates a validation run for the current Ontrack build, using the curr
 By default, the status of the validation is computed from the result of the current Jenkins stage.
 
 If can also be provided explicitly using the `status` parameter or through data validation.
-
-### Remaining
-
-- [x] Validation status
-- [x] Data
-- [ ] Test results
-- [x] Run info
