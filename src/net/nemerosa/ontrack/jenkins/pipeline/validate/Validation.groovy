@@ -53,7 +53,7 @@ class Validation {
         }
 
         // Run info
-        RunInfo runInfo = JenkinsUtils.getRunInfo(this, tracer)
+        RunInfo runInfo = JenkinsUtils.getRunInfo(dsl, tracer)
         tracer("Run info = ${runInfo.toString()}")
         if (runInfo != null && !runInfo.isEmpty()) {
             if (runInfo.runTime != null) {
