@@ -13,6 +13,7 @@ This step downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli), 
 | `setup` | boolean | `true` | Performs the setup of the project and the branch in Ontrack, based on the provided information. It's enabled by default but can be disabled if you prefer to do this yourself using the Ontrack CLI directly. |
 | `autoValidationStamps` | String | _None_ | This option allows the setup of the automatic creation of validation stamps for all branches in the Ontrack project. See [auto validation stamps](#auto-validation-stamps) for the possible values. |
 | `autoPromotionLevels` | boolean | _None_ | This option allows the setup of the automatic creation of promotion levels for all branches in the Ontrack project. |
+| `promotions` | See [promotions](#promotions) below | _None_ | Configuration of the auto promotions |
 | `scm` | String | Value of `ONTRACK_SCM` or `github` | Type of SCM for this project. See [SCM Configuration](#scm-configuration) for more information. |
 | `scmIndexation` | int | `30` | SCM indexation interval in minutes. Set to 0 to disable. |
 | `scmConfiguration` | String | Value of `ONTRACK_SCM_CONFIG` or `github.com` | Name of the SCM configuration in Ontrack holding connection information about the SCM. |
@@ -42,6 +43,44 @@ The `autoValidationStamps` parameter can have the following values:
 * `true` - auto creation of validation stamps based on predefined validation stamps
 * `force` - auto creation even if no predefined validation stamp if defined (they will be created)
 * any other value - disable the auto creation of validation stamps
+
+### Promotions
+
+The `promotions` parameter is used to set up the auto promotions for the Ontrack branch.
+
+It contains a map indexed by promotion name and containing promotion definitions:
+
+* `validations` - list of validation stamps which must be passed for the promotion to be granted
+* `promotions` - list of promotion levels which must be granted
+
+For example:
+
+```groovy
+ontrackCliSetup(
+        promotions: [
+                BRONZE: [
+                        validations: [
+                                "BUILD"
+                        ]
+                ],
+                SILVER: [
+                        promotions: [
+                                "BRONZE",
+                        ],
+                        validations: [
+                                "CHML",
+                                "PERCENTAGE",
+                                "METRICS",
+                        ],
+                ],
+        ]
+)
+```
+
+In this example, we define two promotion levels:
+
+* `BRONZE` - granted whenever the `BUILD` validation stamp is passed
+* `SILVER` - granted whenever all the mentioned validation stamps are passed _and_ the `BRONZE` promotion has been granted
 
 ### SCM configuration
 

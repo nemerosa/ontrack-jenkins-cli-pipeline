@@ -8,7 +8,27 @@ pipeline {
 
         stage("Setup") {
             steps {
-                ontrackCliSetup(logging: true, autoValidationStamps: true)
+                ontrackCliSetup(
+                    logging: true,
+                     autoValidationStamps: true,
+                     promotions: [
+                        BRONZE: [
+                            validations: [
+                                "BUILD"
+                            ]
+                        ],
+                        SILVER: [
+                            promotions: [
+                                "BRONZE",
+                            ],
+                            validations: [
+                                "CHML",
+                                "PERCENTAGE",
+                                "METRICS",
+                            ],
+                        ],
+                     ]
+                )
                 ontrackCliBuild()
             }
         }
