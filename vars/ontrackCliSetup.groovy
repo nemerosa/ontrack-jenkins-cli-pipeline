@@ -80,6 +80,78 @@ def call(Map<String, ?> params = [:]) {
 
         Cli.call(this, logging, ['branch', 'set-property', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, 'git', '--git-branch', env.BRANCH_NAME])
 
+        // Validation stamps setup
+
+        def createdValidations = [:]
+        def validations = params.validations
+        if (validations) {
+            validations.each { validation ->
+                String name = validation.name as String
+                createdValidations[name] = validation
+                // Generic data
+                if (validation.dataType) {
+                    def vsArgs = ['validation', 'setup', 'generic', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
+                    vsArgs += '--data-type'
+                    vsArgs += validation.dataType
+                    if (validation.dataConfig) {
+                        vsArgs += '--data-config'
+                        vsArgs += "'${JsonUtils.toJSON(validation.dataConfig)}'".toString()
+                    }
+                }
+                // Tests
+                else if (validation.tests) {
+                    def vsArgs = ['validation', 'setup', 'tests', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
+                    if (validation.tests.warningIfSkipped != null) {
+                        vsArgs += '--warning-if-skipped'
+                        vsArgs += validation.tests.warningIfSkipped as boolean
+                    }
+                    if (validation.chml.warning != null) {
+                        vsArgs += '--warning'
+                        vsArgs += "${validation.chml.warning.level}=${validation.chml.warning.value}"
+                    }
+                    Cli.call(this, logging, vsArgs)
+                }
+                // CHML
+                else if (validation.chml) {
+                    def vsArgs = ['validation', 'setup', 'chml', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
+                    if (validation.chml.failed != null) {
+                        vsArgs += '--failed'
+                        vsArgs += "${validation.chml.failed.level}=${validation.chml.failed.value}"
+                    }
+                    if (validation.chml.warning != null) {
+                        vsArgs += '--warning'
+                        vsArgs += "${validation.chml.warning.level}=${validation.chml.warning.value}"
+                    }
+                    Cli.call(this, logging, vsArgs)
+                }
+                // Percentage
+                else if (validation.percentage) {
+                    def vsArgs = ['validation', 'setup', 'percentage', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
+                    if (validation.percentage.failure != null) {
+                        vsArgs += '--failure'
+                        vsArgs += validation.percentage.failure as int
+                    }
+                    if (validation.percentage.warning != null) {
+                        vsArgs += '--warning'
+                        vsArgs += validation.percentage.warning as int
+                    }
+                    if (validation.percentage.okIfGreater != null) {
+                        vsArgs += '--ok-if-greater'
+                        vsArgs += validation.percentage.okIfGreater as boolean
+                    }
+                    Cli.call(this, logging, vsArgs)
+                }
+                // Metrics
+                else if (validation.metrics) {
+                    Cli.call(this, logging, ['validation', 'setup', 'metrics', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name])
+                }
+                // Generic stamp
+                else {
+                    Cli.call(this, logging, ['validation', 'setup', 'generic', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name])
+                }
+            }
+        }
+
         // Auto promotion configuration
 
         def promotions = params.promotions

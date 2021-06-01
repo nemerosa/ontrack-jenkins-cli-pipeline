@@ -11,6 +11,39 @@ pipeline {
                 ontrackCliSetup(
                     logging: true,
                      autoValidationStamps: true,
+                     validations: [
+                         [
+                            name: "BUILD",
+                            tests: [
+                                warningIfSkipped: true,
+                            ]
+                         ],
+                         [
+                            name: "CHML",
+                            chml: [
+                                failed: [
+                                    level: 'CRITICAL',
+                                    value: 1,
+                                ],
+                                warning: [
+                                    level: 'HIGH',
+                                    value: 1,
+                                ]
+                            ],
+                         ],
+                         [
+                            name: "PERCENTAGE",
+                            percentage: [
+                                failure: 80,
+                                warning: 50,
+                                okIfGreater: false,
+                            ],
+                         ],
+                         [
+                            name: "METRICS",
+                            metrics: true
+                         ]
+                     ]
                      promotions: [
                         BRONZE: [
                             validations: [
