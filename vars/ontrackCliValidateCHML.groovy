@@ -4,6 +4,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
 
 def call(Map<String, ?> params = [:]) {
 
+    boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
     int critical = ParamUtils.getIntParam(params, "critical", 0)
     int high = ParamUtils.getIntParam(params, "high", 0)
     int medium = ParamUtils.getIntParam(params, "medium", 0)

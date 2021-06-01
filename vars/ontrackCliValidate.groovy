@@ -5,6 +5,8 @@ import net.nemerosa.ontrack.jenkins.pipeline.validate.Validation
 
 def call(Map<String, ?> params = [:]) {
 
+    boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
+
     String dataType = ParamUtils.getConditionalParam(params, "dataType", false, null)
     boolean dataValidation = ParamUtils.getBooleanParam(params, "dataValidation", true)
     Object data = params.data
