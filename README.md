@@ -94,6 +94,7 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 * [`ontrackCliValidateTests`](vars/ontrackCliValidateTests.md) - creates an Ontrack validation run based on JUnit test results
 * [`ontrackCliValidateCHML`](vars/ontrackCliValidateCHML.md) - creates an Ontrack validation run based on critical/high/medium/low stats
 * [`ontrackCliValidatePercentage`](vars/ontrackCliValidatePercentage.md) - creates an Ontrack validation run based on a percentage
+* [`ontrackCliValidateMetrics`](vars/ontrackCliValidateMetrics.md) - creates an Ontrack validation run based on a map of metrics
 
 ### Technical steps
 
