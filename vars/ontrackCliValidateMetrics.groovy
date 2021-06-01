@@ -13,6 +13,7 @@ def call(Map<String, ?> params = [:]) {
     List<String> args = validation.cli(this, params, false)
 
     // Metrics
+    args += 'metrics'
     metrics.each { name, value ->
         args += '--metric'
         args += "$name=$value"
