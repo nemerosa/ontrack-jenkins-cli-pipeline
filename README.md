@@ -62,6 +62,13 @@ pipeline {
                 // Ontrack build entry creation
                 ontrackCliBuild(release: env.VERSION)
             }
+            post {
+                always {
+                    // Validation run, including detection of the 
+                    // status and run information
+                    ontrackCliValidate(stamp: 'STAMP')
+                }
+            }
         }
     }
 }
