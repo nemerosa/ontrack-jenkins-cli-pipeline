@@ -102,8 +102,7 @@ def call(Map<String, ?> params = [:]) {
                 else if (validation.tests) {
                     def vsArgs = ['validation', 'setup', 'tests', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
                     if (validation.tests.warningIfSkipped != null) {
-                        vsArgs += '--warning-if-skipped'
-                        vsArgs += validation.tests.warningIfSkipped as boolean
+                        vsArgs += "--warning-if-skipped=${validation.tests.warningIfSkipped as boolean}" as String
                     }
                     Cli.call(this, logging, vsArgs)
                 }
@@ -132,8 +131,7 @@ def call(Map<String, ?> params = [:]) {
                         vsArgs += validation.percentage.warning as int
                     }
                     if (validation.percentage.okIfGreater != null) {
-                        vsArgs += '--ok-if-greater'
-                        vsArgs += validation.percentage.okIfGreater as boolean
+                        vsArgs += "--ok-if-greater=${validation.percentage.okIfGreater as boolean}" as String
                     }
                     Cli.call(this, logging, vsArgs)
                 }
