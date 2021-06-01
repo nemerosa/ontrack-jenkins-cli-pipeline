@@ -111,20 +111,20 @@ def call(Map<String, ?> params = [:]) {
 
             // Auto promotion setup
             promotions.each { promotion, promotionConfig ->
-                List<String> setupArgs = ['promotion', 'setup', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--promotion', promotion]
+                List<String> promotionArgs = ['promotion', 'setup', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--promotion', promotion]
                 if (promotionConfig.validations) {
                     promotionConfig.validations.each { validation ->
-                        setupArgs += '--validation'
-                        setupArgs += validation
+                        promotionArgs += '--validation'
+                        promotionArgs += validation
                     }
                 }
                 if (promotionConfig.promotions) {
                     promotionConfig.promotions.each { other ->
-                        setupArgs += '--depends-on'
-                        setupArgs += other
+                        promotionArgs += '--depends-on'
+                        promotionArgs += other
                     }
                 }
-                Cli.call(this, logging, setupArgs)
+                Cli.call(this, logging, promotionArgs)
             }
 
         }
