@@ -22,7 +22,7 @@ pipeline {
             }
             post {
                 always {
-                    ontrackCliValidate(stamp: 'BUILD')
+                    ontrackCliValidateTests(stamp: 'BUILD')
                 }
             }
         }
