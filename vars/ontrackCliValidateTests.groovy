@@ -11,9 +11,9 @@ def call(Map<String, ?> params = [:]) {
     def results = junit(testResults: pattern, allowEmptyResults: allowEmptyResults)
 
     // Getting results details
-    int passed = testResults.passCount
-    int skipped = testResults.skipCount
-    int failed = testResults.failCount
+    int passed = results.passCount
+    int skipped = results.skipCount
+    int failed = results.failCount
 
     // Validation parameters
     Validation validation = new Validation("ontrack-cli-validate-tests")
