@@ -24,6 +24,7 @@ pipeline {
                 always {
                     ontrackCliValidateTests(stamp: 'BUILD')
                     ontrackCliValidateCHML(stamp: 'CHML', critical: 2, high: 13)
+                    ontrackCliValidatePercentage(stamp: 'PERCENTAGE', value: 87)
                 }
             }
         }
