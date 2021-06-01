@@ -43,7 +43,7 @@ pipeline {
                             name: "METRICS",
                             metrics: true
                          ]
-                     ]
+                     ],
                      promotions: [
                         BRONZE: [
                             validations: [
