@@ -78,6 +78,10 @@ class Cli {
         String cli = dsl.env.ONTRACK_CLI_NAME as String
         String script = cli + ' ' + params.toList().join(' ')
 
+        // FIXME #9 Remove those traces
+        println("ONTRACK_CLI_DIR = ${dsl.env.ONTRACK_CLI_DIR}")
+        println("PATH = ${dsl.env.PATH}")
+
         String header = '#!/bin/bash -e'
         if (logging) {
             header += ' -x'
