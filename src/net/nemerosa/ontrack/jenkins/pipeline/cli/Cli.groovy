@@ -76,6 +76,7 @@ class Cli {
      */
     static String call(def dsl, boolean logging, List<String> params) {
         String cli = dsl.env.ONTRACK_CLI_NAME as String
+        String cliPath = dsl.env.ONTRACK_CLI_DIR as String
         String script = cli + ' ' + params.toList().join(' ')
 
         String header = '#!/bin/bash -e'
@@ -88,9 +89,7 @@ class Cli {
         String bash = """\
             $header
 
-            echo PATH=\$PATH
-            echo ONTRACK_CLI_DIR=\$ONTRACK_CLI_DIR
-            ls -l \$ONTRACK_CLI_DIR
+            export PATH=\$PATH:$cliPath
             
             $script
         """
