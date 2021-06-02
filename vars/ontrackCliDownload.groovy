@@ -46,7 +46,7 @@ def call(Map<String, ?> params = [:]) {
     // Target file
     FilePath target = directory.child(executable)
     // Downloading
-    logger("Downloading $path into $target")
+    logger("Downloading $url into $target")
     target.copyFrom(new URL(url))
     logger("Target at ${target} is ${target.length()} bytes")
     // Makes the file executable
