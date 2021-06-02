@@ -87,6 +87,10 @@ class Cli {
 
         String bash = """\
             $header
+
+            echo PATH=\$PATH
+            echo ONTRACK_CLI_DIR=\$ONTRACK_CLI_DIR
+            ls \$ONTRACK_CLI_DIR
             
             $script
         """
