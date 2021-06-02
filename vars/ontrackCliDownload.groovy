@@ -42,7 +42,7 @@ def call(Map<String, ?> params = [:]) {
     FilePath workspace = getContext hudson.FilePath
     logger("Workspace $workspace")
     // FilePath interface must be used for download
-    FilePath directory = workspace.createTempDir('ontrack-cli', null)
+    FilePath directory = workspace.createTempDir('.ontrack-cli', null)
     // Target file
     FilePath target = directory.child(executable)
     // Downloading
