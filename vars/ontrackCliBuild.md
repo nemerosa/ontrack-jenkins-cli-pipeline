@@ -12,6 +12,7 @@ This step creates an Ontrack build based on the available information in your pi
 | `branch` | String | `ONTRACK_BRANCH_NAME` environment variable | Name of the branch in Ontrack to target |
 | `name` | String | `BUILD_NUMBER` environment variable | Name of the build to create in Ontrack |
 | `release` | String | _None_ | If provided, will attach a release property to the build. |
+| `gitCommit` | String | `GIT_COMMIT` environment variable | Git commit property to set for the build. If value is `none`, no Git commit property will be created. |
 | `logging` | boolean | `false` | Set to `true` to display debug / logging information while performing the operation. |
 
 ### Output

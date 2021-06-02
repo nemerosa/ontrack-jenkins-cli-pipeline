@@ -17,6 +17,12 @@ def call(Map<String, ?> params = [:]) {
         args += release
     }
 
+    String gitCommit = ParamUtils.getConditionalParam(params, "gitCommit", false, env.GIT_COMMIT as String)
+    if (gitCommit && gitCommit != 'none') {
+        args += '--commit'
+        args += gitCommit
+    }
+
     Cli.call(this, logging, args)
 
 }
