@@ -50,7 +50,7 @@ def call(Map<String, ?> params = [:]) {
     target.copyFrom(new URL(url))
     logger("Target at ${target} is ${target.length()} bytes")
     // Makes the file executable
-    target.chmod(0700)
+    target.chmod(0777)
 
     // Logging
     if (logging && tracing) {
