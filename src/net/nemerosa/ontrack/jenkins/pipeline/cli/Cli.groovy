@@ -90,6 +90,8 @@ class Cli {
             $header
 
             export PATH=\$PATH:$cliPath
+            echo ONTRACK_CLI_DIR=\$ONTRACK_CLI_DIR
+            ls -l \$ONTRACK_CLI_DIR
             
             $script
         """
