@@ -12,6 +12,7 @@ This steps configures a connection to an Ontrack instance.
 | `credentialsId` | String | `ONTRACK_TOKEN` | ID of the Jenkins credentials which contains the authentication token to Ontrack |
 | `name` | String | `prod` | Name of the configuration to create to hold the connection parameters.
 | `logging` | boolean | `false` | Set to `true` to display logging information while connecting the CLI. |
+| `tracing` | boolean | `false` | Set to `true` to display debug / low level information while connecting the CLI. |
 
 ### Outputs
 

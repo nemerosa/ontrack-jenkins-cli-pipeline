@@ -8,8 +8,12 @@ def call(Map<String, ?> params = [:]) {
     String name = ParamUtils.getParam(params, "name", "prod")
 
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
+    boolean tracing = ParamUtils.getBooleanParam(params, "tracing", false)
 
     withCredentials([string(credentialsId: credentialsId, variable: 'ONTRACK_TOKEN')]) {
+        if (logging && tracing) {
+            sh 'ls -l $ONTRACK_CLI_DIR'
+        }
         Cli.call(this, logging, "config", "create", name, url, "--token", env.ONTRACK_TOKEN, "--override")
     }
 }
