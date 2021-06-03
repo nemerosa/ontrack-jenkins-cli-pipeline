@@ -43,14 +43,26 @@ class GraphQL {
             con.outputStream.withWriter { writer ->
                 writer << jsonPayload
             }
+            // Gets the response code
+            def code = con.responseCode
+            if (code != 200) {
+                throw new RuntimeException("GraphQL HTTP $code error: ${con.responseMessage}")
+            }
             // Gets the response as text
-            def jsonResponse = con.content.text
+            def jsonResponse = con.inputStream.withReader {
+                it.text
+            }
             // Logging
             logger("Raw response = $jsonResponse)")
             // Parsing
             def response = JSONSerializer.toJSON(jsonResponse)
             logger("Response = $response)")
-            // TODO Management of errors
+            // Management of errors
+            def errors = response.errors
+            if (errors) {
+                String message = errors.collect { it.message }.join('\n')
+                throw new RuntimeException("GraphQL errors:\n$message")
+            }
             // OK
             response
         }
