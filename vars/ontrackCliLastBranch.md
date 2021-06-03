@@ -19,5 +19,5 @@ This step returns the name of the last Ontrack branch of the project which match
 ### Example
 
 ```groovy
-String branch = ontrackGetLastBranch(pattern: "release-.*")
+String branch = ontrackCliLastBranch(pattern: "release-.*")
 ```
