@@ -67,6 +67,9 @@ pipeline {
         }
 
         stage("Build") {
+            environment {
+                ONTRACK_TOKEN = credentials('ONTRACK_TOKEN')
+            }
             steps {
                 sh '''
                     ./gradlew test \\
