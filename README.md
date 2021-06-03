@@ -96,6 +96,10 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 * [`ontrackCliValidatePercentage`](vars/ontrackCliValidatePercentage.md) - creates an Ontrack validation run based on a percentage
 * [`ontrackCliValidateMetrics`](vars/ontrackCliValidateMetrics.md) - creates an Ontrack validation run based on a map of metrics
 
+### Generic steps
+
+* [`ontrackCliGraphQL`](vars/ontrackCliGraphQL.md) - performs a GraphQL call to Ontrack and returns the JSON response
+
 ### Technical steps
 
 > Those steps are used internally and will seldom be called directly.

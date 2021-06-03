@@ -14,6 +14,8 @@ def call(Map<String, ?> params = [:]) {
         if (logging && tracing) {
             sh 'ls -l $ONTRACK_CLI_DIR'
         }
+        env.ONTRACK_CLI_URL = url
+        env.ONTRACK_CLI_TOKEN = env.ONTRACK_TOKEN
         Cli.call(this, logging, "config", "create", name, url, "--token", env.ONTRACK_TOKEN, "--override")
     }
 }

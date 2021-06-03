@@ -16,7 +16,8 @@ This steps configures a connection to an Ontrack instance.
 
 ### Outputs
 
-None.
+* `ONTRACK_CLI_URL` will contain the actual URL being used
+* `ONTRACK_CLI_TOKEN` will contain the actual token being used
 
 ### Example
 

@@ -72,6 +72,24 @@ pipeline {
                     ./gradlew test \\
                         --console plain
                 '''
+                // Testing the GraphQL call
+                script {
+                    def result = ontrackCliGraphQL(
+                        query: '''
+                            query BranchInfo($project: String!) {
+                                branches(project: $project, name: "release.*") {
+                                    name
+                                }
+                            }
+                        ''',
+                        variables: [
+                            project: "ontrack"
+                        ]
+                    )
+                    result.data.branches.each { branch ->
+                        echo "Branch = $branch"
+                    }
+                }
             }
             post {
                 always {
