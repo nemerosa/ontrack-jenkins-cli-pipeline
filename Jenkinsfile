@@ -90,8 +90,13 @@ pipeline {
                         ],
                     )
                     result.data.branches.each { branch ->
-                        echo "Branch = $branch"
+                        echo "Branch = ${branch.name}"
                     }
+                }
+                // Testing the last branch call
+                script {
+                    String lastOntrackRelease = ontrackCliLastBranch(project: 'ontrack', pattern: 'release-.*')
+                    echo "Last Ontrack release branch: ${lastOntrackRelease}"
                 }
             }
             post {
