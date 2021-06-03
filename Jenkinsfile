@@ -87,7 +87,8 @@ pipeline {
                         ''',
                         variables: [
                             project: "ontrack"
-                        ]
+                        ],
+                        logging: true,
                     )
                     result.data.branches.each { branch ->
                         echo "Branch = $branch"
