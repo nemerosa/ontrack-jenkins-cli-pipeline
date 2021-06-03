@@ -45,8 +45,14 @@ class GraphQL {
             }
             // Gets the response as text
             def jsonResponse = content.text
+            // Logging
+            logger("Raw response = $jsonResponse)")
             // Parsing
-            JSONSerializer.toJSON(jsonPayload)
+            def response = JSONSerializer.toJSON(jsonResponse)
+            logger("Response = $response)")
+            // TODO Management of errors
+            // OK
+            response
         }
     }
 }
