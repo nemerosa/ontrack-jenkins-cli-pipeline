@@ -5,7 +5,7 @@ import net.sf.json.JSONSerializer
 class JsonUtils {
 
     static String toJSON(Object data) {
-        return JSONSerializer.toJSON(data)
+        return JSONSerializer.toJSON(data).toString()
     }
 
 }
