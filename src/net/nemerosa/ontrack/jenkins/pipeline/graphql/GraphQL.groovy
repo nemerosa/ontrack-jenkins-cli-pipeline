@@ -40,7 +40,7 @@ class GraphQL {
             // Logging
             logger("Payload = $jsonPayload")
             // Body
-            con.outputStream.text = jsonPayload
+            con.outputStream.write(jsonPayload.bytes)
             // Gets the response code
             def code = con.responseCode
             if (code != 200) {
