@@ -22,12 +22,12 @@ class GraphQL {
         logger("Variables = $variables")
         def graphQLURL = new URL("$url/graphql")
         def connection = graphQLURL.openConnection() as HttpURLConnection
-        return connection.with {
-            doInput = true
-            doOutput = true
-            requestMethod = 'POST'
-            setRequestProperty('X-Ontrack-Token', token)
-            setRequestProperty('Content-Type', 'application/json')
+        return connection.with { con ->
+            con.doInput = true
+            con.doOutput = true
+            con.requestMethod = 'POST'
+            con.setRequestProperty('X-Ontrack-Token', token)
+            con.setRequestProperty('Content-Type', 'application/json')
             // Payload
             def payload = [
                     query: query,
@@ -40,11 +40,11 @@ class GraphQL {
             // Logging
             logger("Payload = $jsonPayload")
             // Body
-            outputStream.withWriter { writer ->
+            con.outputStream.withWriter { writer ->
                 writer << jsonPayload
             }
             // Gets the response as text
-            def jsonResponse = content.text
+            def jsonResponse = con.content.text
             // Logging
             logger("Raw response = $jsonResponse)")
             // Parsing
