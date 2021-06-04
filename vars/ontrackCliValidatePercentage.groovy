@@ -1,6 +1,6 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.validate.Validation
-import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
+import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
 def call(Map<String, ?> params = [:]) {
 
