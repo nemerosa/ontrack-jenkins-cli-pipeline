@@ -4,16 +4,52 @@ import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
 
 def call(Map<String, ?> params = [:]) {
 
-    boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
+    boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
     int value = ParamUtils.getIntParam(params, "value", 0)
 
-    // Validation parameters
+    // GraphQL query
+    String query = '''
+        mutation ValidateBuildWithPercentage(
+            $project: String!,
+            $branch: String!,
+            $build: String!,
+            $validation: String!,
+            $description: String!,
+            $runInfo: RunInfoInput,
+            $value: Int!
+        ) {
+            validateBuildWithPercentage(input: {
+                project: $project,
+                branch: $branch,
+                build: $build,
+                validation: $validation,
+                description: $description,
+                runInfo: $runInfo,
+                value: $value
+            }) {
+                errors {
+                    message
+                }
+            }
+        }
+    '''
+
+    // GraphQL variables
     Validation validation = new Validation("ontrack-cli-validate-percentage")
-    List<String> args = validation.cli(this, params, false)
+    Map<String,?> variables = validation.variables(this, params, false)
 
-    // CHML values
-    args += ['percentage', '--value', value]
+    // Value
+    variables.value =  value
 
-    // Calling the CLI
-    Cli.call(this, logging, args)
+    // GraphQL call
+
+    def response = ontrackCliGraphQL(
+            logging: logging,
+            query: query,
+            variables: variables,
+    )
+
+    // Checks for errors
+
+    GraphQL.checkForMutationErrors(response, 'validateBuildWithPercentage')
 }
