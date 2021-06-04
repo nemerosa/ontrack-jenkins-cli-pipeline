@@ -112,7 +112,7 @@ pipeline {
                     ontrackCliValidateTests(stamp: 'BUILD')
                     ontrackCliValidateCHML(stamp: 'CHML', critical: 0, high: 0, medium: 13, low: 218)
                     ontrackCliValidatePercentage(stamp: 'PERCENTAGE', value: 34)
-                    ontrackCliValidateMetrics(stamp: 'METRICS', metrics: [
+                    ontrackCliValidateMetrics(stamp: 'METRICS', logging: true, metrics: [
                         ui: 88,
                         backend: 67.3,
                         network: 15.0,
