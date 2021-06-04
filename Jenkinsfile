@@ -42,6 +42,9 @@ pipeline {
                          [
                             name: "METRICS",
                             metrics: true
+                         ],
+                         [
+                           name: "GENERIC",
                          ]
                      ],
                      promotions: [
@@ -101,6 +104,7 @@ pipeline {
             }
             post {
                 always {
+                    ontrackCliValidate(stamp: 'GENERIC')
                     ontrackCliValidateTests(stamp: 'BUILD')
                     ontrackCliValidateCHML(stamp: 'CHML', critical: 0, high: 0, medium: 13, low: 218)
                     ontrackCliValidatePercentage(stamp: 'PERCENTAGE', value: 34)
