@@ -49,10 +49,9 @@ class GraphQL {
             // Gets the response as text
             def jsonResponse = con.inputStream.text
             // Logging
-            logger("Raw response = $jsonResponse)")
+            logger("Response = $jsonResponse)")
             // Parsing
             def response = JSONSerializer.toJSON(jsonResponse)
-            logger("Response = $response)")
             // Management of errors
             def errors = response.errors
             if (errors) {
