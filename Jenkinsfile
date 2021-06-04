@@ -6,7 +6,8 @@ pipeline {
     agent any
 
     environment {
-        ONTRACK_LOGGING = true
+        // Logging disabled globally
+        ONTRACK_LOGGING = false
     }
 
     stages {
@@ -14,7 +15,6 @@ pipeline {
         stage("Setup") {
             steps {
                 ontrackCliSetup(
-                    logging: true,
                      autoValidationStamps: true,
                      validations: [
                          [
