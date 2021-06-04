@@ -14,7 +14,7 @@ This step creates a validation run for the current Ontrack build, using the curr
 | `stamp` | String | _Required_ | Name of the validation stamp to set |
 | `status` | String | _None_ | Status of the validation. See the [validation](#validation) section below. |
 | `dataType` | String | _None_ | FQCN of the validation data type |
-| `data` | Object | _None_ | Validation data. It'll be serialized as JSON for the Ontrack CLI call. |
+| `data` | Object | _None_ | Validation data. It'll be serialized as JSON. |
 | `dataValidation` | boolean | `true` | If some validation data is provided, uses the data for the status computation. | 
 | `logging` | boolean | `false` | Set to `true` to display debug / logging information while performing the operation. |
 | `tracing` | boolean | `false` | Set to `true` to display low level information while performing the operation. |
@@ -24,3 +24,9 @@ This step creates a validation run for the current Ontrack build, using the curr
 By default, the status of the validation is computed from the result of the current Jenkins stage.
 
 If can also be provided explicitly using the `status` parameter or through data validation.
+
+### Example
+
+```groovy
+ontrackCliValidate(stamp: 'BUILD')
+```
