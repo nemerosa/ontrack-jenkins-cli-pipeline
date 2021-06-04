@@ -42,7 +42,7 @@ def call(Map<String, ?> params = [:]) {
     // Metrics
     def metricsInput = []
     metrics.each { name, value ->
-        metrics += [
+        metricsInput += [
             name: name,
             value: value,
         ]
