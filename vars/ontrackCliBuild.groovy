@@ -1,5 +1,5 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
-import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
+import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
 def call(Map<String, ?> params = [:]) {
 
@@ -90,10 +90,16 @@ def call(Map<String, ?> params = [:]) {
 
     // GraphQL call
 
-    ontrackCliGraphQL(
+    def response = ontrackCliGraphQL(
             logging: logging,
             query: query,
             variables: variables,
     )
+
+    // Checks for errors
+
+    GraphQL.checkForMutationErrors(response, 'createBuildOrGet')
+    GraphQL.checkForMutationErrors(response, 'setBuildReleaseProperty')
+    GraphQL.checkForMutationErrors(response, 'setBuildGitCommitProperty')
 
 }
