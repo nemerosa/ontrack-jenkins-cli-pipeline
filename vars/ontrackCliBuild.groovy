@@ -72,7 +72,7 @@ def call(Map<String, ?> params = [:]) {
     // Release property
 
     variables.releaseProperty = false
-    variables.release = null
+    variables.release = ''
     if (release) {
         variables.releaseProperty = true
         variables.release = release
@@ -81,7 +81,7 @@ def call(Map<String, ?> params = [:]) {
     // Git commit
 
     variables.commitProperty = false
-    variables.commit = null
+    variables.commit = ''
     String gitCommit = ParamUtils.getConditionalParam(params, "gitCommit", false, env.GIT_COMMIT as String)
     if (gitCommit && gitCommit != 'none') {
         variables.commitProperty = true
