@@ -213,6 +213,16 @@ def call(Map<String, ?> params = [:]) {
                 createdValidations[name] = validation
                 // Generic data
                 if (validation.dataType) {
+                    ValidationStampUtils.setupGenericValidationStamp(
+                            this,
+                            logging,
+                            project,
+                            branch,
+                            name,
+                            '',
+                            validation.dataType,
+                            validation.dataConfig
+                    )
                     def response = ontrackCliGraphQL(
                             query: '''
                                 mutation SetupValidationStamp(
@@ -255,172 +265,55 @@ def call(Map<String, ?> params = [:]) {
                     if (validation.tests.warningIfSkipped != null) {
                         warningIfSkipped = validation.tests.warningIfSkipped as boolean
                     }
-                    def response = ontrackCliGraphQL(
-                            query: '''
-                                mutation SetupTestSummaryValidationStamp(
-                                    $project: String!,
-                                    $branch: String!,
-                                    $validation: String!,
-                                    $description: String,
-                                    $warningIfSkipped: Boolean!
-                                ) {
-                                    setupTestSummaryValidationStamp(input: {
-                                        project: $project,
-                                        branch: $branch,
-                                        validation: $validation,
-                                        description: $description,
-                                        warningIfSkipped: $warningIfSkipped
-                                    }) {
-                                        errors {
-                                            message
-                                        }
-                                    }
-                                }
-                            ''',
-                            logging: logging,
-                            variables: [
-                                    project: project,
-                                    branch: branch,
-                                    validation: name,
-                                    description: '',
-                                    warningIfSkipped: warningIfSkipped,
-                            ]
+                    ValidationStampUtils.setupTestsValidationStamp(
+                            this,
+                            logging,
+                            project,
+                            branch,
+                            name,
+                            '',
+                            warningIfSkipped,
                     )
-                    GraphQL.checkForMutationErrors(response, 'setupTestSummaryValidationStamp')
                 }
                 // CHML
                 else if (validation.chml) {
-                    def variables = [
-                            project: project,
-                            branch: branch,
-                            validation: name,
-                            description: '',
-                    ]
-                    if (validation.chml.failed != null) {
-                        variables.failedLevel = validation.chml.failed.level as String
-                        variables.failedValue = validation.chml.failed.value as int
-                    }
-                    if (validation.chml.warning != null) {
-                        variables.warningLevel = validation.chml.warning.level as String
-                        variables.warningValue = validation.chml.warning.value as int
-                    }
-                    def response = ontrackCliGraphQL(
-                            query: '''
-                                mutation SetupCHMLValidationStamp(
-                                    $project: String!,
-                                    $branch: String!,
-                                    $validation: String!,
-                                    $description: String,
-                                    $warningLevel: CHML!,
-                                    $warningValue: Int!,
-                                    $failedLevel: CHML!,
-                                    $failedValue: Int!
-                                ) {
-                                    setupCHMLValidationStamp(input: {
-                                        project: $project,
-                                        branch: $branch,
-                                        validation: $validation,
-                                        description: $description,
-                                        warningLevel: {
-                                            level: $warningLevel,
-                                            value: $warningValue
-                                        },
-                                        failedLevel: {
-                                            level: $failedLevel,
-                                            value: $failedValue
-                                        }
-                                    }) {
-                                        errors {
-                                            message
-                                        }
-                                    }
-                                }
-                            ''',
-                            logging: logging,
-                            variables: variables,
+                    ValidationStampUtils.setupCHMLValidationStamp(
+                            this,
+                            logging,
+                            project,
+                            branch,
+                            name,
+                            '',
+                            validation.chml.failed.level as String,
+                            validation.chml.failed.value as int,
+                            validation.chml.warning.level as String,
+                            validation.chml.warning.value as int
                     )
-                    GraphQL.checkForMutationErrors(response, 'setupCHMLValidationStamp')
                 }
                 // Percentage
                 else if (validation.percentage) {
-                    def variables = [
-                            project: project,
-                            branch: branch,
-                            validation: name,
-                            description: '',
-                    ]
-                    if (validation.percentage.failure != null) {
-                        variables.failure = validation.percentage.failure as int
-                    }
-                    if (validation.percentage.warning != null) {
-                        variables.warning = validation.percentage.warning as int
-                    }
-                    if (validation.percentage.okIfGreater != null) {
-                        variables.okIfGreater = validation.percentage.okIfGreater as boolean
-                    }
-                    def response = ontrackCliGraphQL(
-                            query: '''
-                                mutation SetupPercentageValidationStamp(
-                                    $project: String!,
-                                    $branch: String!,
-                                    $validation: String!,
-                                    $description: String,
-                                    $warning: Int,
-                                    $failure: Int,
-                                    $okIfGreater: Boolean!
-                                ) {
-                                    setupPercentageValidationStamp(input: {
-                                        project: $project,
-                                        branch: $branch,
-                                        validation: $validation,
-                                        description: $description,
-                                        warningThreshold: $warning,
-                                        failureThreshold: $failure,
-                                        okIfGreater: $okIfGreater
-                                    }) {
-                                        errors {
-                                            message
-                                        }
-                                    }
-                                }
-                            ''',
-                            logging: logging,
-                            variables: variables,
+                    ValidationStampUtils.setupPercentageValidationStamp(
+                            this,
+                            logging,
+                            project,
+                            branch,
+                            name,
+                            '',
+                            validation.percentage.failure as int,
+                            validation.percentage.warning as int,
+                            validation.percentage.okIfGreater as boolean,
                     )
-                    GraphQL.checkForMutationErrors(response, 'setupPercentageValidationStamp')
                 }
                 // Metrics
                 else if (validation.metrics) {
-                    def variables = [
-                            project: project,
-                            branch: branch,
-                            validation: name,
-                            description: '',
-                    ]
-                    def response = ontrackCliGraphQL(
-                            query: '''
-                                mutation SetupMetricsValidationStamp(
-                                    $project: String!,
-                                    $branch: String!,
-                                    $validation: String!,
-                                    $description: String
-                                ) {
-                                    setupMetricsValidationStamp(input: {
-                                        project: $project,
-                                        branch: $branch,
-                                        validation: $validation,
-                                        description: $description
-                                    }) {
-                                        errors {
-                                            message
-                                        }
-                                    }
-                                }
-                            ''',
-                            logging: logging,
-                            variables: variables,
+                    ValidationStampUtils.setupMetricsValidationStamp(
+                            this,
+                            logging,
+                            project,
+                            branch,
+                            name,
+                            '',
                     )
-                    GraphQL.checkForMutationErrors(response, 'setupMetricsValidationStamp')
                 }
                 // Generic stamp
                 else {
