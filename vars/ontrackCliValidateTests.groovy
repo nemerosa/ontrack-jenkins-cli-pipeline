@@ -1,6 +1,6 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.validate.Validation
-import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
+import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
 def call(Map<String, ?> params = [:]) {
 
@@ -16,15 +16,57 @@ def call(Map<String, ?> params = [:]) {
     int skipped = results.skipCount
     int failed = results.failCount
 
+    // GraphQL query
+    String query = '''
+        mutation ValidateBuildWithTests(
+            $project: String!,
+            $branch: String!,
+            $build: String!,
+            $validation: String!,
+            $description: String!,
+            $runInfo: RunInfoInput,
+            $passed: Int!,
+            $skipped: Int!,
+            $failed: Int!
+        ) {
+            validateBuildWithTests(input: {
+                project: $project,
+                branch: $branch,
+                build: $build,
+                validation: $validation,
+                description: $description,
+                runInfo: $runInfo,
+                passed: $passed,
+                skipped: $skipped,
+                failed: $failed
+            }) {
+                errors {
+                    message
+                }
+            }
+        }
+    '''
+
     // Validation parameters
     Validation validation = new Validation("ontrack-cli-validate-tests")
-    List<String> args = validation.cli(this, params, false)
+    Map<String,?> variables = validation.variables(this, params, false)
 
     // Tests args
-    args += ['tests', '--passed', passed, '--skipped', skipped, '--failed', failed]
+    variables.passed = passed
+    variables.skipped = skipped
+    variables.failed = failed
 
-    // Calling the CLI
-    Cli.call(this, logging, args)
+    // GraphQL call
+
+    def response = ontrackCliGraphQL(
+            logging: logging,
+            query: query,
+            variables: variables,
+    )
+
+    // Checks for errors
+
+    GraphQL.checkForMutationErrors(response, 'validateBuildWithTests')
 
     // Returning the results
     return results
