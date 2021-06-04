@@ -2,6 +2,8 @@
 
 This step creates a validation run with validation data based on JUnit test results.
 
+> Note that this step works best after [`ontrackCliSetup`](ontrackCliSetup.md) and [`ontrackCliBuild`](ontrackCliBuild.md) have been called before.
+
 ### Parameters
 
 | Parameter | Type | Default | Description |
