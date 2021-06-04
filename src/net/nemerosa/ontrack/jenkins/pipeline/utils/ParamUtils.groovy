@@ -2,6 +2,16 @@ package net.nemerosa.ontrack.jenkins.pipeline.utils
 
 class ParamUtils {
 
+    static boolean getLogging(Map params, String env) {
+        if (params.logging != null) {
+            return params.logging as boolean
+        } else if (env) {
+            return env.toBoolean()
+        } else {
+            return false
+        }
+    }
+
     static String getParam(Map params, String key) {
         String value = params[key] as String
         if (value) {

@@ -5,6 +5,10 @@ pipeline {
 
     agent any
 
+    environment {
+        ONTRACK_LOGGING = true
+    }
+
     stages {
 
         stage("Setup") {

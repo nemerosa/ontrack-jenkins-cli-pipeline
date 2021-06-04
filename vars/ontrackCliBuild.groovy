@@ -8,7 +8,7 @@ def call(Map<String, ?> params = [:]) {
     String name = ParamUtils.getParam(params, "name", env.BUILD_NUMBER as String)
     String description = ParamUtils.getConditionalParam(params, "description", false, '')
     String release = ParamUtils.getConditionalParam(params, "release", false, null)
-    boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
+    boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
 
     // Exports the build name
 

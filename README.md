@@ -74,6 +74,22 @@ pipeline {
 }
 ```
 
+### Logging
+
+Most of the [steps](#steps) accept a `logging` parameter but logging can be configured globally using the `ONTRACK_LOGGING` environment variable, set to `false` or `true` (`false` is the default).
+
+> Note that any `logging` parameter on the step will override the global settings.
+
+Typically, the `ONTRACK_LOGGING` environment variable would be set at pipeline level:
+
+```groovy
+pipeline {
+    environment {
+        ONTRACK_LOGGING = true
+    }
+}
+```
+
 ### Versioning
 
 In this example, we use the `main` branch of the pipeline library but it's better to stick to:
