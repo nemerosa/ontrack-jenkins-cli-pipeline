@@ -66,7 +66,7 @@ class GraphQL {
 
     static void checkForMutationErrors(def response, String nodeName) {
         def node = response.data[nodeName]
-        if (node != null && node.errors) {
+        if (node != null && node.errors && node.errors.isArray()) {
             String message = node.errors.collect { it.message }.join('\n')
             throw new RuntimeException("$nodeName mutation returns some errors:\n$message")
         }
