@@ -356,7 +356,7 @@ def call(Map<String, ?> params = [:]) {
                             logging,
                             project,
                             branch,
-                            name,
+                            validation,
                             '',
                     )
                 }
