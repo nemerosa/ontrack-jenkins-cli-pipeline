@@ -4,6 +4,19 @@ pipeline {
 
     agent any
 
+    options {
+        // General Jenkins job properties
+        buildDiscarder(logRotator(numToKeepStr: '40'))
+        // Timestamps
+        timestamps()
+        // No durability
+        durabilityHint('PERFORMANCE_OPTIMIZED')
+        // ANSI colours
+        ansiColor('xterm')
+        // No concurrent builds
+        disableConcurrentBuilds()
+    }
+
     environment {
         // Logging disabled globally
         ONTRACK_LOGGING = false
@@ -112,7 +125,7 @@ pipeline {
                     ontrackCliValidateTests(stamp: 'BUILD')
                     ontrackCliValidateCHML(stamp: 'CHML', critical: 0, high: 0, medium: 13, low: 218)
                     ontrackCliValidatePercentage(stamp: 'PERCENTAGE', value: 34)
-                    ontrackCliValidateMetrics(stamp: 'METRICS', logging: true, metrics: [
+                    ontrackCliValidateMetrics(stamp: 'METRICS', metrics: [
                         ui: 88,
                         backend: 67.3,
                         network: 15.0,
