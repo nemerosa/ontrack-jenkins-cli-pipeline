@@ -68,7 +68,7 @@ class GraphQL {
         println("nodeName = $nodeName")
         println("response = $response")
         def node = response.data[nodeName]
-        if (node && node.errors && node.errors.size() > 0) {
+        if (node != null && node.errors != null && node.errors.size() > 0) {
             String message = node.errors.collect { it.message }.join('\n')
             throw new RuntimeException("$nodeName mutation returns some errors:\n$message")
         }
