@@ -6,7 +6,7 @@ def call(Map<String, ?> params = [:]) {
 
     String pattern = ParamUtils.getParam(params, "pattern", "**/build/test-results/**/*.xml")
     boolean allowEmptyResults = ParamUtils.getBooleanParam(params, "allowEmptyResults", true)
-    boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
+    boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
 
     // Parsing the JUnit results
     def results = junit(testResults: pattern, allowEmptyResults: allowEmptyResults)
