@@ -1,5 +1,4 @@
-// FIXME #11 Use `main` version
-@Library("ontrack-jenkins-cli-pipeline@feature/11-pure-graphql") _
+@Library("ontrack-jenkins-cli-pipeline@main") _
 
 pipeline {
 
