@@ -1,6 +1,6 @@
 # Ontrack CLI Jenkins Pipeline Library
 
-Jenkins pipeline library using the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli).
+Jenkins pipeline library using the [Ontrack](https://github.com/nemerosa/ontrack) GraphQL API.
 
 ## Installation
 
@@ -85,7 +85,7 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 ### General setup
 
-* [`ontrackCliSetup`](vars/ontrackCliSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from connection to initializing project and branch in Ontrack for your pipeline.
+* [`ontrackCliSetup`](vars/ontrackCliSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from creating common environment variables to initializing project and branch in Ontrack for your pipeline.
 
 ### Creating Ontrack items
 
@@ -104,9 +104,9 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 * [`ontrackCliGraphQL`](vars/ontrackCliGraphQL.md) - performs a GraphQL call to Ontrack and returns the JSON response
 
-### Technical steps
+### CLI steps
 
-> Those steps are used internally and will seldom be called directly.
+Those steps allow to download and the setup the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli).
 
 * [`ontrackCliDownload`](vars/ontrackCliDownload.md) - downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli) and sets it into the path
 * [`ontrackCliConnect`](vars/ontrackCliConnect.md) - creates a connection configuration for the Ontrack CLI, based on provided information or the environment
