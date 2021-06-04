@@ -41,7 +41,7 @@ class Validation {
         if (!actualStatus) {
             if (computeStatusWhenMissing) {
                 logger("No status is provided, computing status...")
-                actualStatus = JenkinsUtils.getValidationRunStatusFromStage(this)
+                actualStatus = JenkinsUtils.getValidationRunStatusFromStage(dsl)
                 logger("Computed status: $actualStatus")
             }
         }
