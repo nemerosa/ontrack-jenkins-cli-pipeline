@@ -1,11 +1,13 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.OntrackUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.GitHubUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
-import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
+import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
+import net.nemerosa.ontrack.jenkins.pipeline.validate.ValidationStampUtils
+import net.nemerosa.ontrack.jenkins.pipeline.promote.PromotionLevelUtils
 
 def call(Map<String, ?> params = [:]) {
     boolean setup = ParamUtils.getBooleanParam(params, "setup", true)
-    boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
+    boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
     Closure logger = {}
     if (logging) {
         logger = {
@@ -13,19 +15,16 @@ def call(Map<String, ?> params = [:]) {
         }
     }
 
-    // CLI download
-    ontrackCliDownload(params)
-    // CLI setup
-    ontrackCliConnect(params)
-
     // Computing the Ontrack project name from the Git URL
-    env.ONTRACK_PROJECT_NAME = ParamUtils.getParam(params, "project", OntrackUtils.getProjectName(env.GIT_URL))
+    String project = ParamUtils.getParam(params, "project", OntrackUtils.getProjectName(env.GIT_URL))
+    env.ONTRACK_PROJECT_NAME = project
     if (logging) {
         println("[ontrack-cli-setup] ONTRACK_PROJECT_NAME = ${env.ONTRACK_PROJECT_NAME}")
     }
 
     // Computing the Ontrack branch name from the branch name
-    env.ONTRACK_BRANCH_NAME = ParamUtils.getParam(params, "branch", OntrackUtils.getBranchName(env.BRANCH_NAME))
+    String branch = ParamUtils.getParam(params, "branch", OntrackUtils.getBranchName(env.BRANCH_NAME))
+    env.ONTRACK_BRANCH_NAME = branch
     if (logging) {
         println("[ontrack-cli-setup] ONTRACK_BRANCH_NAME = ${env.ONTRACK_BRANCH_NAME}")
     }
@@ -33,28 +32,96 @@ def call(Map<String, ?> params = [:]) {
     // Setting up the branch
     if (setup) {
 
-        // Project & branch creation
+        // GraphQL query
 
-        List<String> setupArgs = ['branch', 'setup', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME]
+        String query = '''
+			mutation ProjectSetup(
+				$project: String!, 
+				$branch: String!,
+				$autoCreateVSProperty: Boolean!,
+				$autoCreateVS: Boolean!,
+				$autoCreateVSIfNotPredefined: Boolean!,
+				$autoCreatePLProperty: Boolean!
+				$autoCreatePL: Boolean!
+			) {
+				createProjectOrGet(input: {name: $project}) {
+					errors {
+					    message
+					}
+				}
+				createBranchOrGet(input: {projectName: $project, name: $branch}) {
+					errors {
+					    message
+					}
+				}
+				setProjectAutoValidationStampProperty(input: {
+					project: $project,
+					isAutoCreate: $autoCreateVS,
+					isAutoCreateIfNotPredefined: $autoCreateVSIfNotPredefined
+				}) @include(if: $autoCreateVSProperty) {
+					errors {
+						message
+					}
+				}
+				setProjectAutoPromotionLevelProperty(input: {
+					project: $project,
+					isAutoCreate: $autoCreatePL
+				}) @include(if: $autoCreatePLProperty) {
+					errors {
+						message
+					}
+				}
+			}
+        '''
 
+        // GraphQL variables
+
+        Map<String,?> variables = [
+                project: env.ONTRACK_PROJECT_NAME,
+                branch: env.ONTRACK_BRANCH_NAME,
+        ]
+
+        // Auto validation stamps
+        variables.autoCreateVSProperty = false
+        variables.autoCreateVS = false
+        variables.autoCreateVSIfNotPredefined = false
         String autoVS = ParamUtils.getConditionalParam(params, "autoValidationStamps", false, "")
         if (autoVS == 'true') {
-            setupArgs += "--auto-create-vs"
+            variables.autoCreateVSProperty = true
+            variables.autoCreateVS = true
+            variables.autoCreateVSIfNotPredefined = false
         } else if (autoVS == 'force') {
-            setupArgs += "--auto-create-vs"
-            setupArgs += "--auto-create-vs-always"
+            variables.autoCreateVSProperty = true
+            variables.autoCreateVS = true
+            variables.autoCreateVSIfNotPredefined = true
         } else if (autoVS == 'false') {
-            setupArgs += "--auto-create-vs=false"
+            variables.autoCreateVSProperty = true
+            variables.autoCreateVS = false
+            variables.autoCreateVSIfNotPredefined = false
         }
 
+        // Auto promotion levels
+        variables.autoCreatePLProperty = false
+        variables.autoCreatePL = false
         String autoPL = ParamUtils.getConditionalParam(params, "autoPromotionLevels", false, "")
         if (autoPL == 'true') {
-            setupArgs += "--auto-create-pl"
+            variables.autoCreatePLProperty = true
+            variables.autoCreatePL = true
         } else if (autoPL == 'false') {
-            setupArgs += "--auto-create-pl=false"
+            variables.autoCreatePLProperty = true
+            variables.autoCreatePL = false
         }
 
-        Cli.call(this, logging, setupArgs)
+        // GraphQL call for the general setup
+        def setupResponse = ontrackCliGraphQL(
+            logging: logging,
+            query: query,
+            variables: variables,
+        )
+        GraphQL.checkForMutationErrors(setupResponse, 'createProjectOrGet')
+        GraphQL.checkForMutationErrors(setupResponse, 'createBranchOrGet')
+        GraphQL.checkForMutationErrors(setupResponse, 'setProjectAutoValidationStampProperty')
+        GraphQL.checkForMutationErrors(setupResponse, 'setProjectAutoPromotionLevelProperty')
 
         // Git configuration for the project & branch
 
@@ -71,14 +138,70 @@ def call(Map<String, ?> params = [:]) {
 
             String issueService = ParamUtils.getParam(params, "scmIssues", env.ONTRACK_SCM_ISSUES ?: 'self')
 
-            Cli.call(this, logging, ['project', 'set-property', '--project', env.ONTRACK_PROJECT_NAME, 'github', '--configuration', scmConfig, '--repository', "${owner}/${repository}", '--indexation', scmIndexation, '--issue-service', issueService])
+            def gitHubProjectResponse = ontrackCliGraphQL(
+                    query: '''
+                        mutation SetProjectGitHubProperty(
+                            $project: String!,
+                            $configuration: String!,
+                            $repository: String!,
+                            $indexationInterval: Int,
+                            $issueServiceConfigurationIdentifier: String
+                        ) {
+                            setProjectGitHubConfigurationProperty(input: {
+                                project: $project,
+                                configuration: $configuration,
+                                repository: $repository,
+                                indexationInterval: $indexationInterval,
+                                issueServiceConfigurationIdentifier: $issueServiceConfigurationIdentifier
+                            }) {
+                                errors {
+                                    message
+                                }
+                            }
+                        }
+                    ''',
+                    variables: [
+                            project: project,
+                            configuration: scmConfig,
+                            repository: "${owner}/${repository}" as String,
+                            indexationInterval: scmIndexation,
+                            issueServiceConfigurationIdentifier: issueService,
+                    ],
+                    logging: logging,
+            )
+            GraphQL.checkForMutationErrors(gitHubProjectResponse, 'setProjectGitHubConfigurationProperty')
         } else {
             throw new RuntimeException("SCM not supported: $scm")
         }
 
         // Branch Git configuration
 
-        Cli.call(this, logging, ['branch', 'set-property', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, 'git', '--git-branch', env.BRANCH_NAME])
+        def branchGitResponse = ontrackCliGraphQL(
+                query: '''
+                    mutation SetBranchGitConfigProperty(
+                        $project: String!,
+                        $branch: String!,
+                        $gitBranch: String!
+                    ) {
+                        setBranchGitConfigProperty(input: {
+                            project: $project,
+                            branch: $branch,
+                            gitBranch: $gitBranch
+                        }) {
+                            errors {
+                                message
+                            }
+                        }
+                    }
+                ''',
+                logging: logging,
+                variables: [
+                        project: project,
+                        branch: branch,
+                        gitBranch: env.BRANCH_NAME as String,
+                ]
+        )
+        GraphQL.checkForMutationErrors(branchGitResponse, 'setBranchGitConfigProperty')
 
         // Validation stamps setup
 
@@ -90,58 +213,225 @@ def call(Map<String, ?> params = [:]) {
                 createdValidations[name] = validation
                 // Generic data
                 if (validation.dataType) {
-                    def vsArgs = ['validation', 'setup', 'generic', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
-                    vsArgs += '--data-type'
-                    vsArgs += validation.dataType
-                    if (validation.dataConfig) {
-                        vsArgs += '--data-config'
-                        vsArgs += "'${JsonUtils.toJSON(validation.dataConfig)}'".toString()
-                    }
+                    def response = ontrackCliGraphQL(
+                            query: '''
+                                mutation SetupValidationStamp(
+                                    $project: String!,
+                                    $branch: String!,
+                                    $validation: String!,
+                                    $description: String,
+                                    $dataType: String,
+                                    $dataTypeConfig: JSON
+                                ) {
+                                    setupValidationStamp(input: {
+                                        project: $project,
+                                        branch: $branch,
+                                        validation: $validation,
+                                        description: $description,
+                                        dataType: $dataType,
+                                        dataTypeConfig: $dataTypeConfig
+                                    }) {
+                                        errors {
+                                            message
+                                        }
+                                    }
+                                }
+                            ''',
+                            logging: logging,
+                            variables: [
+                                    project: project,
+                                    branch: branch,
+                                    validation: name,
+                                    description: '',
+                                    dataType: validation.dataType,
+                                    dataTypeConfig: validation.dataConfig,
+                            ]
+                    )
+                    GraphQL.checkForMutationErrors(response, 'setupValidationStamp')
                 }
                 // Tests
                 else if (validation.tests) {
-                    def vsArgs = ['validation', 'setup', 'tests', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
+                    boolean warningIfSkipped = false
                     if (validation.tests.warningIfSkipped != null) {
-                        vsArgs += "--warning-if-skipped=${validation.tests.warningIfSkipped as boolean}" as String
+                        warningIfSkipped = validation.tests.warningIfSkipped as boolean
                     }
-                    Cli.call(this, logging, vsArgs)
+                    def response = ontrackCliGraphQL(
+                            query: '''
+                                mutation SetupTestSummaryValidationStamp(
+                                    $project: String!,
+                                    $branch: String!,
+                                    $validation: String!,
+                                    $description: String,
+                                    $warningIfSkipped: Boolean!
+                                ) {
+                                    setupTestSummaryValidationStamp(input: {
+                                        project: $project,
+                                        branch: $branch,
+                                        validation: $validation,
+                                        description: $description,
+                                        warningIfSkipped: $warningIfSkipped
+                                    }) {
+                                        errors {
+                                            message
+                                        }
+                                    }
+                                }
+                            ''',
+                            logging: logging,
+                            variables: [
+                                    project: project,
+                                    branch: branch,
+                                    validation: name,
+                                    description: '',
+                                    warningIfSkipped: warningIfSkipped,
+                            ]
+                    )
+                    GraphQL.checkForMutationErrors(response, 'setupTestSummaryValidationStamp')
                 }
                 // CHML
                 else if (validation.chml) {
-                    def vsArgs = ['validation', 'setup', 'chml', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
+                    def variables = [
+                            project: project,
+                            branch: branch,
+                            validation: name,
+                            description: '',
+                    ]
                     if (validation.chml.failed != null) {
-                        vsArgs += '--failed'
-                        vsArgs += "${validation.chml.failed.level}=${validation.chml.failed.value}"
+                        variables.failedLevel = validation.chml.failed.level as String
+                        variables.failedValue = validation.chml.failed.value as int
                     }
                     if (validation.chml.warning != null) {
-                        vsArgs += '--warning'
-                        vsArgs += "${validation.chml.warning.level}=${validation.chml.warning.value}"
+                        variables.warningLevel = validation.chml.warning.level as String
+                        variables.warningValue = validation.chml.warning.value as int
                     }
-                    Cli.call(this, logging, vsArgs)
+                    def response = ontrackCliGraphQL(
+                            query: '''
+                                mutation SetupCHMLValidationStamp(
+                                    $project: String!,
+                                    $branch: String!,
+                                    $validation: String!,
+                                    $description: String,
+                                    $warningLevel: CHML!,
+                                    $warningValue: Int!,
+                                    $failedLevel: CHML!,
+                                    $failedValue: Int!
+                                ) {
+                                    setupCHMLValidationStamp(input: {
+                                        project: $project,
+                                        branch: $branch,
+                                        validation: $validation,
+                                        description: $description,
+                                        warningLevel: {
+                                            level: $warningLevel,
+                                            value: $warningValue
+                                        },
+                                        failedLevel: {
+                                            level: $failedLevel,
+                                            value: $failedValue
+                                        }
+                                    }) {
+                                        errors {
+                                            message
+                                        }
+                                    }
+                                }
+                            ''',
+                            logging: logging,
+                            variables: variables,
+                    )
+                    GraphQL.checkForMutationErrors(response, 'setupCHMLValidationStamp')
                 }
                 // Percentage
                 else if (validation.percentage) {
-                    def vsArgs = ['validation', 'setup', 'percentage', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name]
+                    def variables = [
+                            project: project,
+                            branch: branch,
+                            validation: name,
+                            description: '',
+                    ]
                     if (validation.percentage.failure != null) {
-                        vsArgs += '--failure'
-                        vsArgs += validation.percentage.failure as int
+                        variables.failure = validation.percentage.failure as int
                     }
                     if (validation.percentage.warning != null) {
-                        vsArgs += '--warning'
-                        vsArgs += validation.percentage.warning as int
+                        variables.warning = validation.percentage.warning as int
                     }
                     if (validation.percentage.okIfGreater != null) {
-                        vsArgs += "--ok-if-greater=${validation.percentage.okIfGreater as boolean}" as String
+                        variables.okIfGreater = validation.percentage.okIfGreater as boolean
                     }
-                    Cli.call(this, logging, vsArgs)
+                    def response = ontrackCliGraphQL(
+                            query: '''
+                                mutation SetupPercentageValidationStamp(
+                                    $project: String!,
+                                    $branch: String!,
+                                    $validation: String!,
+                                    $description: String,
+                                    $warning: Int,
+                                    $failure: Int,
+                                    $okIfGreater: Boolean!
+                                ) {
+                                    setupPercentageValidationStamp(input: {
+                                        project: $project,
+                                        branch: $branch,
+                                        validation: $validation,
+                                        description: $description,
+                                        warningThreshold: $warning,
+                                        failureThreshold: $failure,
+                                        okIfGreater: $okIfGreater
+                                    }) {
+                                        errors {
+                                            message
+                                        }
+                                    }
+                                }
+                            ''',
+                            logging: logging,
+                            variables: variables,
+                    )
+                    GraphQL.checkForMutationErrors(response, 'setupPercentageValidationStamp')
                 }
                 // Metrics
                 else if (validation.metrics) {
-                    Cli.call(this, logging, ['validation', 'setup', 'metrics', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name])
+                    def variables = [
+                            project: project,
+                            branch: branch,
+                            validation: name,
+                            description: '',
+                    ]
+                    def response = ontrackCliGraphQL(
+                            query: '''
+                                mutation SetupMetricsValidationStamp(
+                                    $project: String!,
+                                    $branch: String!,
+                                    $validation: String!,
+                                    $description: String
+                                ) {
+                                    setupMetricsValidationStamp(input: {
+                                        project: $project,
+                                        branch: $branch,
+                                        validation: $validation,
+                                        description: $description
+                                    }) {
+                                        errors {
+                                            message
+                                        }
+                                    }
+                                }
+                            ''',
+                            logging: logging,
+                            variables: variables,
+                    )
+                    GraphQL.checkForMutationErrors(response, 'setupMetricsValidationStamp')
                 }
                 // Generic stamp
                 else {
-                    Cli.call(this, logging, ['validation', 'setup', 'generic', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', name])
+                    ValidationStampUtils.setupGenericValidationStamp(
+                            this,
+                            logging,
+                            project,
+                            branch,
+                            name,
+                            '',
+                    )
                 }
             }
         }
@@ -168,31 +458,20 @@ def call(Map<String, ?> params = [:]) {
             // Creates all the validations
             validationStamps.each { validation ->
                 if (!createdValidations.containsKey(validation)) {
-                    Cli.call(this, logging, ['validation', 'setup', 'generic', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--validation', validation])
+                    ValidationStampUtils.setupGenericValidationStamp(
+                            this,
+                            logging,
+                            project,
+                            branch,
+                            name,
+                            '',
+                    )
                 }
-            }
-
-            // Creates all the promotions
-            promotionLevels.each { promotion ->
-                Cli.call(this, logging, ['promotion', 'setup', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--promotion', promotion])
             }
 
             // Auto promotion setup
             promotions.each { promotion, promotionConfig ->
-                List<String> promotionArgs = ['promotion', 'setup', '--project', env.ONTRACK_PROJECT_NAME, '--branch', env.ONTRACK_BRANCH_NAME, '--promotion', promotion]
-                if (promotionConfig.validations) {
-                    promotionConfig.validations.each { validation ->
-                        promotionArgs += '--validation'
-                        promotionArgs += validation
-                    }
-                }
-                if (promotionConfig.promotions) {
-                    promotionConfig.promotions.each { other ->
-                        promotionArgs += '--depends-on'
-                        promotionArgs += other
-                    }
-                }
-                Cli.call(this, logging, promotionArgs)
+                PromotionLevelUtils.setupPromotionLevel(this, logging, project, branch, promotion, promotionConfig.validations, promotionConfig.promotions)
             }
 
         }
