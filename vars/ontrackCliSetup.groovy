@@ -216,7 +216,7 @@ def call(Map<String, ?> params = [:]) {
             GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketConfigurationProperty')
         } else if (scm == 'gitlab') {
             String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
-            String repository = GitLabUtils.getGitLabRepository(env.GIT_URL)
+            String repository = GitLabUtils.getRepository(env.GIT_URL)
 
             String issueService = ParamUtils.getConditionalParam(params, "scmIssues", false, env.ONTRACK_SCM_ISSUES)
 
