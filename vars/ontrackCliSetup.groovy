@@ -1,4 +1,6 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.OntrackUtils
+import net.nemerosa.ontrack.jenkins.pipeline.utils.BitbucketUtils
+import net.nemerosa.ontrack.jenkins.pipeline.utils.GitLabUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.GitHubUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
@@ -170,6 +172,85 @@ def call(Map<String, ?> params = [:]) {
                     logging: logging,
             )
             GraphQL.checkForMutationErrors(gitHubProjectResponse, 'setProjectGitHubConfigurationProperty')
+        } else if (scm == 'bitbucket') {
+            String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
+            BitbucketUtils.BitbucketRepository repo = BitbucketUtils.getBitbucketRepository(env.GIT_URL)
+
+            String issueService = ParamUtils.getConditionalParam(params, "scmIssues", false, env.ONTRACK_SCM_ISSUES)
+
+            def bitbucketProjectResponse = ontrackCliGraphQL(
+                    query: '''
+                        mutation SetProjectBitbucketProperty(
+                            $project: String!,
+                            $configuration: String!,
+                            $bitbucketProject: String!,
+                            $bitbucketRepository: String!,
+                            $indexationInterval: Int,
+                            $issueServiceConfigurationIdentifier: String
+                        ) {
+                            setProjectBitbucketConfigurationProperty(input: {
+                                project: $project,
+                                configuration: $configuration,
+                                bitbucketProject: $bitbucketProject,
+                                bitbucketRepository: $bitbucketRepository,
+                                indexationInterval: $indexationInterval,
+                                issueServiceConfigurationIdentifier: $issueServiceConfigurationIdentifier
+                            }) {
+                                errors {
+                                    message
+                                }
+                            }
+                        }
+                    ''',
+                    variables: [
+                            project: project,
+                            configuration: scmConfig,
+                            bitbucketProject: repo.project,
+                            bitbucketRepository: repo.repository,
+                            indexationInterval: scmIndexation,
+                            issueServiceConfigurationIdentifier: issueService,
+                    ],
+                    logging: logging,
+            )
+            GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketConfigurationProperty')
+        } else if (scm == 'gitlab') {
+            String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
+            String repository = GitLabUtils.getGitLabRepository(env.GIT_URL)
+
+            String issueService = ParamUtils.getConditionalParam(params, "scmIssues", false, env.ONTRACK_SCM_ISSUES)
+
+            def gitLabProjectResponse = ontrackCliGraphQL(
+                    query: '''
+                        mutation SetProjectGitLabProperty(
+                            $project: String!,
+                            $configuration: String!,
+                            $repository: String!,
+                            $indexationInterval: Int,
+                            $issueServiceConfigurationIdentifier: String
+                        ) {
+                            setProjectGitLabConfigurationProperty(input: {
+                                project: $project,
+                                configuration: $configuration,
+                                repository: $repository,
+                                indexationInterval: $indexationInterval,
+                                issueServiceConfigurationIdentifier: $issueServiceConfigurationIdentifier
+                            }) {
+                                errors {
+                                    message
+                                }
+                            }
+                        }
+                    ''',
+                    variables: [
+                            project: project,
+                            configuration: scmConfig,
+                            repository: repository,
+                            indexationInterval: scmIndexation,
+                            issueServiceConfigurationIdentifier: issueService,
+                    ],
+                    logging: logging,
+            )
+            GraphQL.checkForMutationErrors(gitLabProjectResponse, 'setProjectGitLabConfigurationProperty')
         } else {
             throw new RuntimeException("SCM not supported: $scm")
         }
