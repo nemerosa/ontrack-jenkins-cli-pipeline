@@ -1,5 +1,6 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.OntrackUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.BitbucketUtils
+import net.nemerosa.ontrack.jenkins.pipeline.utils.BitbucketRepository
 import net.nemerosa.ontrack.jenkins.pipeline.utils.GitLabUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.GitHubUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
@@ -174,7 +175,7 @@ def call(Map<String, ?> params = [:]) {
             GraphQL.checkForMutationErrors(gitHubProjectResponse, 'setProjectGitHubConfigurationProperty')
         } else if (scm == 'bitbucket') {
             String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
-            BitbucketUtils.BitbucketRepository repo = BitbucketUtils.getBitbucketRepository(env.GIT_URL)
+            BitbucketRepository repo = BitbucketUtils.getBitbucketRepository(env.GIT_URL)
 
             String issueService = ParamUtils.getConditionalParam(params, "scmIssues", false, env.ONTRACK_SCM_ISSUES)
 

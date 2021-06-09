@@ -2,24 +2,6 @@ package net.nemerosa.ontrack.jenkins.pipeline.utils
 
 class BitbucketUtils {
 
-    static class BitbucketRepository {
-        private final String project
-        private final String repository
-
-        BitbucketRepository(String project, String repository) {
-            this.project = project
-            this.repository = repository
-        }
-
-        String getProject() {
-            return project
-        }
-
-        String getRepository() {
-            return repository
-        }
-    }
-
     static BitbucketRepository getBitbucketRepository(String gitUrl) {
         if (!gitUrl) {
             throw new RuntimeException("GIT_URL environment variable is required.")
