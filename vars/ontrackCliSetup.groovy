@@ -231,7 +231,7 @@ def call(Map<String, ?> params = [:]) {
                             $indexationInterval: Int,
                             $issueServiceConfigurationIdentifier: String
                         ) {
-                            setProjectBitbucketConfigurationProperty(input: {
+                            setProjectBitbucketCloudConfigurationProperty(input: {
                                 project: $project,
                                 configuration: $configuration,
                                 repository: $repository,
@@ -253,7 +253,7 @@ def call(Map<String, ?> params = [:]) {
                     ],
                     logging: logging,
             )
-            GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketConfigurationProperty')
+            GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketCloudConfigurationProperty')
         } else if (scm == 'gitlab') {
             String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
             String repository = GitLabUtils.getRepository(env.GIT_URL)
