@@ -1,11 +1,11 @@
-package net.nemerosa.ontrack.jenkins.pipeline.utils
+package net.nemerosa.ontrack.jenkins.pipeline.utils.bitbucket.server
 
-class BitbucketRepository {
+class BitbucketServerRepository {
 
     private final String project
     private final String repository
 
-    BitbucketRepository(String project, String repository) {
+    BitbucketServerRepository(String project, String repository) {
         this.project = project
         this.repository = repository
     }

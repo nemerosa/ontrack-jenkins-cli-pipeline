@@ -1,6 +1,8 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.OntrackUtils
-import net.nemerosa.ontrack.jenkins.pipeline.utils.BitbucketUtils
-import net.nemerosa.ontrack.jenkins.pipeline.utils.BitbucketRepository
+import net.nemerosa.ontrack.jenkins.pipeline.utils.bitbucket.server.BitbucketServerUtils
+import net.nemerosa.ontrack.jenkins.pipeline.utils.bitbucket.server.BitbucketServerRepository
+import net.nemerosa.ontrack.jenkins.pipeline.utils.bitbucket.cloud.BitbucketCloudUtils
+import net.nemerosa.ontrack.jenkins.pipeline.utils.bitbucket.cloud.BitbucketCloudRepository
 import net.nemerosa.ontrack.jenkins.pipeline.utils.GitLabUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.GitHubUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
@@ -173,9 +175,9 @@ def call(Map<String, ?> params = [:]) {
                     logging: logging,
             )
             GraphQL.checkForMutationErrors(gitHubProjectResponse, 'setProjectGitHubConfigurationProperty')
-        } else if (scm == 'bitbucket') {
+        } else if (scm == 'bitbucket-server') {
             String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
-            BitbucketRepository repo = BitbucketUtils.getBitbucketRepository(env.GIT_URL)
+            BitbucketServerRepository repo = BitbucketServerUtils.getBitbucketRepository(env.GIT_URL)
 
             String issueService = ParamUtils.getConditionalParam(params, "scmIssues", false, env.ONTRACK_SCM_ISSUES)
 
@@ -208,6 +210,44 @@ def call(Map<String, ?> params = [:]) {
                             configuration: scmConfig,
                             bitbucketProject: repo.project,
                             bitbucketRepository: repo.repository,
+                            indexationInterval: scmIndexation,
+                            issueServiceConfigurationIdentifier: issueService,
+                    ],
+                    logging: logging,
+            )
+            GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketConfigurationProperty')
+        } else if (scm == 'bitbucket-cloud') {
+            String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
+            BitbucketCloudRepository repo = BitbucketCloudUtils.getBitbucketRepository(env.GIT_URL)
+
+            String issueService = ParamUtils.getConditionalParam(params, "scmIssues", false, env.ONTRACK_SCM_ISSUES)
+
+            def bitbucketProjectResponse = ontrackCliGraphQL(
+                    query: '''
+                        mutation SetProjectBitbucketCloudProperty(
+                            $project: String!,
+                            $configuration: String!,
+                            $repository: String!,
+                            $indexationInterval: Int,
+                            $issueServiceConfigurationIdentifier: String
+                        ) {
+                            setProjectBitbucketConfigurationProperty(input: {
+                                project: $project,
+                                configuration: $configuration,
+                                repository: $repository,
+                                indexationInterval: $indexationInterval,
+                                issueServiceConfigurationIdentifier: $issueServiceConfigurationIdentifier
+                            }) {
+                                errors {
+                                    message
+                                }
+                            }
+                        }
+                    ''',
+                    variables: [
+                            project: project,
+                            configuration: scmConfig,
+                            repository: repo.repository,
                             indexationInterval: scmIndexation,
                             issueServiceConfigurationIdentifier: issueService,
                     ],
