@@ -194,7 +194,8 @@ Possible values are:
 
 * `github` - default
 * `gitlab`
-* `bitbucket`
+* `bitbucket-server` - for Bitbucket Server
+* `bitbucket-cloud` - for Bitbucket Cloud
 * `git` - for a generic Git support
 
 ### Outputs
@@ -204,7 +205,9 @@ The following environment variables are created:
 * `ONTRACK_PROJECT_NAME` - the name of the project in Ontrack
 * `ONTRACK_BRANCH_NAME` - the name of the branch in Ontrack
 
-### Example
+### Examples
+
+#### Simplest example with GitHub
 
 Assuming `ONTRACK_URL` is defined and that you can use the `ONTRACK_TOKEN` credentials, setting up Ontrack in your pipeline is as simple as:
 
@@ -220,3 +223,30 @@ pipeline {
     }
 }
 ```
+
+#### Bitbucket Cloud
+
+Given a configured [Bitbucket Cloud configuration](https://static.nemerosa.net/ontrack/release/4.0.11/docs/doc/index.html#integration-bitbucket-cloud) in Ontrack, you can configure your pipeline based on Bitbucket Cloud to use this configuration and configure all the items (project & branch) automatically:
+
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage("Setup") {
+            steps {
+                ontrackCliSetup(
+                        scm: 'bitbucket-cloud',
+                        scmConfiguration: '<name of your config in Ontrack>',
+                        // ... any other option
+                )
+            }
+        }
+    }
+}
+```
+
+If you use _only_ Bitbucket Cloud in your Jenkins instance, you can set the Jenkins global variable `ONTRACK_SCM` to `bitbucket-cloud` and you can drop the `scm` parameter from `ontrackCliSetup`.
+> 
+If additionally you use only one configuration, you can set the Jenkins global variable `ONTRACK_SCM_CONFIG` to hold it and you can drop the `scmConfiguration` parameter from `ontrackCliSetup`.
+
+Note that you can always override those values at pipeline level.
