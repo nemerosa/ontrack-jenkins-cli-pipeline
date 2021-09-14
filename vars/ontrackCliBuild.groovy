@@ -1,3 +1,4 @@
+import net.nemerosa.ontrack.jenkins.pipeline.properties.MessagePropertyUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
@@ -104,18 +105,7 @@ def call(Map<String, ?> params = [:]) {
 
     // Message property
 
-    variables.messageProperty = false
-    variables.messagePropertyType = 'INFO'
-    variables.messagePropertyText = ''
-    if (params.message) {
-        variables.messageProperty = true
-        if (params.message instanceof String) {
-            variables.messagePropertyText = params.message as String
-        } else {
-            variables.messagePropertyType = params.message.type ?: 'INFO'
-            variables.messagePropertyText = params.message.text ?: ''
-        }
-    }
+    variables.messageProperty = MessagePropertyUtils.setVariables(params, variables)
 
     // GraphQL call
 
