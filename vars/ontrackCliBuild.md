@@ -6,14 +6,75 @@ This step creates an Ontrack build based on the available information in your pi
 
 ### Parameters
 
+#### General parameters
+
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `project` | String | `ONTRACK_PROJECT_NAME` environment variable | Name of the project in Ontrack to target |
 | `branch` | String | `ONTRACK_BRANCH_NAME` environment variable | Name of the branch in Ontrack to target |
 | `name` | String | `BUILD_NUMBER` environment variable | Name of the build to create in Ontrack |
-| `release` | String | _None_ | If provided, will attach a release property to the build. |
-| `gitCommit` | String | `GIT_COMMIT` environment variable | Git commit property to set for the build. If value is `none`, no Git commit property will be created. |
 | `logging` | boolean | `false` | Set to `true` to display debug / logging information while performing the operation. |
+
+#### Properties
+
+Extra parameters allow some properties to be set on the build at creation time. Specific steps can also be used, after the build has been created.
+
+| Parameter | Type | Default | Description | Step equivalent |
+|---|---|---|---|---|
+| `release` | String | _None_ | If provided, will attach a release property to the build. | [`ontrackCliBuildRelease`](ontrackCliBuildRelease.md) |
+| `gitCommit` | String | `GIT_COMMIT` environment variable | Git commit property to set for the build. If value is `none`, no Git commit property will be created. | [`ontrackCliBuildGitCommit`](ontrackCliBuildGitCommit.md) |
+| `message` | String or [Object](#message-property) | _None_ | Attaches the message property to the build. See the [details](#message-property) below | [`ontrackCliBuildMessage`](ontrackCliBuildMessage.md) |
+| `metaInfo` | [List or Map](#meta-info-property) | _None_ | Attaches some meta-information to the created build | [`ontrackCliBuildMetaInfo`](ontrackCliBuildMetaInfo.md) |
+
+##### Message property
+
+The `message` property can either be:
+
+* a `String` - in this case, the message type will be `INFO`
+* an object containing two fields:
+  * `text` - the message content, required
+  * `type` - the message type, defaults to `INFO` but can also be `WARNING` or `ERROR`
+
+Examples:
+
+````groovy
+ontrackCliBuild message: 'This an information message'
+ontrackCliBuild message: [text: 'This a warning message', type: 'WARNING']
+````
+
+##### Meta info property
+
+The `metaInfo` parameter is either:
+
+* a _list_ of objects having the following properties:
+  * `name` - required - the key for the meta-info item
+  * `value` - required - the value for the meta-info item
+  * `link` - optional - a link to associate with the meta-info item
+  * `category` - optional - the category for the meta-info item
+* a _map_ of `name` x `value` items (using this syntax, no link nor category can be provided)
+
+Examples:
+
+```groovy
+// List syntax
+ontrackCliBuild metaInfo: [
+        [
+                name: 'name-1',
+                value: 'value-1',
+                link: 'A link',
+                category: 'Some category',
+        ],
+        [
+                name: 'name-2',
+                value: 'value-2',
+        ]
+]
+// Map syntax
+ontrackCliBuild metaInfo: [
+        'name-1': 'value-1',
+        'name-2': 'value-2',
+]
+```
 
 ### Output
 

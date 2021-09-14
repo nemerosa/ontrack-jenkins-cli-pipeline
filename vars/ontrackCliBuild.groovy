@@ -25,7 +25,10 @@ def call(Map<String, ?> params = [:]) {
 			$releaseProperty: Boolean!,
 			$release: String!,
 			$commitProperty: Boolean!,
-			$commit: String!
+			$commit: String!,
+			$messageProperty: Boolean!,
+			$messagePropertyType: String!,
+			$messagePropertyText: String!,
 		) {
 			createBuildOrGet(input: {
 				projectName: $project, 
@@ -53,6 +56,17 @@ def call(Map<String, ?> params = [:]) {
 				build: $build,
 				commit: $commit
 			}) @include(if: $commitProperty) {
+				errors {
+					message
+				}
+			}
+			setBuildMessageProperty(input: {
+				project: $project,
+				branch: $branch,
+				build: $build,
+				type: $messagePropertyType,
+				text: $messagePropertyText,
+			}) @include(if: $messageProperty) {
 				errors {
 					message
 				}
@@ -88,6 +102,21 @@ def call(Map<String, ?> params = [:]) {
         variables.commit = gitCommit
     }
 
+    // Message property
+
+    variables.messageProperty = false
+    variables.messagePropertyType = 'INFO'
+    variables.messagePropertyText = ''
+    if (params.message) {
+        variables.messageProperty = true
+        if (params.message instanceof String) {
+            variables.messagePropertyText = params.message as String
+        } else {
+            variables.messagePropertyType = params.message.type ?: 'INFO'
+            variables.messagePropertyText = params.message.text ?: ''
+        }
+    }
+
     // GraphQL call
 
     def response = ontrackCliGraphQL(
@@ -101,5 +130,6 @@ def call(Map<String, ?> params = [:]) {
     GraphQL.checkForMutationErrors(response, 'createBuildOrGet')
     GraphQL.checkForMutationErrors(response, 'setBuildReleaseProperty')
     GraphQL.checkForMutationErrors(response, 'setBuildGitCommitProperty')
+    GraphQL.checkForMutationErrors(response, 'setBuildMessageProperty')
 
 }
