@@ -1,4 +1,5 @@
 import net.nemerosa.ontrack.jenkins.pipeline.properties.MessagePropertyUtils
+import net.nemerosa.ontrack.jenkins.pipeline.properties.MetaInfoPropertyUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
@@ -30,6 +31,8 @@ def call(Map<String, ?> params = [:]) {
 			$messageProperty: Boolean!,
 			$messagePropertyType: String!,
 			$messagePropertyText: String!,
+			$metaInfoProperty: Boolean!,
+			$metaInfoPropertyItems: [MetaInfoPropertyItemInput!]!,
 		) {
 			createBuildOrGet(input: {
 				projectName: $project, 
@@ -72,6 +75,17 @@ def call(Map<String, ?> params = [:]) {
 					message
 				}
 			}
+			setBuildMetaInfoProperty(input: {
+				project: $project,
+				branch: $branch,
+				build: $build,
+				append: false,
+				items: $metaInfoPropertyItems,
+			}) @include(if: $metaInfoProperty) {
+			    errors {
+			        message
+			    }
+			}
 		}
     '''
 
@@ -107,6 +121,10 @@ def call(Map<String, ?> params = [:]) {
 
     variables.messageProperty = MessagePropertyUtils.setVariables(params, variables)
 
+    // Meta info property
+
+    variables.metaInfoProperty = MetaInfoPropertyUtils.setVariables(params, variables)
+
     // GraphQL call
 
     def response = ontrackCliGraphQL(
@@ -121,5 +139,6 @@ def call(Map<String, ?> params = [:]) {
     GraphQL.checkForMutationErrors(response, 'setBuildReleaseProperty')
     GraphQL.checkForMutationErrors(response, 'setBuildGitCommitProperty')
     GraphQL.checkForMutationErrors(response, 'setBuildMessageProperty')
+    GraphQL.checkForMutationErrors(response, 'setBuildMetaInfoProperty')
 
 }

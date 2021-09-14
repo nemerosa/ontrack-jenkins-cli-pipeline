@@ -82,8 +82,10 @@ pipeline {
                         ],
                      ]
                 )
-                ontrackCliBuild()
-                ontrackCliBuildMessage(message: [text: 'This is a message for an existing build', type: 'ERROR'])
+                ontrackCliBuild(metaInfo: [
+                        'name-1': 'value-1',
+                        'name-2': 'value-2',
+                ])
             }
         }
 
