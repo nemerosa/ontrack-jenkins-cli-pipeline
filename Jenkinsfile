@@ -82,9 +82,8 @@ pipeline {
                         ],
                      ]
                 )
-                ontrackCliBuild(
-                        message: 'Test info message'
-                )
+                ontrackCliBuild()
+                ontrackCliBuildMessage(message: 'This is a message for an existing build')
             }
         }
 
