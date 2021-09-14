@@ -83,7 +83,7 @@ pipeline {
                      ]
                 )
                 ontrackCliBuild(
-                        message: [text: 'Test warning message', type: 'WARNING']
+                        message: 'Test info message'
                 )
             }
         }
