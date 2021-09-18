@@ -42,7 +42,7 @@ def call(Map<String, ?> params = [:]) {
             project: project,
             branch: branch,
             build: build,
-            append: append,
+            metaInfoPropertyAppend: append,
     ]
 
     // Meta info property
