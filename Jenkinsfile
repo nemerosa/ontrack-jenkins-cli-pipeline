@@ -121,7 +121,7 @@ pipeline {
             }
             post {
                 always {
-                    ontrackCliValidate(stamp: 'GENERIC')
+                    ontrackCliValidate(stamp: 'GENERIC', metaInfo: ['name-1': 'value-1'], message: 'This is informative')
                     ontrackCliValidateTests(stamp: 'BUILD', metaInfo: ['name-1': 'value-1'], message: 'This is informative')
                     ontrackCliValidateCHML(stamp: 'CHML', critical: 0, high: 0, medium: 13, low: 218)
                     ontrackCliValidatePercentage(stamp: 'PERCENTAGE', value: 34)
