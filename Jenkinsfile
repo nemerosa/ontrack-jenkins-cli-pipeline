@@ -88,7 +88,7 @@ pipeline {
                 ])
                 ontrackCliBuildMetaInfo(metaInfo: [
                         'name-2': 'value-2'
-                ])
+                ], append: false)
             }
         }
 
