@@ -4,6 +4,7 @@ class MetaInfoPropertyUtils {
 
     static boolean setVariables(Map<String, ?> params, Map<String, ?> variables) {
         boolean metaInfoProperty = false
+        variables.metaInfoPropertyItems = []
         if (params.metaInfo) {
             metaInfoProperty = true
             if (params.metaInfo instanceof Map) {
