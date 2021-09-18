@@ -65,5 +65,5 @@ def call(Map<String, ?> params = [:]) {
     GraphQL.checkForMutationErrors(response, 'validateBuildWithMetrics')
 
     // Validation run properties
-    Validation.setValidationRunProperties(this, params, response, 'validateBuildWithPercentage')
+    Validation.setValidationRunProperties(this, params, response, 'validateBuildWithMetrics')
 }
