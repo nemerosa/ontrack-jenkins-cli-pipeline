@@ -82,7 +82,8 @@ pipeline {
                         ],
                      ]
                 )
-                ontrackCliBuild(metaInfo: [[
+                ontrackCliBuild()
+                ontrackCliBuildMetaInfo(metaInfo: [[
                         'name'  : 'name-1',
                         'value'  : 'value-1',
                         'link'    : 'https://ontrack.nemerosa.net',

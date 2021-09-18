@@ -23,9 +23,9 @@ The `message` property can either be:
 
 ### Examples
 
-````groovy
+```groovy
 ontrackCliSetup(...)
 ontrackCliBuild(...)
 ontrackCliBuildMessage message: 'This an information message'
 ontrackCliBuildMessage message: [text: 'This a warning message', type: 'WARNING']
-````
+```

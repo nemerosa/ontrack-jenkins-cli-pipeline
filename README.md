@@ -115,6 +115,7 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 ### Setting properties on builds
 
 * [`ontrackCliBuildMessage`](vars/ontrackCliBuildMessage.md) - setting a message property on an existing build
+* [`ontrackCliBuildMetaInfo`](vars/ontrackCliBuildMetaInfo.md) - setting or updating a meta-info property on an existing build
 
 ### Accessing Ontrack information
 
