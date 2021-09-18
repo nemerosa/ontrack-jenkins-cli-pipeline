@@ -107,6 +107,7 @@ class Validation {
                         $messageProperty: Boolean!,
                         $messagePropertyType: String!,
                         $messagePropertyText: String!,
+                        $metaInfoProperty: Boolean!,
                         $metaInfoPropertyItems: [MetaInfoPropertyItemInput!]!,
                     ) {
                         setValidationRunMessagePropertyById(input: {
