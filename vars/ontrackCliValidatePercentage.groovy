@@ -27,6 +27,9 @@ def call(Map<String, ?> params = [:]) {
                 runInfo: $runInfo,
                 value: $value
             }) {
+                validationRun {
+                    id
+                }
                 errors {
                     message
                 }
@@ -52,4 +55,7 @@ def call(Map<String, ?> params = [:]) {
     // Checks for errors
 
     GraphQL.checkForMutationErrors(response, 'validateBuildWithPercentage')
+
+    // Validation run properties
+    Validation.setValidationRunProperties(this, params, response, 'validateBuildWithPercentage')
 }

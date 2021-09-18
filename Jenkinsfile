@@ -123,13 +123,13 @@ pipeline {
                 always {
                     ontrackCliValidate(stamp: 'GENERIC', metaInfo: ['name-1': 'value-1'], message: 'This is informative')
                     ontrackCliValidateTests(stamp: 'BUILD', metaInfo: ['name-1': 'value-1'], message: 'This is informative')
-                    ontrackCliValidateCHML(stamp: 'CHML', critical: 0, high: 0, medium: 13, low: 218)
-                    ontrackCliValidatePercentage(stamp: 'PERCENTAGE', value: 34)
+                    ontrackCliValidateCHML(stamp: 'CHML', critical: 0, high: 0, medium: 13, low: 218, metaInfo: ['name-1': 'value-1'], message: 'This is informative')
+                    ontrackCliValidatePercentage(stamp: 'PERCENTAGE', value: 34, metaInfo: ['name-1': 'value-1'], message: 'This is informative')
                     ontrackCliValidateMetrics(stamp: 'METRICS', metrics: [
                         ui: 88,
                         backend: 67.3,
                         network: 15.0,
-                    ])
+                    ], metaInfo: ['name-1': 'value-1'], message: 'This is informative')
                 }
             }
         }

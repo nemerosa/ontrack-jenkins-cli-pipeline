@@ -36,6 +36,9 @@ def call(Map<String, ?> params = [:]) {
                 medium: $medium,
                 low: $low
             }) {
+                validationRun {
+                    id
+                }
                 errors {
                     message
                 }
@@ -64,4 +67,7 @@ def call(Map<String, ?> params = [:]) {
     // Checks for errors
 
     GraphQL.checkForMutationErrors(response, 'validateBuildWithCHML')
+
+    // Validation run properties
+    Validation.setValidationRunProperties(this, params, response, 'validateBuildWithPercentage')
 }
