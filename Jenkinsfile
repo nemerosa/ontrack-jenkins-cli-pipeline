@@ -93,7 +93,7 @@ pipeline {
                         'value'  : 'value-2',
                         'link'    : 'https://ontrack.nemerosa.net',
                         'category': 'ontrack',
-                ]])
+                ]], logging: true)
             }
         }
 

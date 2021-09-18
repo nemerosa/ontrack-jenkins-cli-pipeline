@@ -1,5 +1,4 @@
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
-import net.nemerosa.ontrack.jenkins.pipeline.properties.MessagePropertyUtils
 import net.nemerosa.ontrack.jenkins.pipeline.properties.MetaInfoPropertyUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
@@ -43,6 +42,7 @@ def call(Map<String, ?> params = [:]) {
             project: project,
             branch: branch,
             build: build,
+            append: append,
     ]
 
     // Meta info property
