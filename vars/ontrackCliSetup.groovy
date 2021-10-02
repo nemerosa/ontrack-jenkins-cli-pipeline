@@ -406,10 +406,10 @@ def call(Map<String, ?> params = [:]) {
                             branch,
                             name,
                             '',
+                            validation.chml.warning.level as String,
+                            validation.chml.warning.value as int,
                             validation.chml.failed.level as String,
                             validation.chml.failed.value as int,
-                            validation.chml.warning.level as String,
-                            validation.chml.warning.value as int
                     )
                 }
                 // Percentage
