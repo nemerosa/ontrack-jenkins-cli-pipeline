@@ -143,7 +143,7 @@ class ValidationStampUtils {
                 project     : project,
                 branch      : branch,
                 validation  : validation,
-                description : '',
+                description : description,
                 warningLevel: warningLevel,
                 warningValue: warningValue,
                 failedLevel : failedLevel,
