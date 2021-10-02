@@ -117,6 +117,11 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 * [`ontrackCliBuildMessage`](vars/ontrackCliBuildMessage.md) - setting a message property on an existing build
 * [`ontrackCliBuildMetaInfo`](vars/ontrackCliBuildMetaInfo.md) - setting or updating a meta-info property on an existing build
 
+### Build links
+
+* [`ontrackCliBuildLink`](vars/ontrackCliBuildLink.md) - creates a link to another build
+* [`ontrackCliBuildLinks`](vars/ontrackCliBuildLinks.md) - creates several link other builds
+
 ### Accessing Ontrack information
 
 * [`ontrackCliLastBranch`](vars/ontrackCliLastBranch.md) - getting the last branch for given pattern
