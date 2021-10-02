@@ -1,4 +1,4 @@
-@Library("ontrack-jenkins-cli-pipeline@feature/17-additional-properties") _
+@Library("ontrack-jenkins-cli-pipeline@v1") _
 
 pipeline {
 
