@@ -83,12 +83,6 @@ pipeline {
                      ]
                 )
                 ontrackCliBuild()
-                ontrackCliBuildLink(toProject: 'ontrack', toBuild: '4.0.38')
-                ontrackCliBuildLinks(to: [[
-                        project: 'ontrack', build: '4.0.37'
-                ], [
-                        project: 'ontrack', build: '4.0.36'
-                ]])
             }
         }
 
