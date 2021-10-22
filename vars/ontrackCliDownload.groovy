@@ -10,6 +10,11 @@ def call(Map<String, ?> params = [:]) {
     boolean tracing = ParamUtils.getBooleanParam(params, "tracing", false)
     // Name of the executable
     String executable = ParamUtils.getParam(params, "executable", "ontrack-cli")
+    // Download URL
+    String downloadHostUrl = ParamUtils.getParam(params, "downloadHostUrl", "github.com")
+    if (logging) {
+        println("[ontrack-cli-download] Download Host URL = $downloadHostUrl")
+    }
     // Version to download
     String version = ParamUtils.getConditionalParam(params, "version", false, null)
     if (logging) {
@@ -33,7 +38,7 @@ def call(Map<String, ?> params = [:]) {
     // Windows executable name
     executable += os.extension
     // Gets the download path to the Cli
-    String url = Cli.getDownloadUrl(os, version)
+    String url = Cli.getDownloadUrl(os, version, downloadHostUrl)
     if (logging) {
         println("[ontrack-cli-download] CLI URL = $url")
     }
