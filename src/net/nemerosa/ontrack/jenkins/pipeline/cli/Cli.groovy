@@ -44,13 +44,14 @@ class Cli {
      * Gets the URL to download the CLI from.
      * @param os OS information
      * @param version Version or null for the latest
+     * @param downloadHostUrl downloadHostUrl is either github.com or a custom host
      * @return URL to the CLI
      */
-    static String getDownloadUrl(OS os, String version) {
+    static String getDownloadUrl(OS os, String version, String downloadHostUrl) {
         if (version) {
-            return "https://github.com/nemerosa/ontrack-cli/releases/download/$version/ontrack-cli-${os.name}-${os.arch}${os.extension}"
+            return "$downloadHostUrl/nemerosa/ontrack-cli/releases/download/$version/ontrack-cli-${os.name}-${os.arch}${os.extension}"
         } else {
-            return "https://github.com/nemerosa/ontrack-cli/releases/latest/download/ontrack-cli-${os.name}-${os.arch}${os.extension}"
+            return "$downloadHostUrl/nemerosa/ontrack-cli/releases/latest/download/ontrack-cli-${os.name}-${os.arch}${os.extension}"
         }
     }
 
