@@ -11,7 +11,7 @@ def call(Map<String, ?> params = [:]) {
     // Name of the executable
     String executable = ParamUtils.getParam(params, "executable", "ontrack-cli")
     // Download URL
-    String downloadHostUrl = ParamUtils.getParam(params, "downloadHostUrl", "github.com")
+    String downloadHostUrl = ParamUtils.getParam(params, "downloadHostUrl", "https://github.com")
     if (logging) {
         println("[ontrack-cli-download] Download Host URL = $downloadHostUrl")
     }
