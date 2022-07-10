@@ -126,6 +126,10 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 * [`ontrackCliLastBranch`](vars/ontrackCliLastBranch.md) - getting the last branch for given pattern
 
+### Auto versioning setup
+
+* [`ontrackCliAutoVersioning`](vars/ontrackCliAutoVersioning.md) - setting up the auto versioning for the branch
+
 ### Generic steps
 
 * [`ontrackCliGraphQL`](vars/ontrackCliGraphQL.md) - performs a GraphQL call to Ontrack and returns the JSON response
