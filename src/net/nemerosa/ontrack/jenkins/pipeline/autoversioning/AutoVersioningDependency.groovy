@@ -90,4 +90,24 @@ class AutoVersioningDependency {
         return autoApprovalMode
     }
 
+
+    @Override
+    public String toString() {
+        return "AutoVersioningDependency{" +
+                "sourceProject='" + sourceProject + '\'' +
+                ", sourceBranch='" + sourceBranch + '\'' +
+                ", sourcePromotion='" + sourcePromotion + '\'' +
+                ", targetPath='" + targetPath + '\'' +
+                ", targetRegex='" + targetRegex + '\'' +
+                ", targetProperty='" + targetProperty + '\'' +
+                ", targetPropertyRegex='" + targetPropertyRegex + '\'' +
+                ", targetPropertyType='" + targetPropertyType + '\'' +
+                ", autoApproval=" + autoApproval +
+                ", upgradeBranchPattern='" + upgradeBranchPattern + '\'' +
+                ", validationStamp='" + validationStamp + '\'' +
+                ", postProcessing='" + postProcessing + '\'' +
+                ", postProcessingConfig=" + postProcessingConfig +
+                ", autoApprovalMode='" + autoApprovalMode + '\'' +
+                '}';
+    }
 }
