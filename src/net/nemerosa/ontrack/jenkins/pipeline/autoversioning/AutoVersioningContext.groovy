@@ -73,7 +73,6 @@ class AutoVersioningContext {
         String validationStamp = params.validationStamp
         String upgradeBranchPattern = params.upgradeBranchPattern
         String autoApprovalMode = params.autoApprovalMode
-        String slackChannel = params.slackChannel
 
         String postProcessing = params.postProcessing
         def postProcessingConfig = params.postProcessingConfig as Map<String, ?> ?: [:]
@@ -94,7 +93,6 @@ class AutoVersioningContext {
                 postProcessing,
                 postProcessingConfig,
                 autoApprovalMode,
-                slackChannel,
         )
 
         // Adding this configuration to the list
