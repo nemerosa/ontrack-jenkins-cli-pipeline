@@ -16,6 +16,14 @@ def call(Map<String, ?> params = [:], Closure configuration) {
         return
     }
 
+    // Logging
+    Closure logger = {}
+    if (logging) {
+        logger = {
+            println("[ontrack-cli-graphql] $it")
+        }
+    }
+
     // Block evaluation
     def context = new AutoVersioningContext(this)
     configuration.delegate = context
@@ -60,7 +68,8 @@ def call(Map<String, ?> params = [:], Closure configuration) {
     List<AutoVersioningDependency> dependencies = context.dependencies ?: []
     variables.configurations = dependencies
 
-    // Converting to input configurations
+    // Logging before GraphQL call
+    logger("Variables: $variables")
 
     // GraphQL call
 
