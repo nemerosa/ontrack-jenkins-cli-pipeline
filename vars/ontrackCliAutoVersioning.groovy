@@ -17,10 +17,10 @@ def call(Map<String, ?> params = [:], Closure configuration) {
     }
 
     // Logging
-    Closure logger = {}
+    Closure logger = { String message -> }
     if (logging) {
-        logger = {
-            println("[ontrack-cli-graphql] $it")
+        logger = { String message ->
+            println(message)
         }
     }
 
