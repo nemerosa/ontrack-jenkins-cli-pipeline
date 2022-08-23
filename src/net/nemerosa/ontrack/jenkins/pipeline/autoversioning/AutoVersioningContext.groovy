@@ -79,20 +79,20 @@ class AutoVersioningContext {
 
         // Config object
         def config = new AutoVersioningDependency(
-                sourceProject,
-                sourceBranch,
-                sourcePromotion,
-                targetPath,
-                targetRegex,
-                targetProperty,
-                targetPropertyRegex,
-                targetPropertyType,
-                autoApproval,
-                upgradeBranchPattern,
-                validationStamp,
-                postProcessing,
-                postProcessingConfig,
-                autoApprovalMode,
+                sourceProject: sourceProject,
+                sourceBranch: sourceBranch,
+                sourcePromotion: sourcePromotion,
+                targetPath: targetPath,
+                targetRegex: targetRegex,
+                targetProperty: targetProperty,
+                targetPropertyRegex: targetPropertyRegex,
+                targetPropertyType: targetPropertyType,
+                autoApproval: autoApproval,
+                upgradeBranchPattern: upgradeBranchPattern,
+                validationStamp: validationStamp,
+                postProcessing: postProcessing,
+                postProcessingConfig: postProcessingConfig,
+                autoApprovalMode: autoApprovalMode,
         )
 
         // Adding this configuration to the list
