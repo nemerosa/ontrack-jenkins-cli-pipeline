@@ -89,25 +89,5 @@ class AutoVersioningDependency {
     String getAutoApprovalMode() {
         return autoApprovalMode
     }
-
-
-    @Override
-    String toString() {
-        return "AutoVersioningDependency{" +
-                "sourceProject='" + sourceProject + '\'' +
-                ", sourceBranch='" + sourceBranch + '\'' +
-                ", sourcePromotion='" + sourcePromotion + '\'' +
-                ", targetPath='" + targetPath + '\'' +
-                ", targetRegex='" + targetRegex + '\'' +
-                ", targetProperty='" + targetProperty + '\'' +
-                ", targetPropertyRegex='" + targetPropertyRegex + '\'' +
-                ", targetPropertyType='" + targetPropertyType + '\'' +
-                ", autoApproval=" + autoApproval +
-                ", upgradeBranchPattern='" + upgradeBranchPattern + '\'' +
-                ", validationStamp='" + validationStamp + '\'' +
-                ", postProcessing='" + postProcessing + '\'' +
-                ", postProcessingConfig=" + postProcessingConfig +
-                ", autoApprovalMode='" + autoApprovalMode + '\'' +
-                '}' as String
-    }
+    
 }
