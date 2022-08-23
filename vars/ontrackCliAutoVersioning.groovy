@@ -66,7 +66,7 @@ def call(Map<String, ?> params = [:], Closure configuration) {
     // Getting the list of dependencies
 
     List<AutoVersioningDependency> dependencies = context.dependencies ?: []
-    variables.configurations = dependencies
+    variables.configurations = dependencies.collect { it.toMap() }
 
     // Logging before GraphQL call
     logger("Variables: $variables")
