@@ -118,3 +118,24 @@ dependencies:
     path: dep.properties
     property: my-version
 ```
+
+### Parameters
+
+* `project` - Ontrack project to watch
+* `branch` - name of the branch to take into account for the dependency. Several branches can be selected using a regular expression. If several branches are eligible, only the latest version can be used, based on inverted order of semantic versioning. Branches which do not comply with semantic versioning are discarded.
+* `promotion` - promotion to watch
+* `path` - comma-separated list of file to update with the new version
+* `regex` - regex to use in the target file to identify the line to replace with the new version. It must have a capturing group in position 1, which will be replaced by the actual version. For example: `coreVersion = (.*)`
+* `property` - can be used instead of the `regex` when we consider property files. In the sample above, the target property can be set to `coreVersion`
+* `propertyRegex` - when `property` is used, `propertyRegex` can define a regular expression to extract / update the actual version from/into the property value. The regular expression must contain at least one capturing group, holding the actual version value. This `propertyRegex` is useful for cases when the version is part of a bigger string, for example, for a Docker image qualified name. Example: when `property = "repository/image:tag"`, to target the tag, you can use `propertyRegex: "repository\/image\:(.*)"`
+* `propertyType` - when `property` is set, defines how the target file must be handled. For example, it could be a dependency notation in a NPM `package.json` file, or a property entry in Java properties file for Gradle. For NPM, use `npm`. For Java properties, use `properties`. When not specified, it defaults to `properties`. Other types are available (see the [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-config-type))
+* `autoApproval` - check if the PR must be approved automatically or not (`true` by default)
+* `upgradeBranchPattern` - prefix to use for the upgrade branch in Git, defaults to `feature/auto-upgrade-<project>-<version>`. If set manually, the `<project>` and `<version>` tokens can be used to be replaced respectively# by the dependency project (the `project` above) and the actual version. Only the `<version>` token is required.
+* `postProcessing` - type of post-processing to launch after the version has been updated - see the [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-post-processing)
+* `postProcessingConfig` - configuration of the post-processing - see the [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-post-processing)
+* `validationStamp` - ff defined, will create a validation stamp in the target branch being upgraded. If this parameter is set to `auto`, the validation stamp name will be created automatically from the source project, with `auto-versioning-` as a prefix.
+* `autoApprovalMode` - either `CLIENT` or `SCM` - see the [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-pr)
+
+### See also
+
+* [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning)
