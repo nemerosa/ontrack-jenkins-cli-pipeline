@@ -92,7 +92,7 @@ class AutoVersioningDependency {
 
 
     @Override
-    public String toString() {
+    String toString() {
         return "AutoVersioningDependency{" +
                 "sourceProject='" + sourceProject + '\'' +
                 ", sourceBranch='" + sourceBranch + '\'' +
@@ -108,6 +108,6 @@ class AutoVersioningDependency {
                 ", postProcessing='" + postProcessing + '\'' +
                 ", postProcessingConfig=" + postProcessingConfig +
                 ", autoApprovalMode='" + autoApprovalMode + '\'' +
-                '}';
+                '}' as String
     }
 }
