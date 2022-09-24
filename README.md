@@ -129,6 +129,7 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 ### Auto versioning setup
 
 * [`ontrackCliAutoVersioning`](vars/ontrackCliAutoVersioning.md) - setting up the auto versioning for the branch
+* [`ontrackCliAutoVersioningCheck`](vars/ontrackCliAutoVersioningCheck.md) - checking the auto versioning alignment and creating a corresponding validation
 
 ### Generic steps
 
