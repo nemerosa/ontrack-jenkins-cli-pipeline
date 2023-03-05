@@ -76,6 +76,15 @@ def call(Map<String, ?> params = [:]) {
 						message
 					}
 				}
+				setBranchReleaseValidationProperty(input: {
+					project: $project,
+					branch: $branch,
+					validation: $releaseValidation,
+				}) @include(if: $releaseValidationProperty) {
+					errors {
+						message
+					}
+				}
 			}
         '''
 
@@ -115,6 +124,16 @@ def call(Map<String, ?> params = [:]) {
         } else if (autoPL == 'false') {
             variables.autoCreatePLProperty = true
             variables.autoCreatePL = false
+        }
+
+        // Branch release validation property
+        String releaseValidation = params.releaseValidation
+        if (releaseValidation) {
+            variables.releaseValidation = releaseValidation
+            variables.releaseValidationProperty = true
+        } else {
+            variables.releaseValidation = ''
+            variables.releaseValidationProperty = false
         }
 
         // GraphQL call for the general setup
