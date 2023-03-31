@@ -50,6 +50,7 @@ def call(Map<String, ?> params = [:]) {
 				$autoCreatePL: Boolean!
 				$releaseValidation: String!,
 				$releaseValidationProperty: Boolean!,
+				$useLabel: Boolean!,
 			) {
 				createProjectOrGet(input: {name: $project}) {
 					errors {
