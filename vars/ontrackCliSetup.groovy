@@ -48,6 +48,8 @@ def call(Map<String, ?> params = [:]) {
 				$autoCreateVSIfNotPredefined: Boolean!,
 				$autoCreatePLProperty: Boolean!
 				$autoCreatePL: Boolean!
+				$releaseValidation: String!,
+				$releaseValidationProperty: Boolean!,
 			) {
 				createProjectOrGet(input: {name: $project}) {
 					errors {
@@ -72,6 +74,14 @@ def call(Map<String, ?> params = [:]) {
 					project: $project,
 					isAutoCreate: $autoCreatePL
 				}) @include(if: $autoCreatePLProperty) {
+					errors {
+						message
+					}
+				}
+				setProjectBuildLinkDisplayProperty(input: {
+					project: $project,
+					useLabel: true
+				}) @include(if: $useLabel) {
 					errors {
 						message
 					}
@@ -126,6 +136,9 @@ def call(Map<String, ?> params = [:]) {
             variables.autoCreatePL = false
         }
 
+        // Project use label
+        variables.useLabel = ParamUtils.getBooleanParam(params, "useLabel", false)
+
         // Branch release validation property
         String releaseValidation = params.releaseValidation
         if (releaseValidation) {
@@ -146,6 +159,8 @@ def call(Map<String, ?> params = [:]) {
         GraphQL.checkForMutationErrors(setupResponse, 'createBranchOrGet')
         GraphQL.checkForMutationErrors(setupResponse, 'setProjectAutoValidationStampProperty')
         GraphQL.checkForMutationErrors(setupResponse, 'setProjectAutoPromotionLevelProperty')
+        GraphQL.checkForMutationErrors(setupResponse, 'setProjectBuildLinkDisplayProperty')
+        GraphQL.checkForMutationErrors(setupResponse, 'setBranchReleaseValidationProperty')
 
         // Git configuration for the project & branch
 
