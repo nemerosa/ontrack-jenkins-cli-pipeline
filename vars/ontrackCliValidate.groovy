@@ -3,6 +3,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.validate.Validation
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
 
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
 

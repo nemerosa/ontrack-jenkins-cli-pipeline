@@ -4,6 +4,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String, ?> params = [:], Closure configuration) {
+    if (ontrackCliFailsafe()) return
 
     // Parameters
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)

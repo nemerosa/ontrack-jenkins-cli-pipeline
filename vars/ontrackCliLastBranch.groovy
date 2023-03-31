@@ -1,6 +1,8 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return null
+
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME)
     String pattern = ParamUtils.getParam(params, "pattern", '.*')
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)

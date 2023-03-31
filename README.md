@@ -141,3 +141,11 @@ Those steps allow to download and the setup the [Ontrack CLI](https://github.com
 
 * [`ontrackCliDownload`](vars/ontrackCliDownload.md) - downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli) and sets it into the path
 * [`ontrackCliConnect`](vars/ontrackCliConnect.md) - creates a connection configuration for the Ontrack CLI, based on provided information or the environment
+
+## Failsafe
+
+In case you want to utterly disable all the Ontrack steps, in all pipelines, to do something and in particular,
+you want to remove any connection to the Ontrack server, you can set the `ONTRACK_STOP` global environment
+variable to `true`.
+
+> Note that steps _returning_ values will then return a null or empty value.

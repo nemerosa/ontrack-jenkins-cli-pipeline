@@ -5,6 +5,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import hudson.FilePath
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
     // Loqging
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
     boolean tracing = ParamUtils.getBooleanParam(params, "tracing", false)

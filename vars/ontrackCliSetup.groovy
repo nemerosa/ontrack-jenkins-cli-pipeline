@@ -11,6 +11,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.validate.ValidationStampUtils
 import net.nemerosa.ontrack.jenkins.pipeline.promote.PromotionLevelUtils
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
     boolean setup = ParamUtils.getBooleanParam(params, "setup", true)
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
     Closure logger = {}

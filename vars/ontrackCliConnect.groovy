@@ -2,6 +2,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.cli.Cli
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
 
     String url = ParamUtils.getParam(params, 'url', env.ONTRACK_URL as String)
     String credentialsId = ParamUtils.getParam(params, "credentialsId", 'ONTRACK_TOKEN')

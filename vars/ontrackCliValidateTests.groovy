@@ -3,6 +3,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.validate.Validation
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
 
     String pattern = ParamUtils.getParam(params, "pattern", "**/build/test-results/**/*.xml")
     boolean allowEmptyResults = ParamUtils.getBooleanParam(params, "allowEmptyResults", true)

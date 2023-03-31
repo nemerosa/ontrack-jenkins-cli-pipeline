@@ -2,6 +2,8 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
 def call(Map<String,?> params = [:]) {
+    if (ontrackCliFailsafe()) return {}
+
     String query = ParamUtils.getParam(params, "query")
     def variables = params.variables
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
