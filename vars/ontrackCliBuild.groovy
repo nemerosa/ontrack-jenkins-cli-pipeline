@@ -8,7 +8,7 @@ def call(Map<String, ?> params = [:]) {
 
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
     String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
-    String name = ParamUtils.getParam(params, "name", env.BUILD_NUMBER as String)
+    String name = ParamUtils.getParam(params, "name", env.BUILD_TAG as String)
     String description = ParamUtils.getConditionalParam(params, "description", false, '')
     String release = ParamUtils.getConditionalParam(params, "release", false, null)
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)

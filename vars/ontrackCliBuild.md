@@ -12,7 +12,7 @@ This step creates an Ontrack build based on the available information in your pi
 |---|---|---|---|
 | `project` | String | `ONTRACK_PROJECT_NAME` environment variable | Name of the project in Ontrack to target |
 | `branch` | String | `ONTRACK_BRANCH_NAME` environment variable | Name of the branch in Ontrack to target |
-| `name` | String | `BUILD_NUMBER` environment variable | Name of the build to create in Ontrack |
+| `name` | String | `BUILD_TAG` environment variable | Name of the build to create in Ontrack |
 | `logging` | boolean | `false` | Set to `true` to display debug / logging information while performing the operation. |
 
 #### Properties
