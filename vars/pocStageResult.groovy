@@ -6,4 +6,5 @@ def call() {
     FlowNode flowNode = getContext(FlowNode)
     def stageNode = JenkinsUtils.getStageNode(flowNode, stageName)
     println("stageNode = $stageNode")
+    println("stageNode.allActions = ${stageNode.allActions}")
 }
