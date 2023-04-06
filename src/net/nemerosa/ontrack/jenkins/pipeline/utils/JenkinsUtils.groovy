@@ -234,4 +234,21 @@ class JenkinsUtils {
         return null
     }
 
+    // ===========
+
+    static FlowNode getStageNode(FlowNode node, String stageName) {
+        if (node instanceof StepStartNode) {
+            StepStartNode stepNode = (StepStartNode) node
+            if (stepNode.getDisplayName() == stageName) return node
+        }
+        def parents = node.getParents()
+        if (!parents.isEmpty()) {
+            for (def parent in parents) {
+                def parentNode = getStageNode(parent, stageName)
+                if (parentNode != null) return parentNode
+            }
+        }
+        return null
+    }
+
 }

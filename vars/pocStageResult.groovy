@@ -1,20 +1,9 @@
-import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode
+import net.nemerosa.ontrack.jenkins.pipeline.utils.JenkinsUtils
+import org.jenkinsci.plugins.workflow.graph.FlowNode
 
 def call() {
-    def stageName = env.STAGE_NAME
-    def build = currentBuild.rawBuild
-    def startNode = build.getExecution().getNodes().find {
-        it instanceof StepStartNode &&
-                it.getDisplayName() == stageName
-    }
-    if (startNode != null) {
-        for (def action in startNode.allActions) {
-            println("action = $action")
-        }
-        def result = startNode.getAction(org.jenkinsci.plugins.workflow.actions.StageStatusAction.class)?.getResult()
-        if (result != null) {
-            println "Result of stage '${stageName}': ${result}"
-        }
-    }
-
+    String stageName = env.STAGE_NAME
+    FlowNode flowNode = getContext(FlowNode)
+    def stageNode = JenkinsUtils.getStageNode(flowNode, stageName)
+    println("stageNode = $stageNode")
 }
