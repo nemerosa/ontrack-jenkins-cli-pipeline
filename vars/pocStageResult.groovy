@@ -3,7 +3,7 @@ import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode
 def call() {
     def stageName = env.STAGE_NAME
     def build = currentBuild.rawBuild
-    def startNode = build.execution.nodes.find {
+    def startNode = build.getExecution().getNodes().find {
         it instanceof StepStartNode &&
                 it.getDisplayName() == stageName
     }
