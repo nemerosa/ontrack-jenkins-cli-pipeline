@@ -1,4 +1,4 @@
-import hudson.model.labels.LabelAction
+import org.jenkinsci.plugins.workflow.actions.LabelAction
 
 def call() {
     def stageName = env.STAGE_NAME
