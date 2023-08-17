@@ -135,6 +135,7 @@ dependencies:
 * `postProcessingConfig` - configuration of the post-processing - see the [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-post-processing)
 * `validationStamp` - ff defined, will create a validation stamp in the target branch being upgraded. If this parameter is set to `auto`, the validation stamp name will be created automatically from the source project, with `auto-versioning-` as a prefix.
 * `autoApprovalMode` - either `CLIENT` or `SCM` - see the [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-pr)
+* `qualifier` - optional qualifier to use when creating a build link for this configuration
 
 ### See also
 
