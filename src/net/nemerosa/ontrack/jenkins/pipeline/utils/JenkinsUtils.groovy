@@ -53,7 +53,7 @@ class JenkinsUtils {
         // Base run info
         RunInfo runInfo = new RunInfo()
         runInfo.sourceType = 'jenkins'
-        runInfo.sourceUri = dsl.env.JOB_URL as String
+        runInfo.sourceUri = dsl.env.BUILD_URL as String
 
         // Trigger info
         List<Cause> causes = run.getCauses()
