@@ -136,6 +136,10 @@ dependencies:
 * `validationStamp` - ff defined, will create a validation stamp in the target branch being upgraded. If this parameter is set to `auto`, the validation stamp name will be created automatically from the source project, with `auto-versioning-` as a prefix.
 * `autoApprovalMode` - either `CLIENT` or `SCM` - see the [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-pr)
 * `qualifier` - optional qualifier to use when creating a build link for this configuration
+* `versionSource` - how must the source build version be computed if not using the default mechanism (label if source project configured or build name). Possible options are:
+  * `name` - using the build name
+  * `labelOnly` - using the build label only (required)
+  * `metaInfo/<category>/<name>` or `metaInfo/<name>` - the version is required to be stored in the meta information of the source build, identified its name and optional category
 
 ### See also
 

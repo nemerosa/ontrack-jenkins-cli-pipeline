@@ -17,8 +17,9 @@ class AutoVersioningDependency {
     private final Map<String, ?> postProcessingConfig
     private final String autoApprovalMode
     private final String qualifier
+    private final String versionSource
 
-    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier) {
+    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource) {
         this.sourceProject = sourceProject
         this.sourceBranch = sourceBranch
         this.sourcePromotion = sourcePromotion
@@ -34,6 +35,7 @@ class AutoVersioningDependency {
         this.targetPropertyType = targetPropertyType
         this.autoApprovalMode = autoApprovalMode
         this.qualifier = qualifier
+        this.versionSource = versionSource
     }
 
     String getSourceProject() {
@@ -96,6 +98,10 @@ class AutoVersioningDependency {
         return qualifier
     }
 
+    String getVersionSource() {
+        return versionSource
+    }
+
     Map<String, ?> toMap() {
         return [
                 sourceProject       : sourceProject,
@@ -113,6 +119,7 @@ class AutoVersioningDependency {
                 postProcessingConfig: postProcessingConfig,
                 autoApprovalMode    : autoApprovalMode,
                 qualifier           : qualifier,
+                versionSource       : versionSource,
         ]
     }
 

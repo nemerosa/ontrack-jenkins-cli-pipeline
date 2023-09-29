@@ -74,6 +74,7 @@ class AutoVersioningContext {
         String upgradeBranchPattern = params.upgradeBranchPattern
         String autoApprovalMode = params.autoApprovalMode
         String qualifier = params.qualifier
+        String versionSource = params.versionSource
 
         String postProcessing = params.postProcessing
         def postProcessingConfig = params.postProcessingConfig as Map<String, ?> ?: [:]
@@ -95,6 +96,7 @@ class AutoVersioningContext {
                 postProcessingConfig,
                 autoApprovalMode,
                 qualifier,
+                versionSource,
         )
 
         // Adding this configuration to the list
