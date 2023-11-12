@@ -131,6 +131,13 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 * [`ontrackCliAutoVersioning`](vars/ontrackCliAutoVersioning.md) - setting up the auto versioning for the branch
 * [`ontrackCliAutoVersioningCheck`](vars/ontrackCliAutoVersioningCheck.md) - checking the auto versioning alignment and creating a corresponding validation
 
+### Setup of notifications
+
+* [`ontrackCliSetupProjectNotifications`](vars/ontrackCliSetupProjectNotifications.md) - setup of notifications at project level
+* [`ontrackCliSetupBranchNotifications`](vars/ontrackCliSetupBranchNotifications.md) - setup of notifications at branch level
+* [`ontrackCliSetupPromotionLevelNotifications`](vars/ontrackCliSetupPromotionLevelNotifications.md) - setup of notifications at promotion level
+* [`ontrackCliSetupValidationStampNotifications`](vars/ontrackCliSetupValidationStampNotifications.md) - setup of notifications at validation stamp level
+
 ### Generic steps
 
 * [`ontrackCliGraphQL`](vars/ontrackCliGraphQL.md) - performs a GraphQL call to Ontrack and returns the JSON response
