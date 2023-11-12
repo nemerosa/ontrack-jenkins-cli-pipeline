@@ -22,6 +22,7 @@ To trigger a Jenkins job whenever a new `GOLD` promotion is created:
 
 ```groovy
 ontrackCliSetupPromotionLevelNotifications(
+        promotion: "GOLD",
         channel: 'jenkins',
         channelConfig: [
                 config: "my-jenkins-config-name",
@@ -31,6 +32,5 @@ ontrackCliSetupPromotionLevelNotifications(
         events: [
                 "new_promotion_run",
         ],
-        keywords: "GOLD",
 )
 ```

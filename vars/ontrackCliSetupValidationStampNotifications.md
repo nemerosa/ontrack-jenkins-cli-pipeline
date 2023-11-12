@@ -22,6 +22,7 @@ To send a notification on Slack whenever a new `tfc` validation is failed:
 
 ```groovy
 ontrackCliSetupValidationStampNotifications(
+        validation: "tfc",
         channel: 'slack',
         channelConfig: [
                 channel: '#notifications',
@@ -30,6 +31,6 @@ ontrackCliSetupValidationStampNotifications(
         events: [
                 "new_validation_run",
         ],
-        keywords: "tfc failed",
+        keywords: "failed",
 )
 ```
