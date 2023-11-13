@@ -378,44 +378,9 @@ def call(Map<String, ?> params = [:]) {
                             branch,
                             name,
                             '',
-                            validation.dataType,
+                            validation.dataType as String,
                             validation.dataConfig
                     )
-                    def response = ontrackCliGraphQL(
-                            query: '''
-                                mutation SetupValidationStamp(
-                                    $project: String!,
-                                    $branch: String!,
-                                    $validation: String!,
-                                    $description: String,
-                                    $dataType: String,
-                                    $dataTypeConfig: JSON
-                                ) {
-                                    setupValidationStamp(input: {
-                                        project: $project,
-                                        branch: $branch,
-                                        validation: $validation,
-                                        description: $description,
-                                        dataType: $dataType,
-                                        dataTypeConfig: $dataTypeConfig
-                                    }) {
-                                        errors {
-                                            message
-                                        }
-                                    }
-                                }
-                            ''',
-                            logging: logging,
-                            variables: [
-                                    project: project,
-                                    branch: branch,
-                                    validation: name,
-                                    description: '',
-                                    dataType: validation.dataType,
-                                    dataTypeConfig: validation.dataConfig,
-                            ]
-                    )
-                    GraphQL.checkForMutationErrors(response, 'setupValidationStamp')
                 }
                 // Tests
                 else if (validation.tests) {
