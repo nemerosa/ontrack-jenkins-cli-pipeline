@@ -13,17 +13,19 @@ def call(Map<String, ?> params = [:]) {
     }
     List<String> events = params.events as List<String> ?: []
     String keywords = params.keywords
+    String contentTemplate = params.contentTemplate
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
 
     // Call
     def response = ontrackCliGraphQL(
             logging: logging,
             variables: [
-                    project      : project,
-                    channel      : channel,
-                    channelConfig: channelConfig,
-                    events       : events,
-                    keywords     : keywords,
+                    project        : project,
+                    channel        : channel,
+                    channelConfig  : channelConfig,
+                    events         : events,
+                    keywords       : keywords,
+                    contentTemplate: contentTemplate,
             ],
             query: '''
                 mutation SetProjectSubscriptions(
@@ -32,6 +34,7 @@ def call(Map<String, ?> params = [:]) {
                     $channelConfig: JSON!,
                     $events: [String!]!,
                     $keywords: String,
+                    $contentTemplate: String,
                 ) {
                     subscribeProjectToEvents(input: {
                         project: $project,
@@ -39,6 +42,7 @@ def call(Map<String, ?> params = [:]) {
                         channelConfig: $channelConfig,
                         events: $events,
                         keywords: $keywords,
+                        contentTemplate: $contentTemplate,
                     }) {
                         errors {
                             message
