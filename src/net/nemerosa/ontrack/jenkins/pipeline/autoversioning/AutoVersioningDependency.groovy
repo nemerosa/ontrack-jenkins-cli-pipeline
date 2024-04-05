@@ -18,8 +18,11 @@ class AutoVersioningDependency {
     private final String autoApprovalMode
     private final String qualifier
     private final String versionSource
+    private final String prTitleTemplate
+    private final String prBodyTemplate
+    private final String prBodyTemplateFormat
 
-    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource) {
+    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource, String prTitleTemplate, String prBodyTemplate, String prBodyTemplateFormat) {
         this.sourceProject = sourceProject
         this.sourceBranch = sourceBranch
         this.sourcePromotion = sourcePromotion
@@ -36,6 +39,9 @@ class AutoVersioningDependency {
         this.autoApprovalMode = autoApprovalMode
         this.qualifier = qualifier
         this.versionSource = versionSource
+        this.prTitleTemplate = prTitleTemplate
+        this.prBodyTemplate = prBodyTemplate
+        this.prBodyTemplateFormat = prBodyTemplateFormat
     }
 
     String getSourceProject() {
@@ -102,6 +108,18 @@ class AutoVersioningDependency {
         return versionSource
     }
 
+    String getPrTitleTemplate() {
+        return prTitleTemplate
+    }
+
+    String getPrBodyTemplate() {
+        return prBodyTemplate
+    }
+
+    String getPrBodyTemplateFormat() {
+        return prBodyTemplateFormat
+    }
+
     Map<String, ?> toMap() {
         return [
                 sourceProject       : sourceProject,
@@ -120,6 +138,9 @@ class AutoVersioningDependency {
                 autoApprovalMode    : autoApprovalMode,
                 qualifier           : qualifier,
                 versionSource       : versionSource,
+                prTitleTemplate     : prTitleTemplate,
+                prBodyTemplate      : prBodyTemplate,
+                prBodyTemplateFormat: prBodyTemplateFormat,
         ]
     }
 

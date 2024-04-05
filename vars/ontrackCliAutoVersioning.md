@@ -140,6 +140,9 @@ dependencies:
   * `name` - using the build name
   * `labelOnly` - using the build label only (required)
   * `metaInfo/<category>/<name>` or `metaInfo/<name>` - the version is required to be stored in the meta information of the source build, identified its name and optional category
+* `prTitleTemplate` - (optional) template for the title of the auto-versioning PR
+* `prBodyTemplate` - (optional) template for the body of the auto-versioning PR 
+* `prBodyTemplateFormat` - (optional) template format for the body of the auto-versioning PR. By default using text (`plain`) but `html` and `markdown` are also supported. 
 
 ### See also
 

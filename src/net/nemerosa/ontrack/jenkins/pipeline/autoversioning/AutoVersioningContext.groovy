@@ -75,6 +75,9 @@ class AutoVersioningContext {
         String autoApprovalMode = params.autoApprovalMode
         String qualifier = params.qualifier
         String versionSource = params.versionSource
+        String prTitleTemplate = params.prTitleTemplate
+        String prBodyTemplate = params.prBodyTemplate
+        String prBodyTemplateFormat = params.prBodyTemplateFormat
 
         String postProcessing = params.postProcessing
         def postProcessingConfig = params.postProcessingConfig as Map<String, ?> ?: [:]
@@ -97,6 +100,9 @@ class AutoVersioningContext {
                 autoApprovalMode,
                 qualifier,
                 versionSource,
+                prTitleTemplate,
+                prBodyTemplate,
+                prBodyTemplateFormat,
         )
 
         // Adding this configuration to the list
