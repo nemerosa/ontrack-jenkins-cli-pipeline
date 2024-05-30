@@ -10,7 +10,7 @@ JCasC (Jenkins Configuration as Code) is the recommended approach:
 
 ```yaml
 globalLibraries:
-    libraries:
+  libraries:
     - name: "ontrack-jenkins-cli-pipeline"
       retriever:
         modernSCM:
@@ -29,9 +29,11 @@ You can also use the Jenkins management UI to register this library:
 
 ## Setup
 
-The [steps](#steps) provided by this library, in order to avoid redundant configuration, rely on predefined environment variables and credentials.
+The [steps](#steps) provided by this library, in order to avoid redundant configuration, rely on predefined environment
+variables and credentials.
 
-> Those environment variables and credentials are not _strictly_ required but they will ease the use of the Ontrack steps.
+> Those environment variables and credentials are not _strictly_ required but they will ease the use of the Ontrack
+> steps.
 
 In most of the cases, you just need to define:
 
@@ -42,7 +44,8 @@ See [`ontrackCliSetup`](vars/ontrackCliSetup.md) for more information.
 
 ## Usage
 
-In your `Jenkinsfile`, declare the version of the pipeline library you want to use and start using the [steps](#steps) provided by the library. For example:
+In your `Jenkinsfile`, declare the version of the pipeline library you want to use and start using the [steps](#steps)
+provided by the library. For example:
 
 ```groovy
 @Library("ontrack-jenkins-cli-pipeline@main") _
@@ -76,7 +79,8 @@ pipeline {
 
 ### Logging
 
-Most of the [steps](#steps) accept a `logging` parameter but logging can be configured globally using the `ONTRACK_LOGGING` environment variable, set to `false` or `true` (`false` is the default).
+Most of the [steps](#steps) accept a `logging` parameter but logging can be configured globally using
+the `ONTRACK_LOGGING` environment variable, set to `false` or `true` (`false` is the default).
 
 > Note that any `logging` parameter on the step will override the global settings.
 
@@ -95,30 +99,40 @@ pipeline {
 In this example, we use the `main` branch of the pipeline library but it's better to stick to:
 
 * versioned branches, like `v1`
-* or explicit tags in order to ensure build reproducibility. See the list of available tags in [GitHub](https://github.com/nemerosa/ontrack-jenkins-cli-pipeline/tags).
+* or explicit tags in order to ensure build reproducibility. See the list of available tags
+  in [GitHub](https://github.com/nemerosa/ontrack-jenkins-cli-pipeline/tags).
 
 ## Steps
 
 ### General setup
 
-* [`ontrackCliSetup`](vars/ontrackCliSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from creating common environment variables to initializing project and branch in Ontrack for your pipeline.
+* [`ontrackCliSetup`](vars/ontrackCliSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from
+  creating common environment variables to initializing project and branch in Ontrack for your pipeline.
 * [`ontrackCliSetupSonarQube`](vars/ontrackCliSetupSonarQube.md) - setup of SonarQube properties at project level
 
 ### Creating Ontrack items
 
 * [`ontrackCliBuild`](vars/ontrackCliBuild.md) - creates an Ontrack build entry based on current information
-* [`ontrackCliValidate`](vars/ontrackCliValidate.md) - creates an Ontrack validation run for the current build, based on current information or provided information
-* [`ontrackCliValidateTests`](vars/ontrackCliValidateTests.md) - creates an Ontrack validation run based on JUnit test results
-* [`ontrackCliValidateWithTestResults`](vars/ontrackCliValidateWithTestResults.md) - same as above but reuses existing JUnit tst results
-* [`ontrackCliValidateCHML`](vars/ontrackCliValidateCHML.md) - creates an Ontrack validation run based on critical/high/medium/low stats
-* [`ontrackCliValidatePercentage`](vars/ontrackCliValidatePercentage.md) - creates an Ontrack validation run based on a percentage
-* [`ontrackCliValidateMetrics`](vars/ontrackCliValidateMetrics.md) - creates an Ontrack validation run based on a map of metrics
+* [`ontrackCliValidate`](vars/ontrackCliValidate.md) - creates an Ontrack validation run for the current build, based on
+  current information or provided information
+* [`ontrackCliValidateTests`](vars/ontrackCliValidateTests.md) - creates an Ontrack validation run based on JUnit test
+  results
+* [`ontrackCliValidateWithTestResults`](vars/ontrackCliValidateWithTestResults.md) - same as above but reuses existing
+  JUnit tst results
+* [`ontrackCliValidateCHML`](vars/ontrackCliValidateCHML.md) - creates an Ontrack validation run based on
+  critical/high/medium/low stats
+* [`ontrackCliValidatePercentage`](vars/ontrackCliValidatePercentage.md) - creates an Ontrack validation run based on a
+  percentage
+* [`ontrackCliValidateMetrics`](vars/ontrackCliValidateMetrics.md) - creates an Ontrack validation run based on a map of
+  metrics
 
 ### Setting properties on builds
 
 * [`ontrackCliBuildMessage`](vars/ontrackCliBuildMessage.md) - setting a message property on an existing build
-* [`ontrackCliBuildMetaInfo`](vars/ontrackCliBuildMetaInfo.md) - setting or updating a meta-info property on an existing build
-* [`ontrackCliBuildGitCommit](vars/ontrackCliBuildGitCommit.md) - setting or updating the "Git commit" property on an existing build
+* [`ontrackCliBuildMetaInfo`](vars/ontrackCliBuildMetaInfo.md) - setting or updating a meta-info property on an existing
+  build
+* [`ontrackCliBuildGitCommit](vars/ontrackCliBuildGitCommit.md) - setting or updating the "Git commit" property on an
+  existing build
 
 ### Build links
 
@@ -129,24 +143,35 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 * [`ontrackCliLastBranch`](vars/ontrackCliLastBranch.md) - getting the last branch for given pattern
 * [`ontrackCliLastPromotion`](vars/ontrackCliLastPromotion.md) - getting the last build for a given promotion
-* [`ontrackCliLastPromotionByProject`](vars/ontrackCliLastPromotionByProject.md) - getting the last build for a given promotion over all branches
-* [`ontrackCliGetBuildByVersion`](vars/ontrackCliGetBuildByVersion.md) - getting a build using its release/label/version property
-* [`ontrackCliGetBuildByMetaVersion`](vars/ontrackCliGetBuildByMetaVersion.md) - getting a build using a version stored in its meta information
-* [`ontrackCliGetBuildByProjectAndVersion`](vars/ontrackCliGetBuildByProjectAndVersion.md) - getting a build using its release/label/version property inside a project
-* [`ontrackCliGetBuildByCommit`](vars/ontrackCliGetBuildByCommit.md) - getting a build in the current branch using its commit
+* [`ontrackCliLastPromotionByProject`](vars/ontrackCliLastPromotionByProject.md) - getting the last build for a given
+  promotion over all branches
+* [`ontrackCliGetBuildByVersion`](vars/ontrackCliGetBuildByVersion.md) - getting a build using its release/label/version
+  property
+* [`ontrackCliGetBuildByMetaVersion`](vars/ontrackCliGetBuildByMetaVersion.md) - getting a build using a version stored
+  in its meta information
+* [`ontrackCliGetBuildByProjectAndVersion`](vars/ontrackCliGetBuildByProjectAndVersion.md) - getting a build using its
+  release/label/version property inside a project
+* [`ontrackCliGetBuildByCommit`](vars/ontrackCliGetBuildByCommit.md) - getting a build in the current branch using its
+  commit
 
 ### Auto versioning setup
 
 * [`ontrackCliAutoVersioning`](vars/ontrackCliAutoVersioning.md) - setting up the auto versioning for the branch
-* [`ontrackCliAutoVersioningProject`](vars/ontrackCliAutoVersioningProject.md) - setting up the auto versioning rules at project level
-* [`ontrackCliAutoVersioningCheck`](vars/ontrackCliAutoVersioningCheck.md) - checking the auto versioning alignment and creating a corresponding validation
+* [`ontrackCliAutoVersioningProject`](vars/ontrackCliAutoVersioningProject.md) - setting up the auto versioning rules at
+  project level
+* [`ontrackCliAutoVersioningCheck`](vars/ontrackCliAutoVersioningCheck.md) - checking the auto versioning alignment and
+  creating a corresponding validation
 
 ### Setup of notifications
 
-* [`ontrackCliSetupProjectNotifications`](vars/ontrackCliSetupProjectNotifications.md) - setup of notifications at project level
-* [`ontrackCliSetupBranchNotifications`](vars/ontrackCliSetupBranchNotifications.md) - setup of notifications at branch level
-* [`ontrackCliSetupPromotionLevelNotifications`](vars/ontrackCliSetupPromotionLevelNotifications.md) - setup of notifications at promotion level
-* [`ontrackCliSetupValidationStampNotifications`](vars/ontrackCliSetupValidationStampNotifications.md) - setup of notifications at validation stamp level
+* [`ontrackCliSetupProjectNotifications`](vars/ontrackCliSetupProjectNotifications.md) - setup of notifications at
+  project level
+* [`ontrackCliSetupBranchNotifications`](vars/ontrackCliSetupBranchNotifications.md) - setup of notifications at branch
+  level
+* [`ontrackCliSetupPromotionLevelNotifications`](vars/ontrackCliSetupPromotionLevelNotifications.md) - setup of
+  notifications at promotion level
+* [`ontrackCliSetupValidationStampNotifications`](vars/ontrackCliSetupValidationStampNotifications.md) - setup of
+  notifications at validation stamp level
 
 ### Generic steps
 
@@ -156,14 +181,17 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 > These steps are very specific in the kind of scenario they are running and interact with more than Ontrack.
 
-* [`ontrackCliCheckoutConditionalOnPromotionAndTrigger`](vars/ontrackCliCheckoutConditionalOnPromotionAndTrigger.md) - performs a SCM checkout based on the nature of the trigger
+* [`ontrackCliCheckoutConditionalOnPromotionAndTrigger`](vars/ontrackCliCheckoutConditionalOnPromotionAndTrigger.md) -
+  performs a SCM checkout based on the nature of the trigger
 
 ### CLI steps
 
 Those steps allow to download and the setup the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli).
 
-* [`ontrackCliDownload`](vars/ontrackCliDownload.md) - downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli) and sets it into the path
-* [`ontrackCliConnect`](vars/ontrackCliConnect.md) - creates a connection configuration for the Ontrack CLI, based on provided information or the environment
+* [`ontrackCliDownload`](vars/ontrackCliDownload.md) - downloads
+  the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli) and sets it into the path
+* [`ontrackCliConnect`](vars/ontrackCliConnect.md) - creates a connection configuration for the Ontrack CLI, based on
+  provided information or the environment
 
 ## Ignoring errors
 
@@ -182,3 +210,13 @@ variable to `true`.
 
 > Like when [ignoring errors](#ignoring-errors), the steps _returning_ values will return a null or empty value. This
 > may cause some issues in some pipelines relying on these values, so it's not a perfect solution.
+
+## Environment variables
+
+| Variable              | Default value | Description                                            |
+|-----------------------|---------------|--------------------------------------------------------|
+| ONTRACK_LOGGING       | `false`       | Enabling by default logging for all Ontrack operations |
+| ONTRACK_URL           | _Required_    | URL to the Ontrack server                              |
+| ONTRACK_TOKEN         | _Required_    | API token used to connect to Ontrack                   |
+| ONTRACK_STOP          | `false`       | See [Failsafe](#failsafe)                              |
+| ONTRACK_IGNORE_ERRORS | `false`       | See [Ignoring errors](#ignoring-errors)                |
