@@ -22,6 +22,7 @@ class Validation {
         String stamp = ParamUtils.getParam(params, "stamp")
         String description = ParamUtils.getConditionalParam(params, "description", false, '')
         String status = ParamUtils.getConditionalParam(params, "status", false, null)
+        boolean useBuildDuration = ParamUtils.getBooleanParam(params, "useBuildDuration", false)
         boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
         boolean tracing = ParamUtils.getBooleanParam(params, "tracing", false)
 
@@ -51,7 +52,7 @@ class Validation {
         if (!actualStatus) {
             if (computeStatusWhenMissing) {
                 logger("No status is provided, computing status...")
-                actualStatus = JenkinsUtils.getValidationRunStatusFromStage(dsl)
+                actualStatus = JenkinsUtils.getValidationRunStatusFromStage(dsl, logger)
                 logger("Computed status: $actualStatus")
             }
         }
@@ -62,7 +63,7 @@ class Validation {
         }
 
         // Run info
-        RunInfo runInfo = JenkinsUtils.getRunInfo(dsl, tracer)
+        RunInfo runInfo = JenkinsUtils.getRunInfo(dsl, useBuildDuration, tracer)
         tracer("Run info = ${runInfo.toString()}")
         if (runInfo != null && !runInfo.isEmpty()) {
             Map<String, ?> runInfoVariables = [:]
@@ -139,8 +140,8 @@ class Validation {
 
                 // Checks for errors
 
-                GraphQL.checkForMutationErrors(propertyResponse, 'setValidationRunMessagePropertyById')
-                GraphQL.checkForMutationErrors(propertyResponse, 'setValidationRunMetaInfoPropertyById')
+                GraphQL.checkForMutationErrors(propertyResponse, 'setValidationRunMessagePropertyById', dsl.ontrackCliIgnoreErrors())
+                GraphQL.checkForMutationErrors(propertyResponse, 'setValidationRunMetaInfoPropertyById', dsl.ontrackCliIgnoreErrors())
             }
         }
     }

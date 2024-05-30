@@ -12,28 +12,47 @@ def call(Map<String, ?> params = [:]) {
     }
 
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
-    Map<String, Double> metrics = params.metrics as Map<String, Double>
-    if (!metrics) throw new RuntimeException("Missing metrics")
+
+    // Parameters
+    boolean ignoreStatusIfResults = ParamUtils.getBooleanParam(params, 'ignoreStatusIfResults', true)
+    boolean useBuildDuration = ParamUtils.getBooleanParam(params, 'useBuildDuration', true)
+
+    // Getting results details
+    def results = params.results
+    int passed = results?.passCount ?: 0
+    int skipped = results?.skipCount ?: 0
+    int failed = results?.failCount ?: 0
+
+    // Status to use
+    if (results && ignoreStatusIfResults) {
+        params.status = null
+    }
 
     // GraphQL query
     String query = '''
-        mutation ValidateBuildWithMetrics(
+        mutation ValidateBuildWithTests(
             $project: String!,
             $branch: String!,
             $build: String!,
             $validation: String!,
             $description: String!,
             $runInfo: RunInfoInput,
-            $metrics: [MetricsEntryInput!]!
+            $passed: Int!,
+            $skipped: Int!,
+            $failed: Int!,
+            $status: String,
         ) {
-            validateBuildWithMetrics(input: {
+            validateBuildWithTests(input: {
                 project: $project,
                 branch: $branch,
                 build: $build,
                 validation: $validation,
                 description: $description,
                 runInfo: $runInfo,
-                metrics: $metrics
+                passed: $passed,
+                skipped: $skipped,
+                failed: $failed,
+                status: $status,
             }) {
                 validationRun {
                     id
@@ -46,18 +65,13 @@ def call(Map<String, ?> params = [:]) {
     '''
 
     // Validation parameters
-    Validation validation = new Validation("ontrack-cli-validate-metrics")
+    Validation validation = new Validation("ontrack-cli-validate-tests")
     Map<String,?> variables = validation.variables(this, params, false)
 
-    // Metrics
-    def metricsInput = []
-    metrics.each { name, value ->
-        metricsInput += [
-            name: name,
-            value: value,
-        ]
-    }
-    variables.metrics = metricsInput
+    // Tests args
+    variables.passed = passed
+    variables.skipped = skipped
+    variables.failed = failed
 
     // GraphQL call
 
@@ -69,8 +83,11 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    if (GraphQL.checkForMutationErrors(response, 'validateBuildWithMetrics', ontrackCliIgnoreErrors())) {
+    if (GraphQL.checkForMutationErrors(response, 'validateBuildWithTests', ontrackCliIgnoreErrors())) {
         // Validation run properties
-        Validation.setValidationRunProperties(this, params, response, 'validateBuildWithMetrics')
+        Validation.setValidationRunProperties(this, params, response, 'validateBuildWithTests')
     }
+
+    // Returning the results
+    return results
 }

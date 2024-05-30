@@ -5,6 +5,12 @@ import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 def call(Map<String, ?> params = [:]) {
     if (ontrackCliFailsafe()) return
 
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack for pull requests."
+        return
+    }
+
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
     int critical = ParamUtils.getIntParam(params, "critical", 0)
     int high = ParamUtils.getIntParam(params, "high", 0)
@@ -23,7 +29,8 @@ def call(Map<String, ?> params = [:]) {
             $critical: Int!,
             $high: Int!,
             $medium: Int!,
-            $low: Int!
+            $low: Int!,
+            $status: String,
         ) {
             validateBuildWithCHML(input: {
                 project: $project,
@@ -35,7 +42,8 @@ def call(Map<String, ?> params = [:]) {
                 critical: $critical,
                 high: $high,
                 medium: $medium,
-                low: $low
+                low: $low,
+                status: $status,
             }) {
                 validationRun {
                     id
@@ -67,8 +75,8 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'validateBuildWithCHML')
-
-    // Validation run properties
-    Validation.setValidationRunProperties(this, params, response, 'validateBuildWithCHML')
+    if (GraphQL.checkForMutationErrors(response, 'validateBuildWithCHML', ontrackCliIgnoreErrors())) {
+        // Validation run properties
+        Validation.setValidationRunProperties(this, params, response, 'validateBuildWithCHML')
+    }
 }

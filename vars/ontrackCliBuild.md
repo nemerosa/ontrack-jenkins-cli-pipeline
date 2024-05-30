@@ -8,23 +8,31 @@ This step creates an Ontrack build based on the available information in your pi
 
 #### General parameters
 
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `project` | String | `ONTRACK_PROJECT_NAME` environment variable | Name of the project in Ontrack to target |
-| `branch` | String | `ONTRACK_BRANCH_NAME` environment variable | Name of the branch in Ontrack to target |
-| `name` | String | `BUILD_TAG` environment variable | Name of the build to create in Ontrack. The name will always be escaped for Ontrack compliance. |
-| `logging` | boolean | `false` | Set to `true` to display debug / logging information while performing the operation. |
+| Parameter | Type    | Default                                     | Description                                                                          |
+|-----------|---------|---------------------------------------------|--------------------------------------------------------------------------------------|
+| `project` | String  | `ONTRACK_PROJECT_NAME` environment variable | Name of the project in Ontrack to target                                             |
+| `branch`  | String  | `ONTRACK_BRANCH_NAME` environment variable  | Name of the branch in Ontrack to target                                              |
+| `name`    | String  | _See below_                                 | Name of the build to create in Ontrack                                               |
+| `logging` | boolean | `false`                                     | Set to `true` to display debug / logging information while performing the operation. |
+
+If not provided, the name of the build is computed using `<branch>-<timestamp>`:
+
+* `<branch>` is the normalized branch name (for example, `release/1.27` becomes `release-1.27`)
+* `<timestamp>` is the current timestamp formatted as `yyyyMMddHHmmSS`
+
+> Before, the name was made equal to the `BUILD_TAG` environment variable; this proved to be not unique enough since the build number may be reset to 1 and
+> lead to some cycles and confiucts.
 
 #### Properties
 
 Extra parameters allow some properties to be set on the build at creation time. Specific steps can also be used, after the build has been created.
 
-| Parameter | Type | Default | Description | Step equivalent |
-|---|---|---|---|---|
-| `release` | String | _None_ | If provided, will attach a release property to the build. | [`ontrackCliBuildRelease`](ontrackCliBuildRelease.md) |
-| `gitCommit` | String | `GIT_COMMIT` environment variable | Git commit property to set for the build. If value is `none`, no Git commit property will be created. | [`ontrackCliBuildGitCommit`](ontrackCliBuildGitCommit.md) |
-| `message` | String or [Object](#message-property) | _None_ | Attaches the message property to the build. See the [details](#message-property) below | [`ontrackCliBuildMessage`](ontrackCliBuildMessage.md) |
-| `metaInfo` | [List or Map](#meta-info-property) | _None_ | Attaches some meta-information to the created build | [`ontrackCliBuildMetaInfo`](ontrackCliBuildMetaInfo.md) |
+| Parameter   | Type                                  | Default                           | Description                                                                                           | Step equivalent                                           |
+|-------------|---------------------------------------|-----------------------------------|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
+| `release`   | String                                | _None_                            | If provided, will attach a release property to the build.                                             | [`ontrackCliBuildRelease`](ontrackCliBuildRelease.md)     |
+| `gitCommit` | String                                | `GIT_COMMIT` environment variable | Git commit property to set for the build. If value is `none`, no Git commit property will be created. | [`ontrackCliBuildGitCommit`](ontrackCliBuildGitCommit.md) |
+| `message`   | String or [Object](#message-property) | _None_                            | Attaches the message property to the build. See the [details](#message-property) below                | [`ontrackCliBuildMessage`](ontrackCliBuildMessage.md)     |
+| `metaInfo`  | [List or Map](#meta-info-property)    | _None_                            | Attaches some meta-information to the created build                                                   | [`ontrackCliBuildMetaInfo`](ontrackCliBuildMetaInfo.md)   |
 
 ##### Message property
 

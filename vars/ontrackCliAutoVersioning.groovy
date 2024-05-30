@@ -6,16 +6,16 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 def call(Map<String, ?> params = [:], Closure configuration) {
     if (ontrackCliFailsafe()) return
 
-    // Parameters
-    String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
-    String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
-    boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
-
     // Not for pull requests
     if (env.BRANCH_NAME ==~ 'PR-.*') {
         echo "No Ontrack auto versioning on promotion for pull requests."
         return
     }
+
+    // Parameters
+    String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
+    String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
+    boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
 
     // Logging
     Closure logger = { String message -> }
@@ -26,14 +26,14 @@ def call(Map<String, ?> params = [:], Closure configuration) {
     }
 
     // Block evaluation
-    def context = new AutoVersioningContext(this)
+    def context = new AutoVersioningContext(this, logger)
     configuration.delegate = context
     configuration()
 
     // Checking the branches
     Set<String> branches = context.branches
     if (branches && !branches.any { branchName -> env.BRANCH_NAME ==~ branchName }) {
-        echo "ontrackCliAutoVersioning: current branch ${env.BRANCH_NAME} does not match ${branches} - not setting up PR creation on promotion"
+        echo "ontrackCliAutoVersioning: current branch ${env.BRANCH_NAME} does not match ${branches} - not setting up auto versioning"
         return
     }
 
@@ -82,6 +82,6 @@ def call(Map<String, ?> params = [:], Closure configuration) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'setAutoVersioningConfigByName')
+    GraphQL.checkForMutationErrors(response, 'setAutoVersioningConfigByName', ontrackCliIgnoreErrors())
 
 }
