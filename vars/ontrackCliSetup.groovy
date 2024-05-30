@@ -146,7 +146,9 @@ def call(Map<String, ?> params = [:]) {
         }
 
         // Project use label
-        variables.useLabel = ParamUtils.getBooleanParam(params, "useLabel", false)
+        def ontrackUseLabel = env.ONTRACK_USE_LABEL as String
+        boolean defaultUseLabel = ontrackUseLabel != null ? ontrackUseLabel as boolean : false
+        variables.useLabel = ParamUtils.getBooleanParam(params, "useLabel", defaultUseLabel)
 
         // Branch release validation property
         String releaseValidation = params.releaseValidation
