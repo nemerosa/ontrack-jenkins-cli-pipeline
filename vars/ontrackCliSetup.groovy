@@ -95,14 +95,6 @@ def call(Map<String, ?> params = [:]) {
 						message
 					}
 				}
-				setProjectBuildLinkDisplayProperty(input: {
-					project: $project,
-					useLabel: true
-				}) @include(if: $useLabel) {
-					errors {
-						message
-					}
-				}
 				setBranchReleaseValidationProperty(input: {
 					project: $project,
 					branch: $branch,

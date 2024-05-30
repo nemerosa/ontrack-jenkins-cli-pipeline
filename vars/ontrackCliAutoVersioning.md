@@ -137,9 +137,9 @@ dependencies:
 * `autoApprovalMode` - either `CLIENT` or `SCM` - see the [Ontrack documentation](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-pr)
 * `qualifier` - optional qualifier to use when creating a build link for this configuration
 * `versionSource` - how must the source build version be computed if not using the default mechanism (label if source project configured or build name). Possible options are:
-    * `name` - using the build name
-    * `labelOnly` - using the build label only (required)
-    * `metaInfo/<category>/<name>` or `metaInfo/<name>` - the version is required to be stored in the meta information of the source build, identified its name and optional category
+  * `name` - using the build name
+  * `labelOnly` - using the build label only (required)
+  * `metaInfo/<category>/<name>` or `metaInfo/<name>` - the version is required to be stored in the meta information of the source build, identified its name and optional category
 * `prTitleTemplate` - (optional) template for the title of the auto-versioning PR
 * `prBodyTemplate` - (optional) template for the body of the auto-versioning PR
 * `prBodyTemplateFormat` - (optional) template format for the body of the auto-versioning PR. By default using text (`plain`) but `html` and `markdown` are also supported.
