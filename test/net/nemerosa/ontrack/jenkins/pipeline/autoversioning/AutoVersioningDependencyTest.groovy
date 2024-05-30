@@ -26,6 +26,8 @@ class AutoVersioningDependencyTest {
                 null,
                 null,
                 null,
+                [],
+                [],
         )
         def s = dep.toString()
         println(s)
