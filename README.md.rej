@@ -1,0 +1,10 @@
+diff a/README.md b/README.md	(rejected hunks)
+@@ -23,7 +23,7 @@ See [`ontrackCliSetup`](vars/ontrackCliSetup.md) for more information.
+ In your `Jenkinsfile`, declare the version of the pipeline library you want to use and start using the [steps](#steps) provided by the library. For example:
+
+ ```groovy
+-@Library("ontrack-jenkins-cli-pipeline@v1") _
++@Library("ontrack-jenkins-cli-pipeline@master") _
+
+ pipeline {
+     agent any

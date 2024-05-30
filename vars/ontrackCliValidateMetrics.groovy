@@ -3,6 +3,13 @@ import net.nemerosa.ontrack.jenkins.pipeline.validate.Validation
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack for pull requests."
+        return
+    }
 
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
     Map<String, Double> metrics = params.metrics as Map<String, Double>
@@ -62,8 +69,8 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'validateBuildWithMetrics')
-
-    // Validation run properties
-    Validation.setValidationRunProperties(this, params, response, 'validateBuildWithMetrics')
+    if (GraphQL.checkForMutationErrors(response, 'validateBuildWithMetrics', ontrackCliIgnoreErrors())) {
+        // Validation run properties
+        Validation.setValidationRunProperties(this, params, response, 'validateBuildWithMetrics')
+    }
 }

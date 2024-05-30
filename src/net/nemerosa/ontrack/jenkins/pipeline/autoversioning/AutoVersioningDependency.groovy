@@ -16,8 +16,12 @@ class AutoVersioningDependency {
     private final String postProcessing
     private final Map<String, ?> postProcessingConfig
     private final String autoApprovalMode
+    private final String qualifier
+    private final String versionSource
+    private final List<String> reviewers
+    private final List<AutoVersioningNotification> notifications
 
-    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode) {
+    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource, List<String> reviewers, List<AutoVersioningNotification> notifications) {
         this.sourceProject = sourceProject
         this.sourceBranch = sourceBranch
         this.sourcePromotion = sourcePromotion
@@ -32,6 +36,10 @@ class AutoVersioningDependency {
         this.postProcessingConfig = postProcessingConfig
         this.targetPropertyType = targetPropertyType
         this.autoApprovalMode = autoApprovalMode
+        this.qualifier = qualifier
+        this.versionSource = versionSource
+        this.reviewers = reviewers
+        this.notifications = notifications
     }
 
     String getSourceProject() {
@@ -90,6 +98,22 @@ class AutoVersioningDependency {
         return autoApprovalMode
     }
 
+    String getQualifier() {
+        return qualifier
+    }
+
+    String getVersionSource() {
+        return versionSource
+    }
+
+    List<String> getReviewers() {
+        return reviewers
+    }
+
+    List<AutoVersioningNotification> getNotifications() {
+        return notifications
+    }
+
     Map<String, ?> toMap() {
         return [
                 sourceProject       : sourceProject,
@@ -106,6 +130,10 @@ class AutoVersioningDependency {
                 postProcessing      : postProcessing,
                 postProcessingConfig: postProcessingConfig,
                 autoApprovalMode    : autoApprovalMode,
+                qualifier           : qualifier,
+                versionSource       : versionSource,
+                reviewers           : reviewers,
+                notifications       : notifications?.collect { it.toMap() },
         ]
     }
 

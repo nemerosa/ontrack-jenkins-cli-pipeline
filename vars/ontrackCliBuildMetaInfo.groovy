@@ -3,6 +3,13 @@ import net.nemerosa.ontrack.jenkins.pipeline.properties.MetaInfoPropertyUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack build meta info for pull requests."
+        return
+    }
 
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
 
@@ -59,6 +66,6 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'setBuildMetaInfoProperty')
+    GraphQL.checkForMutationErrors(response, 'setBuildMetaInfoProperty', ontrackCliIgnoreErrors())
 
 }

@@ -3,6 +3,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.validate.Validation
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
 
     String pattern = ParamUtils.getParam(params, "pattern", "**/build/test-results/**/*.xml")
     boolean allowEmptyResults = ParamUtils.getBooleanParam(params, "allowEmptyResults", true)
@@ -10,6 +11,12 @@ def call(Map<String, ?> params = [:]) {
 
     // Parsing the JUnit results
     def results = junit(testResults: pattern, allowEmptyResults: allowEmptyResults)
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack for pull requests."
+        return
+    }
 
     // Getting results details
     int passed = results.passCount
@@ -69,10 +76,10 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'validateBuildWithTests')
-
-    // Validation run properties
-    Validation.setValidationRunProperties(this, params, response, 'validateBuildWithTests')
+    if (GraphQL.checkForMutationErrors(response, 'validateBuildWithTests', ontrackCliIgnoreErrors())) {
+        // Validation run properties
+        Validation.setValidationRunProperties(this, params, response, 'validateBuildWithTests')
+    }
 
     // Returning the results
     return results

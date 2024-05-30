@@ -39,7 +39,7 @@ class ValidationStampUtils {
                         dataTypeConfig: dataConfig,
                 ]
         )
-        GraphQL.checkForMutationErrors(response, 'setupValidationStamp')
+        GraphQL.checkForMutationErrors(response, 'setupValidationStamp', dsl.ontrackCliIgnoreErrors())
     }
 
     static void setupMetricsValidationStamp(def dsl, boolean logging, String project, String branch, String validation, String description) {
@@ -72,7 +72,7 @@ class ValidationStampUtils {
                 logging: logging,
                 variables: variables,
         )
-        GraphQL.checkForMutationErrors(response, 'setupMetricsValidationStamp')
+        GraphQL.checkForMutationErrors(response, 'setupMetricsValidationStamp', dsl.ontrackCliIgnoreErrors())
     }
 
     static void setupPercentageValidationStamp(
@@ -124,7 +124,7 @@ class ValidationStampUtils {
                 logging: logging,
                 variables: variables,
         )
-        GraphQL.checkForMutationErrors(response, 'setupPercentageValidationStamp')
+        GraphQL.checkForMutationErrors(response, 'setupPercentageValidationStamp', dsl.ontrackCliIgnoreErrors())
     }
 
     static void setupCHMLValidationStamp(
@@ -184,7 +184,7 @@ class ValidationStampUtils {
                 logging: logging,
                 variables: variables,
         )
-        GraphQL.checkForMutationErrors(response, 'setupCHMLValidationStamp')
+        GraphQL.checkForMutationErrors(response, 'setupCHMLValidationStamp', dsl.ontrackCliIgnoreErrors())
     }
 
     static void setupTestsValidationStamp(
@@ -228,7 +228,7 @@ class ValidationStampUtils {
                 logging: logging,
                 variables: variables,
         )
-        GraphQL.checkForMutationErrors(response, 'setupTestSummaryValidationStamp')
+        GraphQL.checkForMutationErrors(response, 'setupTestSummaryValidationStamp', dsl.ontrackCliIgnoreErrors())
     }
 
 }

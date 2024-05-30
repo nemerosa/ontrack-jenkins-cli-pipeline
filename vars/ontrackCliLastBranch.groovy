@@ -1,6 +1,14 @@
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return null
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack for pull requests."
+        return ""
+    }
+
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME)
     String pattern = ParamUtils.getParam(params, "pattern", '.*')
     boolean logging = ParamUtils.getBooleanParam(params, "logging", false)

@@ -13,11 +13,17 @@ class AutoVersioningContext {
     private final def dsl
 
     /**
+     * Logger
+     */
+    private final Closure logger
+
+    /**
      * Constructor
      * @param dsl DSL context
      */
-    AutoVersioningContext(dsl) {
+    AutoVersioningContext(dsl, Closure logger) {
         this.dsl = dsl
+        this.logger = logger
     }
 
     /**
@@ -43,8 +49,14 @@ class AutoVersioningContext {
     void yaml(String path) {
         // Reads the path as YAML
         def yaml = dsl.readYaml(file: path)
+        // Logging
+        logger("yaml = $yaml")
         // Dependencies as a collection
-        yaml.dependencies.each { dependency(it as Map) }
+        yaml.dependencies.each {
+            def map = it as Map
+            logger("config map = $map")
+            dependency(map)
+        }
     }
 
     /**
@@ -73,6 +85,22 @@ class AutoVersioningContext {
         String validationStamp = params.validationStamp
         String upgradeBranchPattern = params.upgradeBranchPattern
         String autoApprovalMode = params.autoApprovalMode
+        String qualifier = params.qualifier
+        String versionSource = params.versionSource
+        List<String> reviewers = params.reviewers as List<String> ?: []
+
+        List<AutoVersioningNotification> notifications = null
+        def notificationsArray = params.notifications
+        if (notificationsArray) {
+            notifications = notificationsArray.collect {
+                new AutoVersioningNotification(
+                        it.channel as String,
+                        it.config,
+                        it.scope as List<String>,
+                        it.notificationTemplate as String,
+                )
+            }
+        }
 
         String postProcessing = params.postProcessing
         def postProcessingConfig = params.postProcessingConfig as Map<String, ?> ?: [:]
@@ -91,8 +119,12 @@ class AutoVersioningContext {
                 upgradeBranchPattern,
                 validationStamp,
                 postProcessing,
-                postProcessingConfig,
+                postProcessingConfig as Map<String, ?>,
                 autoApprovalMode,
+                qualifier,
+                versionSource,
+                reviewers,
+                notifications,
         )
 
         // Adding this configuration to the list

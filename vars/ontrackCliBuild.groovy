@@ -4,10 +4,22 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack build for pull requests."
+        return
+    }
+
+    def timestamp = new Date().format("yyyyMMddHHmmSS")
+    def defaultName = "${env.BRANCH_NAME}-${timestamp}"
 
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
     String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
-    String name = ParamUtils.getParam(params, "name", env.BUILD_NUMBER as String)
+    String name = ParamUtils.getParam(params, "name", defaultName as String)
+            // Escaping the name for Ontrack invalid characters
+            .replaceAll(/[^a-zA-Z0-9._]/, '-')
     String description = ParamUtils.getConditionalParam(params, "description", false, '')
     String release = ParamUtils.getConditionalParam(params, "release", false, null)
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
@@ -135,10 +147,10 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'createBuildOrGet')
-    GraphQL.checkForMutationErrors(response, 'setBuildReleaseProperty')
-    GraphQL.checkForMutationErrors(response, 'setBuildGitCommitProperty')
-    GraphQL.checkForMutationErrors(response, 'setBuildMessageProperty')
-    GraphQL.checkForMutationErrors(response, 'setBuildMetaInfoProperty')
+    GraphQL.checkForMutationErrors(response, 'createBuildOrGet', ontrackCliIgnoreErrors())
+    GraphQL.checkForMutationErrors(response, 'setBuildReleaseProperty', ontrackCliIgnoreErrors())
+    GraphQL.checkForMutationErrors(response, 'setBuildGitCommitProperty', ontrackCliIgnoreErrors())
+    GraphQL.checkForMutationErrors(response, 'setBuildMessageProperty', ontrackCliIgnoreErrors())
+    GraphQL.checkForMutationErrors(response, 'setBuildMetaInfoProperty', ontrackCliIgnoreErrors())
 
 }

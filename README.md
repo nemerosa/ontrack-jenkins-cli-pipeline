@@ -102,12 +102,14 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 ### General setup
 
 * [`ontrackCliSetup`](vars/ontrackCliSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from creating common environment variables to initializing project and branch in Ontrack for your pipeline.
+* [`ontrackCliSetupSonarQube`](vars/ontrackCliSetupSonarQube.md) - setup of SonarQube properties at project level
 
 ### Creating Ontrack items
 
 * [`ontrackCliBuild`](vars/ontrackCliBuild.md) - creates an Ontrack build entry based on current information
 * [`ontrackCliValidate`](vars/ontrackCliValidate.md) - creates an Ontrack validation run for the current build, based on current information or provided information
 * [`ontrackCliValidateTests`](vars/ontrackCliValidateTests.md) - creates an Ontrack validation run based on JUnit test results
+* [`ontrackCliValidateWithTestResults`](vars/ontrackCliValidateWithTestResults.md) - same as above but reuses existing JUnit tst results
 * [`ontrackCliValidateCHML`](vars/ontrackCliValidateCHML.md) - creates an Ontrack validation run based on critical/high/medium/low stats
 * [`ontrackCliValidatePercentage`](vars/ontrackCliValidatePercentage.md) - creates an Ontrack validation run based on a percentage
 * [`ontrackCliValidateMetrics`](vars/ontrackCliValidateMetrics.md) - creates an Ontrack validation run based on a map of metrics
@@ -116,6 +118,7 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 * [`ontrackCliBuildMessage`](vars/ontrackCliBuildMessage.md) - setting a message property on an existing build
 * [`ontrackCliBuildMetaInfo`](vars/ontrackCliBuildMetaInfo.md) - setting or updating a meta-info property on an existing build
+* [`ontrackCliBuildGitCommit](vars/ontrackCliBuildGitCommit.md) - setting or updating the "Git commit" property on an existing build
 
 ### Build links
 
@@ -125,15 +128,34 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 ### Accessing Ontrack information
 
 * [`ontrackCliLastBranch`](vars/ontrackCliLastBranch.md) - getting the last branch for given pattern
+* [`ontrackCliLastPromotion`](vars/ontrackCliLastPromotion.md) - getting the last build for a given promotion
+* [`ontrackCliLastPromotionByProject`](vars/ontrackCliLastPromotionByProject.md) - getting the last build for a given promotion over all branches
+* [`ontrackCliGetBuildByVersion`](vars/ontrackCliGetBuildByVersion.md) - getting a build using its release/label/version property
+* [`ontrackCliGetBuildByMetaVersion`](vars/ontrackCliGetBuildByMetaVersion.md) - getting a build using a version stored in its meta information
+* [`ontrackCliGetBuildByProjectAndVersion`](vars/ontrackCliGetBuildByProjectAndVersion.md) - getting a build using its release/label/version property inside a project
+* [`ontrackCliGetBuildByCommit`](vars/ontrackCliGetBuildByCommit.md) - getting a build in the current branch using its commit
 
 ### Auto versioning setup
 
 * [`ontrackCliAutoVersioning`](vars/ontrackCliAutoVersioning.md) - setting up the auto versioning for the branch
 * [`ontrackCliAutoVersioningCheck`](vars/ontrackCliAutoVersioningCheck.md) - checking the auto versioning alignment and creating a corresponding validation
 
+### Setup of notifications
+
+* [`ontrackCliSetupProjectNotifications`](vars/ontrackCliSetupProjectNotifications.md) - setup of notifications at project level
+* [`ontrackCliSetupBranchNotifications`](vars/ontrackCliSetupBranchNotifications.md) - setup of notifications at branch level
+* [`ontrackCliSetupPromotionLevelNotifications`](vars/ontrackCliSetupPromotionLevelNotifications.md) - setup of notifications at promotion level
+* [`ontrackCliSetupValidationStampNotifications`](vars/ontrackCliSetupValidationStampNotifications.md) - setup of notifications at validation stamp level
+
 ### Generic steps
 
 * [`ontrackCliGraphQL`](vars/ontrackCliGraphQL.md) - performs a GraphQL call to Ontrack and returns the JSON response
+
+### Orchestration steps
+
+> These steps are very specific in the kind of scenario they are running and interact with more than Ontrack.
+
+* [`ontrackCliCheckoutConditionalOnPromotionAndTrigger`](vars/ontrackCliCheckoutConditionalOnPromotionAndTrigger.md) - performs a SCM checkout based on the nature of the trigger
 
 ### CLI steps
 
@@ -141,3 +163,21 @@ Those steps allow to download and the setup the [Ontrack CLI](https://github.com
 
 * [`ontrackCliDownload`](vars/ontrackCliDownload.md) - downloads the [Ontrack CLI](https://github.com/nemerosa/ontrack-cli) and sets it into the path
 * [`ontrackCliConnect`](vars/ontrackCliConnect.md) - creates a connection configuration for the Ontrack CLI, based on provided information or the environment
+
+## Ignoring errors
+
+You can run the Ontrack steps in a mode where any error is ignored.
+
+> Note that steps _returning_ values will then return a null or empty value. This
+> may cause some issues in some pipelines relying on these values, so it's not a perfect solution.
+
+Set the `ONTRACK_IGNORE_ERRORS` global environment variable to `true`.
+
+## Failsafe
+
+In case you want to utterly disable all the Ontrack steps, in all pipelines, to do something and in particular,
+you want to remove any connection to the Ontrack server, you can set the `ONTRACK_STOP` global environment
+variable to `true`.
+
+> Like when [ignoring errors](#ignoring-errors), the steps _returning_ values will return a null or empty value. This
+> may cause some issues in some pipelines relying on these values, so it's not a perfect solution.

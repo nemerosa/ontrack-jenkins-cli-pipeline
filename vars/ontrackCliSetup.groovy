@@ -11,6 +11,14 @@ import net.nemerosa.ontrack.jenkins.pipeline.validate.ValidationStampUtils
 import net.nemerosa.ontrack.jenkins.pipeline.promote.PromotionLevelUtils
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack for pull requests."
+        return
+    }
+
     boolean setup = ParamUtils.getBooleanParam(params, "setup", true)
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
     Closure logger = {}
@@ -21,7 +29,7 @@ def call(Map<String, ?> params = [:]) {
     }
 
     // Computing the Ontrack project name from the Git URL
-    String project = ParamUtils.getParam(params, "project", OntrackUtils.getProjectName(env.GIT_URL))
+    String project = params.project ?: OntrackUtils.getProjectName(env.GIT_URL)
     env.ONTRACK_PROJECT_NAME = project
     if (logging) {
         println("[ontrack-cli-setup] ONTRACK_PROJECT_NAME = ${env.ONTRACK_PROJECT_NAME}")
@@ -48,6 +56,9 @@ def call(Map<String, ?> params = [:]) {
 				$autoCreateVSIfNotPredefined: Boolean!,
 				$autoCreatePLProperty: Boolean!
 				$autoCreatePL: Boolean!
+				$releaseValidation: String!,
+				$releaseValidationProperty: Boolean!,
+				$useLabel: Boolean!,
 			) {
 				createProjectOrGet(input: {name: $project}) {
 					errors {
@@ -76,6 +87,14 @@ def call(Map<String, ?> params = [:]) {
 						message
 					}
 				}
+				setProjectBuildLinkDisplayProperty(input: {
+					project: $project,
+					useLabel: true
+				}) @include(if: $useLabel) {
+					errors {
+						message
+					}
+				}
 				setBranchReleaseValidationProperty(input: {
 					project: $project,
 					branch: $branch,
@@ -99,7 +118,7 @@ def call(Map<String, ?> params = [:]) {
         variables.autoCreateVSProperty = false
         variables.autoCreateVS = false
         variables.autoCreateVSIfNotPredefined = false
-        String autoVS = ParamUtils.getConditionalParam(params, "autoValidationStamps", false, "")
+        String autoVS = ParamUtils.getConditionalParam(params, "autoValidationStamps", false, "true")
         if (autoVS == 'true') {
             variables.autoCreateVSProperty = true
             variables.autoCreateVS = true
@@ -117,7 +136,7 @@ def call(Map<String, ?> params = [:]) {
         // Auto promotion levels
         variables.autoCreatePLProperty = false
         variables.autoCreatePL = false
-        String autoPL = ParamUtils.getConditionalParam(params, "autoPromotionLevels", false, "")
+        String autoPL = ParamUtils.getConditionalParam(params, "autoPromotionLevels", false, "true")
         if (autoPL == 'true') {
             variables.autoCreatePLProperty = true
             variables.autoCreatePL = true
@@ -125,6 +144,9 @@ def call(Map<String, ?> params = [:]) {
             variables.autoCreatePLProperty = true
             variables.autoCreatePL = false
         }
+
+        // Project use label
+        variables.useLabel = ParamUtils.getBooleanParam(params, "useLabel", true)
 
         // Branch release validation property
         String releaseValidation = params.releaseValidation
@@ -142,10 +164,12 @@ def call(Map<String, ?> params = [:]) {
             query: query,
             variables: variables,
         )
-        GraphQL.checkForMutationErrors(setupResponse, 'createProjectOrGet')
-        GraphQL.checkForMutationErrors(setupResponse, 'createBranchOrGet')
-        GraphQL.checkForMutationErrors(setupResponse, 'setProjectAutoValidationStampProperty')
-        GraphQL.checkForMutationErrors(setupResponse, 'setProjectAutoPromotionLevelProperty')
+        GraphQL.checkForMutationErrors(setupResponse, 'createProjectOrGet', ontrackCliIgnoreErrors())
+        GraphQL.checkForMutationErrors(setupResponse, 'createBranchOrGet', ontrackCliIgnoreErrors())
+        GraphQL.checkForMutationErrors(setupResponse, 'setProjectAutoValidationStampProperty', ontrackCliIgnoreErrors())
+        GraphQL.checkForMutationErrors(setupResponse, 'setProjectAutoPromotionLevelProperty', ontrackCliIgnoreErrors())
+        GraphQL.checkForMutationErrors(setupResponse, 'setProjectBuildLinkDisplayProperty', ontrackCliIgnoreErrors())
+        GraphQL.checkForMutationErrors(setupResponse, 'setBranchReleaseValidationProperty', ontrackCliIgnoreErrors())
 
         // Git configuration for the project & branch
 
@@ -193,7 +217,7 @@ def call(Map<String, ?> params = [:]) {
                     ],
                     logging: logging,
             )
-            GraphQL.checkForMutationErrors(gitHubProjectResponse, 'setProjectGitHubConfigurationProperty')
+            GraphQL.checkForMutationErrors(gitHubProjectResponse, 'setProjectGitHubConfigurationProperty', ontrackCliIgnoreErrors())
         } else if (scm == 'bitbucket-server') {
             String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
             BitbucketServerRepository repo = BitbucketServerUtils.getBitbucketRepository(env.GIT_URL)
@@ -234,7 +258,7 @@ def call(Map<String, ?> params = [:]) {
                     ],
                     logging: logging,
             )
-            GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketConfigurationProperty')
+            GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketConfigurationProperty', ontrackCliIgnoreErrors())
         } else if (scm == 'bitbucket-cloud') {
             String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
             BitbucketCloudRepository repo = BitbucketCloudUtils.getBitbucketRepository(env.GIT_URL)
@@ -272,7 +296,7 @@ def call(Map<String, ?> params = [:]) {
                     ],
                     logging: logging,
             )
-            GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketCloudConfigurationProperty')
+            GraphQL.checkForMutationErrors(bitbucketProjectResponse, 'setProjectBitbucketCloudConfigurationProperty', ontrackCliIgnoreErrors())
         } else if (scm == 'gitlab') {
             String scmConfig = ParamUtils.getParam(params, "scmConfiguration", env.ONTRACK_SCM_CONFIG)
             String repository = GitLabUtils.getRepository(env.GIT_URL)
@@ -310,7 +334,7 @@ def call(Map<String, ?> params = [:]) {
                     ],
                     logging: logging,
             )
-            GraphQL.checkForMutationErrors(gitLabProjectResponse, 'setProjectGitLabConfigurationProperty')
+            GraphQL.checkForMutationErrors(gitLabProjectResponse, 'setProjectGitLabConfigurationProperty', ontrackCliIgnoreErrors())
         } else {
             throw new RuntimeException("SCM not supported: $scm")
         }
@@ -342,7 +366,7 @@ def call(Map<String, ?> params = [:]) {
                         gitBranch: env.BRANCH_NAME as String,
                 ]
         )
-        GraphQL.checkForMutationErrors(branchGitResponse, 'setBranchGitConfigProperty')
+        GraphQL.checkForMutationErrors(branchGitResponse, 'setBranchGitConfigProperty', ontrackCliIgnoreErrors())
 
         // Validation stamps setup
 
@@ -398,7 +422,7 @@ def call(Map<String, ?> params = [:]) {
                                     dataTypeConfig: validation.dataConfig,
                             ]
                     )
-                    GraphQL.checkForMutationErrors(response, 'setupValidationStamp')
+                    GraphQL.checkForMutationErrors(response, 'setupValidationStamp', ontrackCliIgnoreErrors())
                 }
                 // Tests
                 else if (validation.tests) {

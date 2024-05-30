@@ -1,0 +1,4 @@
+// THIS STEP IS NOT DOCUMENTED BECAUSE USED ONLY INTERNALLY
+def call() {
+    return (env.ONTRACK_IGNORE_ERRORS == 'true')
+}

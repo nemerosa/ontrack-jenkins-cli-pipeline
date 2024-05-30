@@ -3,6 +3,13 @@ import net.nemerosa.ontrack.jenkins.pipeline.properties.MessagePropertyUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack build message for pull requests."
+        return
+    }
 
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
 
@@ -56,6 +63,6 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'setBuildMessageProperty')
+    GraphQL.checkForMutationErrors(response, 'setBuildMessageProperty', ontrackCliIgnoreErrors())
 
 }

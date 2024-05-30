@@ -3,6 +3,13 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 import net.nemerosa.ontrack.jenkins.pipeline.validate.Validation
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack for pull requests."
+        return
+    }
 
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
 
@@ -53,7 +60,7 @@ def call(Map<String, ?> params = [:]) {
     // Data
     if (dataType) {
         if (!data) throw new RuntimeException("dataType is provided but data is missing.")
-        variables.dataType = dataType
+        variables.dataTypeId = dataType
         variables.data = data
     }
 
@@ -67,9 +74,9 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'createValidationRun')
-
-    // Validation run properties
-    Validation.setValidationRunProperties(this, params, response, 'createValidationRun')
+    if (GraphQL.checkForMutationErrors(response, 'createValidationRun', ontrackCliIgnoreErrors())) {
+        // Validation run properties
+        Validation.setValidationRunProperties(this, params, response, 'createValidationRun')
+    }
 
 }
