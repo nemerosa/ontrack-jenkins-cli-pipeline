@@ -22,14 +22,13 @@ class AutoVersioningDependencyTest {
                 [:],
                 null,
                 "dep1",
+                null,
+                null,
+                null,
+                null,
         )
         def s = dep.toString()
         println(s)
-    }
-
-    @Test
-    void parsing() {
-        def yaml =
     }
 
 }
