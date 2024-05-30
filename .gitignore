@@ -13,3 +13,6 @@ bin
 .settings
 .project
 .classpath
+
+# Ignoring some Git files
+*.patch
