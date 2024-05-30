@@ -2,7 +2,9 @@
 
 pipeline {
 
-    agent any
+    agent {
+        label "do && c-2"
+    }
 
     options {
         // General Jenkins job properties

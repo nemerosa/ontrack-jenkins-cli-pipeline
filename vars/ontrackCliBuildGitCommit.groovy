@@ -1,5 +1,4 @@
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
-import net.nemerosa.ontrack.jenkins.pipeline.properties.MetaInfoPropertyUtils
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String, ?> params = [:]) {
@@ -7,7 +6,7 @@ def call(Map<String, ?> params = [:]) {
 
     // Not for pull requests
     if (env.BRANCH_NAME ==~ 'PR-.*') {
-        echo "No Ontrack build meta info for pull requests."
+        echo "No Ontrack build Git commit for pull requests."
         return
     }
 
@@ -16,29 +15,26 @@ def call(Map<String, ?> params = [:]) {
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
     String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
     String build = ParamUtils.getParam(params, "build", env.ONTRACK_BUILD_NAME as String)
-
-    boolean append = ParamUtils.getBooleanParam(params, "append", true)
+    String gitCommit = ParamUtils.getParam(params, "gitCommit", env.GIT_COMMIT as String)
 
     // GraphQL query
 
     String query = '''
-        mutation BuildMetaInfo(
+        mutation BuildGitCommit(
 			$project: String!,
-			$branch: String!, 
+			$branch: String!,
 			$build: String!,
-			$metaInfoPropertyAppend: Boolean!,
-			$metaInfoPropertyItems: [MetaInfoPropertyItemInput!]!,
+			$gitCommit: String!,
 		) {
-			setBuildMetaInfoProperty(input: {
+			setBuildGitCommitProperty(input: {
 				project: $project,
 				branch: $branch,
 				build: $build,
-				append: $metaInfoPropertyAppend,
-				items: $metaInfoPropertyItems,
+				commit: $gitCommit,
 			}) {
-			    errors {
-			        message
-			    }
+				errors {
+					message
+				}
 			}
 		}
     '''
@@ -49,12 +45,8 @@ def call(Map<String, ?> params = [:]) {
             project: project,
             branch: branch,
             build: build,
-            metaInfoPropertyAppend: append,
+            gitCommit: gitCommit,
     ]
-
-    // Meta info property
-
-    MetaInfoPropertyUtils.setVariables(params, variables)
 
     // GraphQL call
 
@@ -66,6 +58,6 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'setBuildMetaInfoProperty', ontrackCliIgnoreErrors())
+    GraphQL.checkForMutationErrors(response, 'setBuildGitCommitProperty', ontrackCliIgnoreErrors())
 
 }

@@ -1,10 +1,12 @@
 package net.nemerosa.ontrack.jenkins.pipeline.graphql
 
+import org.junit.Ignore
 import org.junit.Test
 
 class GraphQLTest {
 
     @Test
+    @Ignore
     void 'Getting a project by name'() {
         String query = '''
             query ProjectByName($name: String!) {

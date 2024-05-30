@@ -4,19 +4,17 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 def call(Map<String, ?> params = [:]) {
     if (ontrackCliFailsafe()) return
 
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack auto versioning check on promotion for pull requests."
+        return
+    }
+
     // Parameters
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
     String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
     String build = ParamUtils.getParam(params, "build", env.ONTRACK_BUILD_NAME as String)
-    boolean logging = ParamUtils.getBooleanParam(params, "logging", false)
-
-    // Logging
-    Closure logger = { String message -> }
-    if (logging) {
-        logger = { String message ->
-            println(message)
-        }
-    }
+    boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING)
 
     // Query
 
@@ -26,7 +24,7 @@ def call(Map<String, ?> params = [:]) {
             $branch: String!,
             $build: String!,
         ) {
-            checkAutoVersioningConfig(input: {
+            checkAutoVersioning(input: {
                 project: $project,
                 branch: $branch,
                 build: $build,
@@ -56,6 +54,6 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'checkAutoVersioningConfig')
+    GraphQL.checkForMutationErrors(response, 'checkAutoVersioningConfig', ontrackCliIgnoreErrors())
 
 }

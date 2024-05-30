@@ -12,6 +12,12 @@ def call(Map<String, ?> params = [:]) {
     // Parsing the JUnit results
     def results = junit(testResults: pattern, allowEmptyResults: allowEmptyResults)
 
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack for pull requests."
+        return
+    }
+
     // Getting results details
     int passed = results.passCount
     int skipped = results.skipCount
@@ -70,10 +76,10 @@ def call(Map<String, ?> params = [:]) {
 
     // Checks for errors
 
-    GraphQL.checkForMutationErrors(response, 'validateBuildWithTests')
-
-    // Validation run properties
-    Validation.setValidationRunProperties(this, params, response, 'validateBuildWithTests')
+    if (GraphQL.checkForMutationErrors(response, 'validateBuildWithTests', ontrackCliIgnoreErrors())) {
+        // Validation run properties
+        Validation.setValidationRunProperties(this, params, response, 'validateBuildWithTests')
+    }
 
     // Returning the results
     return results

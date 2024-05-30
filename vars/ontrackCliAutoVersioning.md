@@ -141,8 +141,19 @@ dependencies:
   * `labelOnly` - using the build label only (required)
   * `metaInfo/<category>/<name>` or `metaInfo/<name>` - the version is required to be stored in the meta information of the source build, identified its name and optional category
 * `prTitleTemplate` - (optional) template for the title of the auto-versioning PR
-* `prBodyTemplate` - (optional) template for the body of the auto-versioning PR 
-* `prBodyTemplateFormat` - (optional) template format for the body of the auto-versioning PR. By default using text (`plain`) but `html` and `markdown` are also supported. 
+* `prBodyTemplate` - (optional) template for the body of the auto-versioning PR
+* `prBodyTemplateFormat` - (optional) template format for the body of the auto-versioning PR. By default using text (`plain`) but `html` and `markdown` are also supported.
+* `reviewers` - list of user names to add as reviewers to the auto versioning pull requests
+* `notifications` - optional list of [notifications](#notifications) to send upon an auto-versioning event
+
+#### Notifications
+
+Each notification object has the following parameters:
+
+* `channel` - id of the channel to use
+* `config` - configuration of the channel (as a map)
+* `scope` - list of scopes to listen to
+* `notificationTemplate` - optional template for the notification's text
 
 ### See also
 

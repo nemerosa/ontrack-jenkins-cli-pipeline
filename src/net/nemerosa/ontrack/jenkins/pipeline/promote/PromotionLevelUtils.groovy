@@ -39,19 +39,24 @@ class PromotionLevelUtils {
 			}
         '''
 
+        boolean autoPromotion = false
+        if (validations || promotions) {
+            autoPromotion = true
+        }
+
         def variables = [
                 project: project,
                 branch: branch,
                 promotion: promotion,
                 description: '',
-                autoPromotion: validations || promotions,
+                autoPromotion: autoPromotion,
                 validationStamps: validations,
                 promotionLevels: promotions,
         ]
 
         def response = dsl.ontrackCliGraphQL(query: query, variables: variables, logging: logging)
-        GraphQL.checkForMutationErrors(response, 'setupPromotionLevel')
-        GraphQL.checkForMutationErrors(response, 'setPromotionLevelAutoPromotionProperty')
+        GraphQL.checkForMutationErrors(response, 'setupPromotionLevel', dsl.ontrackCliIgnoreErrors())
+        GraphQL.checkForMutationErrors(response, 'setPromotionLevelAutoPromotionProperty', dsl.ontrackCliIgnoreErrors())
     }
 
 }

@@ -13,23 +13,31 @@ import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode
 import org.jenkinsci.plugins.workflow.graph.FlowNode
 import org.jenkinsci.plugins.workflow.graph.StepNode
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor
+import org.jenkinsci.plugins.workflow.job.views.FlowGraphAction
 
 class JenkinsUtils {
 
-    static String getValidationRunStatusFromStage(def dsl) {
+    static String getValidationRunStatusFromStage(def dsl, Closure logger = {}) {
         // Gets the current node
         FlowNode flowNode = dsl.getContext FlowNode
         if (flowNode != null) {
+            logger("[jenkins][flow] Found current flow node from context")
             // Gets the current stage
             FlowNode stage = getStage(flowNode)
             // If there is a stage, gets its status and converts it
             if (stage != null) {
+                logger("[jenkins][flow] Found current stage from current node")
                 Result result = getStageStatusAsResult(stage)
+                logger("[jenkins][flow] Stage result = $result")
                 return toValidationRunStatus(result)
+            } else {
+                logger("[jenkins][flow] Found NO stage from current node")
             }
+        } else {
+            logger("[jenkins][flow] NO current flow node from context. About to get the status from the run, not the stage.")
+            // No node not stage, takes the current build status as a fallback
+            return getValidationRunStatusFromRun(dsl)
         }
-        // No node not stage, takes the current build status as a fallback
-        return getValidationRunStatusFromRun(dsl)
     }
 
     static String getValidationRunStatusFromRun(def dsl) throws IOException, InterruptedException {
@@ -42,7 +50,7 @@ class JenkinsUtils {
         }
     }
 
-    static RunInfo getRunInfo(def dsl, Closure logger) throws IOException, InterruptedException {
+    static RunInfo getRunInfo(def dsl, boolean useBuildDuration, Closure logger) throws IOException, InterruptedException {
         // Gets the associated run
         Run run = dsl.getContext Run
         if (run == null) {
@@ -86,8 +94,11 @@ class JenkinsUtils {
             runInfo.runTime = (System.currentTimeMillis() - run.getStartTimeInMillis()) / 1000L;
         }
 
-        // Adaptation
-        adaptRunInfo(dsl, runInfo, logger)
+        // Adaptation for the stage
+        if (!useBuildDuration) {
+            adaptRunInfo(dsl, runInfo, logger)
+        }
+
         // Run info if not empty
         if (runInfo.isEmpty()) {
             return null
@@ -97,14 +108,29 @@ class JenkinsUtils {
     }
 
     private static void adaptRunInfo(def dsl, RunInfo runInfo, Closure logger) {
-        // Gets the (current) duration of the stage
-        FlowNode flowNode = dsl.getContext FlowNode
-        if (flowNode != null) {
-            Long durationMilliSeconds = getTiming(flowNode, logger)
-            if (durationMilliSeconds != null) {
-                runInfo.runTime = durationMilliSeconds / 1000
+        // Gets the current stage
+        def stage = getCurrentStage(dsl, logger)
+        if (stage != null) {
+            def timeMs = getExecutionTimeMs(stage)
+            if (timeMs != null) {
+                runInfo.runTime = timeMs / 1000
             }
         }
+    }
+
+    static FlowNode getCurrentStage(def dsl, Closure logger) {
+        String stageName = dsl.env.STAGE_NAME as String
+        logger("Trying to get the current stage: ${stageName}")
+
+        def flowGraphAction = dsl.currentBuild.rawBuild.getAction(FlowGraphAction)
+        logger("Flow Graph Action: ${flowGraphAction}")
+        logger("Flow Nodes: ${flowGraphAction.nodes}")
+
+        def stage = flowGraphAction.nodes.find { node ->
+            node instanceof StepStartNode && node.displayName == stageName
+        }
+        logger("Stage: ${stage}")
+        return stage
     }
 
     private static Long getTiming(FlowNode node, Closure logger) {
@@ -138,7 +164,7 @@ class JenkinsUtils {
         return getTiming(node.getParents(), logger)
     }
 
-    private static Long getExecutionTimeMs(FlowNode node) {
+    static Long getExecutionTimeMs(FlowNode node) {
         TimingAction timingAction = node.getAction(TimingAction.class)
         if (timingAction != null) {
             long startTime = timingAction.getStartTime()

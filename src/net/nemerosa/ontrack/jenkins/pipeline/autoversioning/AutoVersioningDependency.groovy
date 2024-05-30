@@ -21,8 +21,10 @@ class AutoVersioningDependency {
     private final String prTitleTemplate
     private final String prBodyTemplate
     private final String prBodyTemplateFormat
+    private final List<String> reviewers
+    private final List<AutoVersioningNotification> notifications
 
-    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource, String prTitleTemplate, String prBodyTemplate, String prBodyTemplateFormat) {
+    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource, String prTitleTemplate, String prBodyTemplate, String prBodyTemplateFormat, List<String> reviewers, List<AutoVersioningNotification> notifications) {
         this.sourceProject = sourceProject
         this.sourceBranch = sourceBranch
         this.sourcePromotion = sourcePromotion
@@ -42,6 +44,8 @@ class AutoVersioningDependency {
         this.prTitleTemplate = prTitleTemplate
         this.prBodyTemplate = prBodyTemplate
         this.prBodyTemplateFormat = prBodyTemplateFormat
+        this.reviewers = reviewers
+        this.notifications = notifications
     }
 
     String getSourceProject() {
@@ -120,6 +124,14 @@ class AutoVersioningDependency {
         return prBodyTemplateFormat
     }
 
+    List<String> getReviewers() {
+        return reviewers
+    }
+
+    List<AutoVersioningNotification> getNotifications() {
+        return notifications
+    }
+
     Map<String, ?> toMap() {
         return [
                 sourceProject       : sourceProject,
@@ -141,6 +153,8 @@ class AutoVersioningDependency {
                 prTitleTemplate     : prTitleTemplate,
                 prBodyTemplate      : prBodyTemplate,
                 prBodyTemplateFormat: prBodyTemplateFormat,
+                reviewers           : reviewers,
+                notifications       : notifications?.collect { it.toMap() },
         ]
     }
 
