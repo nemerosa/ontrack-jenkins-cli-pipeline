@@ -220,3 +220,7 @@ variable to `true`.
 | ONTRACK_TOKEN         | _Required_    | API token used to connect to Ontrack                   |
 | ONTRACK_STOP          | `false`       | See [Failsafe](#failsafe)                              |
 | ONTRACK_IGNORE_ERRORS | `false`       | See [Ignoring errors](#ignoring-errors)                |
+| ONTRACK_USE_LABEL     | `false`       | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
+| ONTRACK_SCM           | `github`      | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
+| ONTRACK_SCM_CONFIG    | `github.com`  | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
+| ONTRACK_SCM_ISSUES    | ``            | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
