@@ -113,8 +113,8 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 ### Creating Ontrack items
 
 * [`ontrackCliBuild`](vars/ontrackCliBuild.md) - creates an Ontrack build entry based on current information
-* [`ontrackCliValidate`](vars/ontrackCliValidate.md) - creates an Ontrack validation run for the current build, based on
-  current information or provided information
+* [`ontrackCliPromote`](vars/ontrackCliPromote.md) - creates an Ontrack promotion run for the current build, based on current information or provided information
+* [`ontrackCliValidate`](vars/ontrackCliValidate.md) - creates an Ontrack validation run for the current build, based on current information or provided information
 * [`ontrackCliValidateTests`](vars/ontrackCliValidateTests.md) - creates an Ontrack validation run based on JUnit test
   results
 * [`ontrackCliValidateWithTestResults`](vars/ontrackCliValidateWithTestResults.md) - same as above but reuses existing
