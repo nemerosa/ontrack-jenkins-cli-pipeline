@@ -8,6 +8,7 @@ def call(Map<String, ?> params = [:]) {
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
     String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
     String validation = ParamUtils.getParam(params, "validation")
+    String name = params.name ?: ''
     String channel = ParamUtils.getParam(params, "channel")
     def channelConfig = params.channelConfig
     if (!channelConfig) {
@@ -22,6 +23,7 @@ def call(Map<String, ?> params = [:]) {
     def response = ontrackCliGraphQL(
             logging: logging,
             variables: [
+                    name           : name,
                     project        : project,
                     branch         : branch,
                     validation     : validation,
@@ -33,6 +35,7 @@ def call(Map<String, ?> params = [:]) {
             ],
             query: '''
                 mutation SetValidationStampSubscriptions(
+                    $name: String,
                     $project: String!,
                     $branch: String!,
                     $validation: String!,
@@ -43,6 +46,7 @@ def call(Map<String, ?> params = [:]) {
                     $contentTemplate: String,
                 ) {
                     subscribeValidationStampToEvents(input: {
+                        name: $name,
                         project: $project,
                         branch: $branch,
                         validation: $validation,

@@ -7,6 +7,7 @@ def call(Map<String, ?> params = [:]) {
     // Parameters
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
     String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
+    String name = params.name ?: ''
     String channel = ParamUtils.getParam(params, "channel")
     def channelConfig = params.channelConfig
     if (!channelConfig) {
@@ -21,6 +22,7 @@ def call(Map<String, ?> params = [:]) {
     def response = ontrackCliGraphQL(
             logging: logging,
             variables: [
+                    name           : name,
                     project        : project,
                     branch         : branch,
                     channel        : channel,
@@ -31,6 +33,7 @@ def call(Map<String, ?> params = [:]) {
             ],
             query: '''
                 mutation SetBranchSubscriptions(
+                    $name: String,
                     $project: String!,
                     $branch: String!,
                     $channel: String!,
@@ -40,6 +43,7 @@ def call(Map<String, ?> params = [:]) {
                     $contentTemplate: String,
                 ) {
                     subscribeBranchToEvents(input: {
+                        name: $name,
                         project: $project,
                         branch: $branch,
                         channel: $channel,

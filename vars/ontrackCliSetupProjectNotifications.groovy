@@ -6,6 +6,7 @@ def call(Map<String, ?> params = [:]) {
 
     // Parameters
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
+    String name = params.name ?: ''
     String channel = ParamUtils.getParam(params, "channel")
     def channelConfig = params.channelConfig
     if (!channelConfig) {
@@ -20,6 +21,7 @@ def call(Map<String, ?> params = [:]) {
     def response = ontrackCliGraphQL(
             logging: logging,
             variables: [
+                    name           : name,
                     project        : project,
                     channel        : channel,
                     channelConfig  : channelConfig,
@@ -29,6 +31,7 @@ def call(Map<String, ?> params = [:]) {
             ],
             query: '''
                 mutation SetProjectSubscriptions(
+                    $name: String,
                     $project: String!,
                     $channel: String!,
                     $channelConfig: JSON!,
@@ -37,6 +40,7 @@ def call(Map<String, ?> params = [:]) {
                     $contentTemplate: String,
                 ) {
                     subscribeProjectToEvents(input: {
+                        name: $name,
                         project: $project,
                         channel: $channel,
                         channelConfig: $channelConfig,
