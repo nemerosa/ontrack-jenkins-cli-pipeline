@@ -231,6 +231,8 @@ variable to `true`.
 
 > Requires Ontrack >= 4.9
 
+#### 4.9.0
+
 * support for Ontrack subscriptions names
 
 ### 2.x
