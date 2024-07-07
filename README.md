@@ -224,3 +224,15 @@ variable to `true`.
 | ONTRACK_SCM           | `github`      | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
 | ONTRACK_SCM_CONFIG    | `github.com`  | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
 | ONTRACK_SCM_ISSUES    | ``            | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
+
+## Change log
+
+### 4.9
+
+> Requires Ontrack >= 4.9
+
+* support for Ontrack subscriptions names
+
+### 2.x
+
+* old versions not linked to a given version of Ontrack
