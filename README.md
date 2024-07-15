@@ -29,18 +29,27 @@ You can also use the Jenkins management UI to register this library:
 
 ## Setup
 
-The [steps](#steps) provided by this library, in order to avoid redundant configuration, rely on predefined environment
-variables and credentials.
+The [steps](#steps) provided by this library rely on environment variables and credentials.
 
-> Those environment variables and credentials are not _strictly_ required but they will ease the use of the Ontrack
-> steps.
+Set the `ONTRACK_URL` Jenkins environment variable to the URL to Ontrack.
 
-In most of the cases, you just need to define:
+Either:
 
-* `ONTRACK_URL` - URL to Ontrack
-* `ONTRACK_TOKEN` - secret text credentials entry containing the authentication token used to connect to Ontrack
+* create an `ONTRACK_TOKEN` secret text credentials entry containing the authentication token used to connect to Ontrack
+* or reuse an existing credentials entry by referring to its ID in an `ONTRACK_TOKEN_ID` environment variable
 
-See [`ontrackCliSetup`](vars/ontrackCliSetup.md) for more information.
+By default, projects and branches managed by this pipeline steps will be linked to a GitHub configuration named `github.com`,
+using GitHub as an issue tracker.
+
+For other settings, use the following environment variables:
+
+* `ONTRACK_SCM` - defaults to `github` - type of SCM, like `github` or `bitbucket-server`.
+* `ONTRACK_SCM_CONFIG` - defaults to `github.com` - name of the SCM configuration in Ontrack.
+* `ONTRACK_SCM_JIRA` - using the defaults if not configured - identifier of the issue service configuration. For example, for
+  Jira, it looks like `jira//<name of the config>`. So if your Jira configuration in Ontrack is named "MyJira", the
+  identifier will be `jira//MyConfig`.
+
+Note that all these settings can be overridden at pipeline level. See [`ontrackCliSetup`](vars/ontrackCliSetup.md) for more information.
 
 ## Usage
 
@@ -213,17 +222,18 @@ variable to `true`.
 
 ## Environment variables
 
-| Variable              | Default value | Description                                            |
-|-----------------------|---------------|--------------------------------------------------------|
-| ONTRACK_LOGGING       | `false`       | Enabling by default logging for all Ontrack operations |
-| ONTRACK_URL           | _Required_    | URL to the Ontrack server                              |
-| ONTRACK_TOKEN         | _Required_    | API token used to connect to Ontrack                   |
-| ONTRACK_STOP          | `false`       | See [Failsafe](#failsafe)                              |
-| ONTRACK_IGNORE_ERRORS | `false`       | See [Ignoring errors](#ignoring-errors)                |
-| ONTRACK_USE_LABEL     | `false`       | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
-| ONTRACK_SCM           | `github`      | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
-| ONTRACK_SCM_CONFIG    | `github.com`  | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
-| ONTRACK_SCM_ISSUES    | ``            | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)       |
+| Variable              | Default value                    | Description                                                                    |
+|-----------------------|----------------------------------|--------------------------------------------------------------------------------|
+| ONTRACK_LOGGING       | `false`                          | Enabling by default logging for all Ontrack operations                         |
+| ONTRACK_URL           | _Required_                       | URL to the Ontrack server                                                      |
+| ONTRACK_TOKEN         | _Required_ or `ONTRACK_TOKEN_ID` | (credentials entry) API token used to connect to Ontrack                       |
+| ONTRACK_TOKEN_ID      | _Required_ or `ONTRACK_TOKEN`    | ID of a text credentials entry containing API token used to connect to Ontrack |
+| ONTRACK_STOP          | `false`                          | See [Failsafe](#failsafe)                                                      |
+| ONTRACK_IGNORE_ERRORS | `false`                          | See [Ignoring errors](#ignoring-errors)                                        |
+| ONTRACK_USE_LABEL     | `false`                          | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)                               |
+| ONTRACK_SCM           | `github`                         | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)                               |
+| ONTRACK_SCM_CONFIG    | `github.com`                     | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)                               |
+| ONTRACK_SCM_ISSUES    | ``                               | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)                               |
 
 ## Change log
 
