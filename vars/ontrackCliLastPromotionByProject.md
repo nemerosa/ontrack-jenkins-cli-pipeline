@@ -19,6 +19,7 @@ This step returns a JSON object describing the build. It can be `null` if the bu
 | Property  | Type   | Description                                            |
 |-----------|--------|--------------------------------------------------------|
 | `id`      | String | ID of the build                                        |
+| `branch`  | String | Name of the branch of the build                        |
 | `name`    | String | Name of the build                                      |
 | `release` | String | (optional) Release/label/version attached to the build |
 | `commit`  | String | (optional) Git commit full SHA attached to the build   |
@@ -27,6 +28,7 @@ If the [`injectEnv`](#parameters) parameter is set to `true`, the following envi
 
 * `ONTRACK_BUILD_LAST_PROMOTION` - `true` if the build is defined, `false` otherwise
 * `ONTRACK_BUILD_ID` - ID of the build if defined
+* `ONTRACK_BUILD_BRANCH_NAME` - name of the branch of the build if defined
 * `ONTRACK_BUILD_NAME` - name of the build if defined
 * `ONTRACK_BUILD_RELEASE` - release of the build if defined
 * `ONTRACK_BUILD_COMMIT` - commit of the build if defined

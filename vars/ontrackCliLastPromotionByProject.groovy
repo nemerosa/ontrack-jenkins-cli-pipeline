@@ -23,6 +23,9 @@ def call(Map<String, ?> params = [:]) {
                   ) {
                     id
                     name
+                    branch {
+                        name
+                    }
                     releaseProperty {
                       value
                     }
@@ -48,6 +51,7 @@ def call(Map<String, ?> params = [:]) {
         if (logging) {
             println("[ontrack-cli-last-promotion-by-project] Build found for promotion ${promotion}")
             println("[ontrack-cli-last-promotion-by-project] Build ID = ${build.id}")
+            println("[ontrack-cli-last-promotion-by-project] Build branch = ${build.branch.name}")
             println("[ontrack-cli-last-promotion-by-project] Build name = ${build.name}")
             println("[ontrack-cli-last-promotion-by-project] Build release = ${release}")
             println("[ontrack-cli-last-promotion-by-project] Build commit = ${commit}")
@@ -56,6 +60,7 @@ def call(Map<String, ?> params = [:]) {
         if (injectEnv) {
             env.ONTRACK_BUILD_LAST_PROMOTION = 'true'
             env.ONTRACK_BUILD_ID = build.id as String
+            env.ONTRACK_BUILD_BRANCH_NAME = build.branch.name as String
             env.ONTRACK_BUILD_NAME = build.name
             if (release) {
                 env.ONTRACK_BUILD_RELEASE = release
