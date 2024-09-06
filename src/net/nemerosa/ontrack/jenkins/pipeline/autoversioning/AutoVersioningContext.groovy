@@ -105,6 +105,21 @@ class AutoVersioningContext {
             }
         }
 
+        List<AutoVersioningDependencyPath> additionalPaths = null
+        def additionalPathsArray = params.additionalPaths
+        if (additionalPathsArray) {
+            additionalPaths = additionalPathsArray.collect {
+                new AutoVersioningDependencyPath(
+                        it.path as String,
+                        it.regex as String,
+                        it.property as String,
+                        it.propertyRegex as String,
+                        it.propertyType as String,
+                        it.versionSource as String,
+                )
+            }
+        }
+
         String postProcessing = params.postProcessing
         def postProcessingConfig = params.postProcessingConfig as Map<String, ?> ?: [:]
 
@@ -131,6 +146,7 @@ class AutoVersioningContext {
                 prBodyTemplateFormat,
                 reviewers,
                 notifications,
+                additionalPaths,
         )
 
         // Adding this configuration to the list

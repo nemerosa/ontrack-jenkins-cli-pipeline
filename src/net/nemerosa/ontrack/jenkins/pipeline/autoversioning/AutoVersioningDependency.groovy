@@ -23,8 +23,9 @@ class AutoVersioningDependency {
     private final String prBodyTemplateFormat
     private final List<String> reviewers
     private final List<AutoVersioningNotification> notifications
+    private final List<AutoVersioningDependencyPath> additionalPaths
 
-    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource, String prTitleTemplate, String prBodyTemplate, String prBodyTemplateFormat, List<String> reviewers, List<AutoVersioningNotification> notifications) {
+    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource, String prTitleTemplate, String prBodyTemplate, String prBodyTemplateFormat, List<String> reviewers, List<AutoVersioningNotification> notifications, List<AutoVersioningDependencyPath> additionalPaths) {
         this.sourceProject = sourceProject
         this.sourceBranch = sourceBranch
         this.sourcePromotion = sourcePromotion
@@ -46,6 +47,7 @@ class AutoVersioningDependency {
         this.prBodyTemplateFormat = prBodyTemplateFormat
         this.reviewers = reviewers
         this.notifications = notifications
+        this.additionalPaths = additionalPaths
     }
 
     String getSourceProject() {
@@ -132,6 +134,10 @@ class AutoVersioningDependency {
         return notifications
     }
 
+    List<AutoVersioningDependencyPath> getAdditionalPaths() {
+        return additionalPaths
+    }
+
     Map<String, ?> toMap() {
         return [
                 sourceProject       : sourceProject,
@@ -155,6 +161,7 @@ class AutoVersioningDependency {
                 prBodyTemplateFormat: prBodyTemplateFormat,
                 reviewers           : reviewers,
                 notifications       : notifications?.collect { it.toMap() },
+                additionalPaths     : additionalPaths?.collect { it.toMap() },
         ]
     }
 
