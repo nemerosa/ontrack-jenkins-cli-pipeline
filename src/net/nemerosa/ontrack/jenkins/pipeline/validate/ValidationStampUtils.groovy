@@ -194,14 +194,16 @@ class ValidationStampUtils {
             String branch,
             String validation,
             String description,
-            boolean warningIfSkipped
+            boolean warningIfSkipped,
+            boolean failWhenNoResults
     ) {
         def variables = [
                 project         : project,
                 branch          : branch,
                 validation      : validation,
-                description     : '',
-                warningIfSkipped: warningIfSkipped
+                description     : description,
+                warningIfSkipped: warningIfSkipped,
+                failWhenNoResults: failWhenNoResults,
         ]
         def response = dsl.ontrackCliGraphQL(
                 query: '''
@@ -210,14 +212,16 @@ class ValidationStampUtils {
                         $branch: String!,
                         $validation: String!,
                         $description: String,
-                        $warningIfSkipped: Boolean!
+                        $warningIfSkipped: Boolean!,
+                        $failWhenNoResults: Boolean!,
                     ) {
                         setupTestSummaryValidationStamp(input: {
                             project: $project,
                             branch: $branch,
                             validation: $validation,
                             description: $description,
-                            warningIfSkipped: $warningIfSkipped
+                            warningIfSkipped: $warningIfSkipped,
+                            failWhenNoResults: $failWhenNoResults,
                         }) {
                             errors {
                                 message

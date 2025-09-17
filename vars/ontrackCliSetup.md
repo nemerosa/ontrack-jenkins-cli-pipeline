@@ -61,6 +61,7 @@ validations: [
     dataType: "net.nemerosa.ontrack.extension.general.validation.TestSummaryValidationDataType",
     dataConfig: [
         warningIfSkipped: true,
+        failWhenNoResults: false,
     ],
  ],
 ]
@@ -73,6 +74,7 @@ Additionally, specific attributes are available for common data types.
 `tests` - for validation based on test summary, containing the following attributes:
 
 * `warningIfSkipped` - defaults to `false`
+* `failWhenNoResults` - defaults to `false`
     
 Example:
 
@@ -82,6 +84,7 @@ validations: [
     name: "BUILD",
     tests: [
         warningIfSkipped: true,
+        failWhenNoResults: false,
     ]
  ],
 ]

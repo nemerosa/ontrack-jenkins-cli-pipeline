@@ -429,8 +429,12 @@ def call(Map<String, ?> params = [:]) {
                 // Tests
                 else if (validation.tests) {
                     boolean warningIfSkipped = false
+                    boolean failWhenNoResults = false
                     if (validation.tests.warningIfSkipped != null) {
                         warningIfSkipped = validation.tests.warningIfSkipped as boolean
+                    }
+                    if (validation.tests.failWhenNoResults != null) {
+                        failWhenNoResults = validation.tests.failWhenNoResults as boolean
                     }
                     ValidationStampUtils.setupTestsValidationStamp(
                             this,
@@ -440,6 +444,7 @@ def call(Map<String, ?> params = [:]) {
                             name,
                             '',
                             warningIfSkipped,
+                            failWhenNoResults,
                     )
                 }
                 // CHML
