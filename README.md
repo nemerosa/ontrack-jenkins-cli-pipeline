@@ -118,6 +118,7 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 * [`ontrackCliSetup`](vars/ontrackCliSetup.md) - general purpose setup task to set up Ontrack in your pipeline, from
   creating common environment variables to initializing project and branch in Ontrack for your pipeline.
 * [`ontrackCliSetupSonarQube`](vars/ontrackCliSetupSonarQube.md) - setup of SonarQube properties at project level
+* [`ontrackCliCIConfig`](vars/ontrackCliCIConfig.md) - uses the CI context to setup the project, the branch and the build in Yontrack (V5 only)
 
 ### Creating Ontrack items
 
@@ -210,6 +211,10 @@ You can run the Ontrack steps in a mode where any error is ignored.
 > may cause some issues in some pipelines relying on these values, so it's not a perfect solution.
 
 Set the `ONTRACK_IGNORE_ERRORS` global environment variable to `true`.
+
+Associated steps:
+
+* [`ontrackCliError`](vars/ontrackCliError.md) - raises an error or logs it, depending on the global settings 
 
 ## Failsafe
 
