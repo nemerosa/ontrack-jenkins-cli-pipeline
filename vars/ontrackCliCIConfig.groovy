@@ -24,7 +24,8 @@ def call(Map<String, ?> params = [:]) {
                 k.startsWith('NODE_') ||
                 k.startsWith('BUILD_') ||
                 k == "JENKINS_URL" ||
-                k == "BRANCH_NAME"
+                k == "BRANCH_NAME" ||
+                k == "VERSION"
     }.collect { k, v ->
         [name: k, value: v]
     } + [
