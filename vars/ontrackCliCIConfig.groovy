@@ -19,6 +19,7 @@ def call(Map<String, ?> params = [:]) {
     logger("CI config: $configText")
 
     def expandedConfigText = CIConfigHelper.expandConfig(this, configText, logger)
+    logger("CI expanded config: $expandedConfigText")
 
     // Collecting the environment
     def environment = env.getEnvironment().findAll { k, _ ->
