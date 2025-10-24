@@ -1,0 +1,35 @@
+version: v1
+configuration:
+  defaults:
+    branch:
+      validations:
+        BUILD:
+          tests:
+            warningIfSkipped: true
+        CHML:
+          chml:
+            warning:
+              level: 'HIGH'
+              value: 1
+            failed:
+              level: 'CRITICAL'
+              value: 1
+        PERCENTAGE:
+          percentage:
+            okIfGreater: false
+            failure: 80
+            warning: 50
+        METRICS:
+          metrics: { }
+        GENERIC: { }
+      promotions:
+        BRONZE:
+          validations:
+            - BUILD
+        SILVER:
+          promotions:
+            - BRONZE
+          validations:
+            - CHML
+            - PERCENTAGE
+            - METRICS

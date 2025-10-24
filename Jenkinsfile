@@ -1,4 +1,4 @@
-@Library("ontrack-jenkins-cli-pipeline@main") _
+@Library("ontrack-jenkins-cli-pipeline@v5") _
 
 pipeline {
 
@@ -28,63 +28,7 @@ pipeline {
 
         stage("Setup") {
             steps {
-                ontrackCliSetup(
-                     autoValidationStamps: true,
-                     validations: [
-                         [
-                            name: "BUILD",
-                            tests: [
-                                warningIfSkipped: true,
-                            ]
-                         ],
-                         [
-                            name: "CHML",
-                            chml: [
-                                failed: [
-                                    level: 'CRITICAL',
-                                    value: 1,
-                                ],
-                                warning: [
-                                    level: 'HIGH',
-                                    value: 1,
-                                ]
-                            ],
-                         ],
-                         [
-                            name: "PERCENTAGE",
-                            percentage: [
-                                failure: 80,
-                                warning: 50,
-                                okIfGreater: false,
-                            ],
-                         ],
-                         [
-                            name: "METRICS",
-                            metrics: true
-                         ],
-                         [
-                           name: "GENERIC",
-                         ]
-                     ],
-                     promotions: [
-                        BRONZE: [
-                            validations: [
-                                "BUILD"
-                            ]
-                        ],
-                        SILVER: [
-                            promotions: [
-                                "BRONZE",
-                            ],
-                            validations: [
-                                "CHML",
-                                "PERCENTAGE",
-                                "METRICS",
-                            ],
-                        ],
-                     ]
-                )
-                ontrackCliBuild()
+                ontrackCliCIConfig()
             }
         }
 
