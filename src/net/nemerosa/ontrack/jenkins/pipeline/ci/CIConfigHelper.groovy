@@ -1,11 +1,9 @@
 package net.nemerosa.ontrack.jenkins.pipeline.ci
 
 import org.yaml.snakeyaml.Yaml
-import com.cloudbees.groovy.cps.NonCPS
 
 class CIConfigHelper {
 
-    @NonCPS
     static String expandConfig(def dsl, String configText, Closure logger) {
         def yaml = new Yaml()
         def configData = yaml.load(configText)
@@ -20,7 +18,6 @@ class CIConfigHelper {
      * @param logger Logger closure for debug output
      * @return The processed object with file references resolved
      */
-    @NonCPS
     static private def resolveYamlReferences(def dsl, def obj, Closure logger) {
         if (obj instanceof Map) {
             def result = [:]
