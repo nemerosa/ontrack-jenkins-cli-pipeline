@@ -49,7 +49,13 @@ class GraphQL {
                 def code = con.responseCode
                 logger("HTTP Code = $code)")
                 // Gets the response as text
-                def jsonResponse = con.inputStream.text
+                def jsonResponse
+                if (code >= 400) {
+                    // For error responses, read from errorStream
+                    jsonResponse = con.errorStream?.text ?: "No error response body"
+                } else {
+                    jsonResponse = con.inputStream.text
+                }
                 // Logging
                 logger("Response = $jsonResponse)")
                 // Error mgt
