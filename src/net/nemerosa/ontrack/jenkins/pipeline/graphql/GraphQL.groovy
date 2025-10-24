@@ -47,6 +47,7 @@ class GraphQL {
                 con.outputStream.write(jsonPayload.bytes)
                 // Gets the response code
                 def code = con.responseCode
+                logger("HTTP Code = $code)")
                 // Gets the response as text
                 def jsonResponse = con.inputStream.text
                 // Logging
