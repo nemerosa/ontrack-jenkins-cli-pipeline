@@ -22,6 +22,9 @@ pipeline {
     environment {
         // Logging disabled globally
         ONTRACK_LOGGING = false
+        // TODO Switch to ontrack.nemerosa.net when upgraded to V5
+        ONTRACK_URL = "https://demo.app.yontrack.com"
+        ONTRACK_TOKEN = credentials("YONTRACK_DEMO_TOKEN")
     }
 
     stages {
