@@ -2,6 +2,7 @@ version: v1
 configuration:
   defaults:
     branch:
+      autoVersioning: @.yontrack/auto-versioning.yaml
       validations:
         BUILD:
           tests:

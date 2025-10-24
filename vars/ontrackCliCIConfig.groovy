@@ -1,3 +1,4 @@
+import net.nemerosa.ontrack.jenkins.pipeline.ci.CIConfigHelper
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
@@ -14,8 +15,10 @@ def call(Map<String, ?> params = [:]) {
     }
 
     logger("Reading CI config at $configPath")
-    def config = readFile(file: configPath)
-    logger("CI config: $configPath")
+    def configText = readFile(file: configPath)
+    logger("CI config: $configText")
+
+    def expandedConfigText = CIConfigHelper.expandConfig(this, configText, logger)
 
     // Collecting the environment
     def environment = env.getEnvironment().findAll { k, _ ->
@@ -69,7 +72,7 @@ def call(Map<String, ?> params = [:]) {
                 }
             ''',
             variables: [
-                    config: config,
+                    config: expandedConfigText,
                     ci    : 'jenkins',
                     scm   : scm,
                     env   : environment,

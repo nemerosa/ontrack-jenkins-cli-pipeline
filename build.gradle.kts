@@ -42,4 +42,6 @@ dependencies {
     implementation("org.jenkins-ci.plugins:pipeline-graph-analysis:1.1@jar")
     implementation("org.jenkins-ci.plugins:structs:1.17@jar")
     implementation("javax.servlet:javax.servlet-api:3.1.0")
+    implementation("org.yaml:snakeyaml:1.33")
+    implementation("com.cloudbees:groovy-cps:1.24")
 }
