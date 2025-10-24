@@ -25,6 +25,7 @@ pipeline {
         // TODO Switch to ontrack.nemerosa.net when upgraded to V5
         ONTRACK_URL = "https://demo.app.yontrack.com"
         ONTRACK_TOKEN = credentials("YONTRACK_DEMO_TOKEN")
+        // ONTRACK_TOKEN = credentials('ONTRACK_TOKEN')
     }
 
     stages {
@@ -36,9 +37,6 @@ pipeline {
         }
 
         stage("Build") {
-            environment {
-                ONTRACK_TOKEN = credentials('ONTRACK_TOKEN')
-            }
             steps {
                 sh '''
                     ./gradlew test \\
