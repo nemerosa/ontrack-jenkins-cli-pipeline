@@ -17,7 +17,7 @@ def call(Map<String, ?> params = [:]) {
     def response = ontrackCliGraphQL(
             query: '''
                 query GetBuild($project: String!, $branch: String!, $build: String!) {
-                  builds(project: $project, branch: $branch, build: $build) {
+                  builds(project: $project, branch: $branch, name: $build) {
                     id
                     name
                     branch {
