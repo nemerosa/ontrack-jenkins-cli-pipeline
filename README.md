@@ -162,7 +162,13 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 * [`ontrackCliGetBuildByProjectAndVersion`](vars/ontrackCliGetBuildByProjectAndVersion.md) - getting a build using its
   release/label/version property inside a project
 * [`ontrackCliGetBuildByCommit`](vars/ontrackCliGetBuildByCommit.md) - getting a build in the current branch using its
-  commit
+* [`ontrackCliGetBuild`](vars/ontrackCliGetBuild.md) - getting some build technical information
+
+### Changelog steps
+
+* [`ontrackCliChangelogSincePromotion`](vars/ontrackCliChangelogSincePromotion.md) - creates a changelog from the current build to the last promotion
+
+
 
 ### Auto versioning setup
 
