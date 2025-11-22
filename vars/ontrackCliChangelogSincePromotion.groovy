@@ -25,6 +25,7 @@ def call(Map<String, ?> params = [:]) {
             project: project,
             branch: branch,
             build: build,
+            logging: logging,
     )
 
     // Getting the last promoted build on this branch
@@ -32,6 +33,7 @@ def call(Map<String, ?> params = [:]) {
             project: project,
             branch: branch,
             promotion: promotion,
+            logging: logging,
     )
 
     // Getting and rendering the changelog between the two builds
