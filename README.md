@@ -168,8 +168,6 @@ In this example, we use the `main` branch of the pipeline library but it's bette
 
 * [`ontrackCliChangelogSincePromotion`](vars/ontrackCliChangelogSincePromotion.md) - creates a changelog from the current build to the last promotion
 
-
-
 ### Auto versioning setup
 
 * [`ontrackCliAutoVersioning`](vars/ontrackCliAutoVersioning.md) - setting up the auto versioning for the branch
@@ -247,6 +245,15 @@ variable to `true`.
 | ONTRACK_SCM_ISSUES    | ``                               | See [`ontrackCliSetup`](vars/ontrackCliSetup.md)                               |
 
 ## Change log
+
+### 5.0
+
+> Requires Yontrack >= 5.0
+
+New steps:
+
+* [`ontrackCliCIConfig`](vars/ontrackCliCIConfig.md)
+* [`ontrackCliChangelogSincePromotion`](vars/ontrackCliChangelogSincePromotion.md)
 
 ### 4.9
 
