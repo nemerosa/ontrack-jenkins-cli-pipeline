@@ -63,8 +63,8 @@ def call(Map<String, ?> params = [:]) {
                 }
             ''',
             variables: [
-                    fromBuildId: fromBuild.id.toInt(),
-                    toBuildId  : currentBuild.id.toInt(),
+                    fromBuildId: fromBuild.id as int,
+                    toBuildId  : currentBuild.id as int,
                     renderer   : renderer,
                     config     : config,
             ],
