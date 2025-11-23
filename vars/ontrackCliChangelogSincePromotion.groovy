@@ -27,6 +27,9 @@ def call(Map<String, ?> params = [:]) {
             build: build,
             logging: logging,
     )
+    if (logging) {
+        echo("[ontrackCliChangelogSincePromotion] Current build = $currentBuild")
+    }
 
     // Getting the last promoted build on this branch
     def fromBuild = ontrackCliLastPromotion(
@@ -35,6 +38,9 @@ def call(Map<String, ?> params = [:]) {
             promotion: promotion,
             logging: logging,
     )
+    if (logging) {
+        echo("[ontrackCliChangelogSincePromotion] From build = $fromBuild")
+    }
 
     // Getting and rendering the changelog between the two builds
     def response = ontrackCliGraphQL(
