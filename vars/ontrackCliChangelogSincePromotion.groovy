@@ -38,7 +38,10 @@ def call(Map<String, ?> params = [:]) {
             promotion: promotion,
             logging: logging,
     )
-    if (logging) {
+    if (!fromBuild) {
+        echo("[ontrackCliChangelogSincePromotion] Could not get last build on branch $branch with promotion $promotion. Returning an empty changelog.")
+        return ""
+    } else if (logging) {
         echo("[ontrackCliChangelogSincePromotion] From build = $fromBuild")
     }
 
