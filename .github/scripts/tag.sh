@@ -65,17 +65,11 @@ echo "Switching to main to merge ${current_branch}..."
 git fetch origin main
 git checkout main
 
-# Ensure local main is synced with origin/main, preferring fast-forward
-if ! git merge --ff-only origin/main; then
-  echo "Fast-forward not possible to sync local main with origin/main; creating a merge commit"
-  git merge --no-ff --no-edit origin/main
-fi
+# Ensure local main is synced with origin/main using fast-forward only
+git merge --ff-only origin/main
 
-# Merge the release branch into main, preferring fast-forward
-if ! git merge --ff-only "$current_branch"; then
-  echo "Fast-forward not possible when merging ${current_branch} into main; creating a merge commit"
-  git merge --no-ff --no-edit "$current_branch"
-fi
+# Merge the release branch into main using fast-forward only
+git merge --ff-only "$current_branch"
 
 git push origin main
 
@@ -84,11 +78,8 @@ echo "Switching back to ${current_branch} and merging main..."
 git checkout "$current_branch"
 git fetch origin main
 
-# Merge main into the release branch, preferring fast-forward
-if ! git merge --ff-only origin/main; then
-  echo "Fast-forward not possible when merging main into ${current_branch}; creating a merge commit"
-  git merge --no-ff --no-edit origin/main
-fi
+# Merge main into the release branch using fast-forward only
+git merge --ff-only origin/main
 
 git push origin "$current_branch"
 
