@@ -68,3 +68,7 @@ configuration:
 
 > For more information about the configuration, see the Yontrack documentation to see how to configure:
 > properties, promotions, validation stamps, notifications, workflows, auto-versioning, custom setup, etc.
+
+### Documentation
+
+See the [Yontrack documentation](https://docs.yontrack.com/yontrack/ref/latest/content/configuration/ci-config.html) for complete information.

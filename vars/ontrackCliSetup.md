@@ -232,7 +232,7 @@ pipeline {
 
 #### Bitbucket Cloud
 
-Given a configured [Bitbucket Cloud configuration](https://static.nemerosa.net/ontrack/release/4.0.11/docs/doc/index.html#integration-bitbucket-cloud) in Ontrack, you can configure your pipeline based on Bitbucket Cloud to use this configuration and configure all the items (project & branch) automatically:
+Given a configured Bitbucket Cloud configuration in Ontrack, you can configure your pipeline based on Bitbucket Cloud to use this configuration and configure all the items (project & branch) automatically:
 
 ```groovy
 pipeline {
