@@ -60,12 +60,37 @@ tag_and_push "$major_minor" true
 # 3) tag & push X (delete previous)
 tag_and_push "$major" true
 
-# 4) merge current branch into main and push main
+# 4) merge current branch into main and push main (prefer fast-forward)
 echo "Switching to main to merge ${current_branch}..."
 git fetch origin main
 git checkout main
-git merge --no-ff --no-edit "$current_branch"
+
+# Ensure local main is synced with origin/main, preferring fast-forward
+if ! git merge --ff-only origin/main; then
+  echo "Fast-forward not possible to sync local main with origin/main; creating a merge commit"
+  git merge --no-ff --no-edit origin/main
+fi
+
+# Merge the release branch into main, preferring fast-forward
+if ! git merge --ff-only "$current_branch"; then
+  echo "Fast-forward not possible when merging ${current_branch} into main; creating a merge commit"
+  git merge --no-ff --no-edit "$current_branch"
+fi
+
 git push origin main
+
+# 5) switch back to vX branch, merge main into it, and push vX (prefer fast-forward)
+echo "Switching back to ${current_branch} and merging main..."
+git checkout "$current_branch"
+git fetch origin main
+
+# Merge main into the release branch, preferring fast-forward
+if ! git merge --ff-only origin/main; then
+  echo "Fast-forward not possible when merging main into ${current_branch}; creating a merge commit"
+  git merge --no-ff --no-edit origin/main
+fi
+
+git push origin "$current_branch"
 
 echo "Done."
 
