@@ -5,6 +5,7 @@ import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 def call(Map<String, ?> params = [:]) {
     String configPath = ParamUtils.getParam(params, 'config', '.yontrack/ci.yaml')
     String scm = params.scm
+    boolean skipGitCommit = ParamUtils.getBooleanParam(params, 'skipGitCommit', false)
     boolean logging = ParamUtils.getLogging(params, env.ONTRACK_LOGGING as String)
 
     Closure logger = {}
@@ -35,6 +36,18 @@ def call(Map<String, ?> params = [:]) {
     } + [
             [name: 'GIT_URL', value: env.GIT_URL], // Not part of the env.getEnvironment()
     ]
+
+    // GIT_COMMIT maybe not be injected correctly
+    def existingGitCommit = environment.find { it.name == "GIT_COMMIT" }?.value
+    if (!existingGitCommit && !skipGitCommit) {
+        def gitCommit = sh(
+                returnStdout: true,
+                script: 'git rev-parse HEAD'
+        ).trim()
+        if (gitCommit) {
+            environment += [name: 'GIT_COMMIT', value: gitCommit]
+        }
+    }
 
     // Launching the configuration
     def response = ontrackCliGraphQL(

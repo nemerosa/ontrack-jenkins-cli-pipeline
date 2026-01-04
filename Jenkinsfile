@@ -29,7 +29,8 @@ pipeline {
 
         stage("Setup") {
             steps {
-                ontrackCliCIConfig()
+                sh 'env'
+                ontrackCliCIConfig(logging: true)
             }
         }
 
