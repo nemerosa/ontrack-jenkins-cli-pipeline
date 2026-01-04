@@ -1,0 +1,33 @@
+name: tag
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v4
+
+      - id: version-get
+        name: Get version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - id: version-display
+        name: Display version
+        run: echo ${{ env.VERSION }}
+
+      - name: "Link the workflow to Yontrack"
+        uses: nemerosa/ontrack-github-actions-cli-library/ontrack-cli-workflow-build@v1.0.2
+        with:
+          project: ontrack-jenkins-cli-pipeline
+          yontrack-url: ${{ vars.ONTRACK_URL }}
+          yontrack-token: ${{ secrets.ONTRACK_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release label
+        run: |
+          yontrack build set-property release ${{ env.VERSION }}
