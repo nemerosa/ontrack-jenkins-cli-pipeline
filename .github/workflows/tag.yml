@@ -42,3 +42,19 @@ jobs:
         if: steps.version-check.outputs.valid == 'true'
         run: |
           yontrack build set-property release ${{ env.VERSION }}
+
+      - name: GitHub release
+        if: steps.version-check.outputs.valid == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yontrack build changelog export \
+            --from-promotion GOLD \
+            --to $YONTRACK_BUILD_ID \
+            --format markdown > .yontrack.log.md
+          gh release create ${{ env.VERSION }} --title "${{ env.VERSION }}" --notes ""
+
+      - name: Yontrack release
+        if: steps.version-check.outputs.valid == 'true'
+        run: |
+          yontrack promote -l GOLD -d "GitHub release created"
