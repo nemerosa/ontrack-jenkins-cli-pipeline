@@ -22,10 +22,7 @@ pipeline {
     environment {
         // Logging disabled globally
         ONTRACK_LOGGING = false
-        // TODO Switch to ontrack.nemerosa.net when upgraded to V5
-        ONTRACK_URL = "https://demo.app.yontrack.com"
-        ONTRACK_TOKEN = credentials("YONTRACK_DEMO_TOKEN")
-        // ONTRACK_TOKEN = credentials('ONTRACK_TOKEN')
+        ONTRACK_TOKEN = credentials("ONTRACK_TOKEN")
     }
 
     stages {
@@ -39,8 +36,7 @@ pipeline {
         stage("Build") {
             steps {
                 sh '''
-                    ./gradlew test \\
-                        --console plain
+                    ./gradlew test --console plain
                 '''
                 // Testing the GraphQL call
                 script {
