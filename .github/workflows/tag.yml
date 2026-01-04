@@ -52,7 +52,7 @@ jobs:
             --from-promotion GOLD \
             --to $YONTRACK_BUILD_ID \
             --format markdown > .yontrack.log.md
-          gh release create ${{ env.VERSION }} --title "${{ env.VERSION }}" --notes ""
+          gh release create ${{ env.VERSION }} --title "${{ env.VERSION }}" --notes-file .yontrack.log.md
 
       - name: Yontrack release
         if: steps.version-check.outputs.valid == 'true'
