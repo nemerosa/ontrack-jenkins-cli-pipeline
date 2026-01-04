@@ -20,7 +20,17 @@ jobs:
         name: Display version
         run: echo ${{ env.VERSION }}
 
+      - id: version-check
+        name: Check version format
+        run: |
+          if [[ "${{ env.VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "valid=true" >> $GITHUB_OUTPUT
+          else
+            echo "valid=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: "Link the workflow to Yontrack"
+        if: steps.version-check.outputs.valid == 'true'
         uses: nemerosa/ontrack-github-actions-cli-library/ontrack-cli-workflow-build@v1.0.2
         with:
           project: ontrack-jenkins-cli-pipeline
@@ -29,5 +39,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release label
+        if: steps.version-check.outputs.valid == 'true'
         run: |
           yontrack build set-property release ${{ env.VERSION }}
