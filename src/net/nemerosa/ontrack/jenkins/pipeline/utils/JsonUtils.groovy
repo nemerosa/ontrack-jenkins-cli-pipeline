@@ -1,11 +1,11 @@
 package net.nemerosa.ontrack.jenkins.pipeline.utils
 
-import net.sf.json.JSONSerializer
+import groovy.json.JsonOutput
 
 class JsonUtils {
 
     static String toJSON(Object data) {
-        return JSONSerializer.toJSON(data).toString()
+        return JsonOutput.toJson(data)
     }
 
 }

@@ -1,8 +1,7 @@
 package net.nemerosa.ontrack.jenkins.pipeline.graphql
 
 import net.nemerosa.ontrack.jenkins.pipeline.utils.JsonUtils
-import net.sf.json.JSON
-import net.sf.json.JSONSerializer
+import groovy.json.JsonSlurper
 
 class GraphQL {
 
@@ -18,7 +17,7 @@ class GraphQL {
         this.ignoreErrors = ignoreErrors
     }
 
-    JSON call(String query, Map<String, ?> variables) {
+    Object call(String query, Map<String, ?> variables) {
         logger("URL = $url")
         logger("Query = $query")
         logger("Variables = $variables")
@@ -63,7 +62,7 @@ class GraphQL {
                     throw new RuntimeException("GraphQL HTTP $code error: ${con.responseMessage}")
                 }
                 // Parsing
-                def response = JSONSerializer.toJSON(jsonResponse)
+                def response = new JsonSlurper().parseText(jsonResponse)
                 // Management of errors
                 def errors = response.errors
                 if (errors) {
@@ -93,7 +92,7 @@ class GraphQL {
     static boolean checkForMutationErrors(def response, String nodeName, boolean ignoreErrors = false) {
         if (response && response.data) {
             def node = response.data[nodeName]
-            if (node != null && node.errors && node.errors.isArray()) {
+            if (node != null && node.errors && node.errors instanceof List) {
                 String message = node.errors.collect { it.message }.join('\n')
                 if (ignoreErrors) {
                     return false
