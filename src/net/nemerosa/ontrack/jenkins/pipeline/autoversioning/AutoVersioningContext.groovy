@@ -91,6 +91,7 @@ class AutoVersioningContext {
         String prBodyTemplate = params.prBodyTemplate
         String prBodyTemplateFormat = params.prBodyTemplateFormat
         List<String> reviewers = params.reviewers as List<String> ?: []
+        Boolean disabled = params.disabled as Boolean
 
         List<AutoVersioningNotification> notifications = null
         def notificationsArray = params.notifications
@@ -147,6 +148,7 @@ class AutoVersioningContext {
                 reviewers,
                 notifications,
                 additionalPaths,
+                disabled,
         )
 
         // Adding this configuration to the list

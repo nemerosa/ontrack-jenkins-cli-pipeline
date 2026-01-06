@@ -24,8 +24,9 @@ class AutoVersioningDependency {
     private final List<String> reviewers
     private final List<AutoVersioningNotification> notifications
     private final List<AutoVersioningDependencyPath> additionalPaths
+    private final Boolean disabled
 
-    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource, String prTitleTemplate, String prBodyTemplate, String prBodyTemplateFormat, List<String> reviewers, List<AutoVersioningNotification> notifications, List<AutoVersioningDependencyPath> additionalPaths) {
+    AutoVersioningDependency(String sourceProject, String sourceBranch, String sourcePromotion, String targetPath, String targetRegex, String targetProperty, String targetPropertyRegex, String targetPropertyType, Boolean autoApproval, String upgradeBranchPattern, String validationStamp, String postProcessing, Map<String, ?> postProcessingConfig, String autoApprovalMode, String qualifier, String versionSource, String prTitleTemplate, String prBodyTemplate, String prBodyTemplateFormat, List<String> reviewers, List<AutoVersioningNotification> notifications, List<AutoVersioningDependencyPath> additionalPaths, Boolean disabled) {
         this.sourceProject = sourceProject
         this.sourceBranch = sourceBranch
         this.sourcePromotion = sourcePromotion
@@ -48,6 +49,7 @@ class AutoVersioningDependency {
         this.reviewers = reviewers
         this.notifications = notifications
         this.additionalPaths = additionalPaths
+        this.disabled = disabled
     }
 
     String getSourceProject() {
@@ -138,6 +140,10 @@ class AutoVersioningDependency {
         return additionalPaths
     }
 
+    Boolean getDisabled() {
+        return disabled
+    }
+
     Map<String, ?> toMap() {
         return [
                 sourceProject       : sourceProject,
@@ -162,6 +168,7 @@ class AutoVersioningDependency {
                 reviewers           : reviewers,
                 notifications       : notifications?.collect { it.toMap() },
                 additionalPaths     : additionalPaths?.collect { it.toMap() },
+                disabled            : disabled,
         ]
     }
 
