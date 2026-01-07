@@ -18,6 +18,9 @@ class CIConfigHelperTest {
     void setup() {
         // Simple map-based mock with closure for readFile
         dslMock = [
+                env     : [
+                        getEnvironment: { [:] }
+                ],
                 readFile: { Map args ->
                     // This will be overridden in individual tests
                     throw new RuntimeException("readFile not configured for: ${args.file}")
@@ -281,5 +284,80 @@ emptyMap: {}
         def resultData = yaml.load(result)
         assertEquals([], resultData.emptyList)
         assertEquals([:], resultData.emptyMap)
+    }
+
+    @Test
+    void expandConfig_template_with_vars() {
+        // Given
+        String configText = 'project: $project'
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [project: 'test'])
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals('test', resultData.project)
+    }
+
+    @Test
+    void expandConfig_template_with_env() {
+        // Given
+        def environment = [[name: 'BRANCH_NAME', value: 'main']]
+        String configText = 'branch: $BRANCH_NAME'
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:], environment)
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals('main', resultData.branch)
+    }
+
+    @Test
+    void expandConfig_template_with_env_list() {
+        // Given
+        def environment = [[name: 'GIT_COMMIT', value: '123456']]
+        String configText = 'commit: ${environment.find { it.name == "GIT_COMMIT" }.value}'
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:], environment)
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals(123456, resultData.commit)
+    }
+
+    @Test
+    void expandConfig_template_with_variables_list() {
+        // Given
+        def vars = [MY_VAR: 'my-value']
+        String configText = 'var: ${variables.find { it.name == "MY_VAR" }.value}'
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, vars)
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals('my-value', resultData.var)
+    }
+
+    @Test
+    void expandConfig_should_resolve_references_before_template_rendering() {
+        // Given: a config with a file reference that contains a template variable
+        String configText = """
+project: test-project
+settings: '@settings.yaml'
+"""
+        // And: the referenced file content containing a template variable
+        String settingsContent = """
+timeout: \${TIMEOUT}
+"""
+
+        // And: configure the mock
+        dslMock.readFile = { Map args ->
+            if (args.file == 'settings.yaml') {
+                return settingsContent
+            }
+            throw new RuntimeException("Unexpected file: \${args.file}")
+        }
+
+        // When: expanding the config with variables
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [TIMEOUT: 500])
+
+        // Then: the result contains the resolved and rendered content
+        def resultData = yaml.load(result)
+        assertEquals(500, resultData.settings.timeout)
     }
 }

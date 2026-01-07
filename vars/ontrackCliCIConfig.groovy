@@ -19,9 +19,6 @@ def call(Map<String, ?> params = [:]) {
     def configText = readFile(file: configPath)
     logger("CI config: $configText")
 
-    def expandedConfigText = CIConfigHelper.expandConfig(this, configText, logger)
-    logger("CI expanded config: $expandedConfigText")
-
     // Collecting the environment
     def environment = env.getEnvironment().findAll { k, _ ->
         k.startsWith('GIT_') ||
@@ -48,6 +45,9 @@ def call(Map<String, ?> params = [:]) {
             environment += [name: 'GIT_COMMIT', value: gitCommit]
         }
     }
+
+    def expandedConfigText = CIConfigHelper.expandConfig(this, configText, logger, params.vars ?: [:], environment)
+    logger("CI expanded config: $expandedConfigText")
 
     // Launching the configuration
     def response = ontrackCliGraphQL(

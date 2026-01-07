@@ -11,6 +11,7 @@ This step uses the CI context to setup the project, the branch and the build in 
 | `config`        | YAML file | `.yontrack/ci.yaml` | Path to the CI configuration (see below)             |
 | `scm`           | String    | _None_              | If left empty, the SCM is detected automatically (1) |
 | `skipGitCommit` | boolean   | `false`             | See (2)                                              |
+| `vars`          | Map       | `[:]`               | Additional variables for the template (see below)    |
 | `logging`       | boolean   | `false`             | Set to `true` to display debug / logging information |
 
 (1) If the SCM is not detected automatically, you can specify it with the `scm` parameter using values like `github`,
@@ -18,6 +19,54 @@ This step uses the CI context to setup the project, the branch and the build in 
 
 (2) Sometimes, the Git commit is not available in the environment variables seen by Jenkins. By default, the step will
 try to get it by running `git rev-parse HEAD`. Use `skipGitCommit: false` to disable this behaviour.
+
+### Templating
+
+The YAML configuration file is treated as a template and rendered using the Groovy `SimpleTemplateEngine`.
+This also applies to any file referenced using the `@` syntax in the YAML configuration.
+
+The following variables are available in the template:
+
+* any environment variable like `GIT_COMMIT`, `BRANCH_NAME`, etc.
+* the `environment` collection, which is a list of maps with `name` and `value` properties.
+* any variable provided in the `vars` parameter of the step.
+* the `variables` collection, which is a list of maps with `name` and `value` properties, containing the variables provided in the `vars` parameter.
+
+Example of usage in the YAML configuration:
+
+```yaml
+version: v1
+configuration:
+  project:
+    properties:
+      - type: net.nemerosa.ontrack.extension.general.Property
+        data:
+          description: "Built from ${BRANCH_NAME}"
+```
+
+Using custom variables:
+
+```yaml
+version: v1
+configuration:
+  project:
+    properties:
+      - type: net.nemerosa.ontrack.extension.general.Property
+        data:
+          description: "Project ${PROJECT_LABEL}"
+```
+
+Using the `variables` collection:
+
+```yaml
+version: v1
+configuration:
+  project:
+    properties:
+      - type: net.nemerosa.ontrack.extension.general.Property
+        data:
+          description: "Release ${variables.find { it.name == 'RELEASE_VERSION' }.value}"
+```
 
 ### Outputs
 
