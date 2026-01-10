@@ -49,8 +49,16 @@ class AutoVersioningContext {
         def yaml = dsl.readYaml(file: path)
         // Logging
         logger("yaml = $yaml")
+        // Configuration list
+        def configurations = yaml.configurations
+        if (!yaml.configurations) {
+            configurations = yaml.dependencies
+            if (!configurations) {
+                configurations = []
+            }
+        }
         // Dependencies as a collection
-        dependencies += yaml
+        dependencies += configurations
     }
 
     /**

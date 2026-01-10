@@ -19,13 +19,32 @@ Methods for this closure are:
 * `yaml(path)` - uses a YAML file at `path` to define dependencies. The YAML file looks like:
 
 ```yaml
-dependencies
-  - project: ...
-    branch: ...
-  - project: ...
+configurations
+  - sourceProject: ...
+    sourceBranch: ...
+  - sourceProject:: ...
 ```
 
 > Refer to the [official documentation](https://docs.yontrack.com/yontrack/ref/latest/content/integrations/auto-versioning/auto-versioning.html) for more information about the parameters.
+
+> In version 5.x of this pipeline library, old names for parameters have been deprecated and the ones listed in the documentation are the ones to use.
+> They have been in place since version V4 of Yontrack, but the Jenkins library was very lenient in accepting old names and translating them to the new ones.
+> 
+> Starting with version 5.x of the library, the new names are preferred, but the old ones are still accepted for backward compatibility.
+> 
+> Starting version 6.x of the library and V6 of Yontrack, the ones will not be accepted anymore.
+> 
+> List of old names and new names:
+> 
+> * `project` -> `sourceProject`
+> * `branch` -> `sourceBranch`
+> * `promotion` -> `sourcePromotion`
+> * `path` -> `targetPath`
+> * `property` -> `targetProperty`
+> * `regex` -> `targetRegex`
+> * `propertyType` -> `targetPropertyType`
+>
+> For the same reasons, in YAML files, `configurations` is now preferred over `dependencies`.
 
 ### Examples
 
@@ -33,11 +52,11 @@ dependencies
 ontrackCliAutoVersioning {
     branch "master"
     dependency(
-            project: "my-pipeline",
-            branch: "main",
-            promotion: "GOLD",
-            path: "Jenkinsfile",
-            regex: "@Library\\(\"my-pipeline@(.*)\"\\) _",
+            sourceProject: "my-pipeline",
+            sourceBranch: "main",
+            sourcePromotion: "GOLD",
+            targetPath: "Jenkinsfile",
+            targetRegex: "@Library\\(\"my-pipeline@(.*)\"\\) _",
     )
 }
 ```
@@ -50,11 +69,11 @@ The example belows adds some post-processing based on Jenkins:
 ontrackCliAutoVersioning {
     branch "main"
     dependency(
-            project: "my-library",
-            branch: "release-1.3",
-            promotion: "IRON",
-            path: "gradle.properties",
-            property: "my-version",
+            sourceProject: "my-library",
+            sourceBranch: "release-1.3",
+            sourcePromotion: "IRON",
+            targetPath: "gradle.properties",
+            targetProperty: "my-version",
             postProcessing: "jenkins",
             postProcessingConfig: [
                     dockerImage  : "openjdk:8",
@@ -76,12 +95,12 @@ ontrackCliAutoVersioning {
 with `auto-versioning.yml` containing:
 
 ```yaml
-dependencies:
-  - project: my-library
-    branch: release-1.3"
-    promotion: IRON
-    path: gradle.properties
-    property: my-version
+configurations:
+  - sourceProject: my-library
+    sourceBranch: release-1.3"
+    sourcePromotion: IRON
+    targetPath: gradle.properties
+    targetProperty: my-version
     postProcessing: jenkins
     postProcessingConfig:
         dockerImage  : openjdk:8
@@ -90,36 +109,17 @@ dependencies:
 
 ### Multiple target files
 
-The `path` parameter, both in Groovy and YAML based configurations, can either be one unique path to update or a list of paths to update.
-
-If a list of paths to update is provided, one distinct dependency per path will be created in Ontrack. So the following two declarations are equivalent:
+The `targetPath` parameter, both in Groovy and YAML based configurations, can either be one unique path to update or a list of paths to update, separated by commas.
 
 ```yaml
-dependencies:
-  - project: my-library
-    branch: release-1.3
-    promotion: IRON
-    path:
-      - gradle.properties
-      - dep.properties
-    property: my-version
+configurations:
+  - sourceProject: my-library
+    sourceBranch: release-1.3
+    sourcePromotion: IRON
+    targetPath: gradle.properties,dep.properties
+    targetProperty: my-version
 ```
 
-is equivalent to:
-
-```yaml
-dependencies:
-  - project: my-library
-    branch: release-1.3
-    promotion: IRON
-    path: gradle.properties
-    property: my-version
-  - project: my-library
-    branch: release-1.3
-    promotion: IRON
-    path: dep.properties
-    property: my-version
-```
 
 ### Parameters
 
