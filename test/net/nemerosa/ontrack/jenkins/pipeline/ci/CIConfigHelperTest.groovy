@@ -360,4 +360,52 @@ timeout: \${TIMEOUT}
         def resultData = yaml.load(result)
         assertEquals(500, resultData.settings.timeout)
     }
+
+    @Test
+    void expandConfig_regex_preservation() {
+        // Given
+        String configText = """
+custom:
+  configs:
+    - conditions:
+        - name: environment-regex
+          config:
+            name: VERSION
+            regex: '\\d+\\.\\d+\\.\\d+'
+"""
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals('\\d+\\.\\d+\\.\\d+', resultData.custom.configs[0].conditions[0].config.regex)
+    }
+
+    @Test
+    void expandConfig_template_with_groovy_expression_blocks() {
+        // Given
+        def environment = [[name: 'ENV', value: 'prod']]
+        String configText = """
+project: <% if (ENV == 'prod') { print 'production' } else { print 'test' } %>
+"""
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:], environment)
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals('production', resultData.project)
+    }
+
+    @Test
+    void expandConfig_template_with_backslashes_in_groovy_expression_blocks() {
+        // Given
+        String configText = """
+regex: <% print '\\\\d+' %>
+literal: <% print '\\\\\\\\path\\\\\\\\to\\\\\\\\file' %>
+"""
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals('\\d+', resultData.regex)
+        assertEquals('\\\\path\\\\to\\\\file', resultData.literal)
+    }
 }

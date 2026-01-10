@@ -17,9 +17,14 @@ class CIConfigHelper {
 
         // 2. Render the whole expanded config as a template
         def expandedConfigText = yaml.dump(configData)
+        // Escape backslashes for the template engine
+        expandedConfigText = expandedConfigText.replace('\\', '\\\\')
         // Unquote template expressions so they can be rendered as literals (important for type preservation)
         expandedConfigText = expandedConfigText.replaceAll(/'(\$\{[^']+\})'/, '$1')
         expandedConfigText = expandedConfigText.replaceAll(/'(\$[^']+)'/, '$1')
+        // Restore backslashes inside template expressions
+        expandedConfigText = expandedConfigText.replaceAll(/\$\{[^}]+\}/) { it.replace('\\\\', '\\') }
+        expandedConfigText = expandedConfigText.replaceAll(/<%[^%>]+%>/) { it.replace('\\\\', '\\').replace("''", "'") }
 
         def engine = new SimpleTemplateEngine()
         def renderedConfigText = engine.createTemplate(expandedConfigText).make(binding).toString()
