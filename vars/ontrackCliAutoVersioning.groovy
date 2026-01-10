@@ -1,5 +1,4 @@
 import net.nemerosa.ontrack.jenkins.pipeline.autoversioning.AutoVersioningContext
-import net.nemerosa.ontrack.jenkins.pipeline.autoversioning.AutoVersioningDependency
 import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
@@ -66,7 +65,7 @@ def call(Map<String, ?> params = [:], Closure configuration) {
 
     // Getting the list of dependencies
 
-    List<AutoVersioningDependency> dependencies = context.dependencies ?: []
+    List dependencies = context.dependencies ?: []
     variables.configurations = dependencies.collect { it.toMap() }
 
     // Logging before GraphQL call

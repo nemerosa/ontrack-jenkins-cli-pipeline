@@ -1,7 +1,5 @@
 package net.nemerosa.ontrack.jenkins.pipeline.autoversioning
 
-import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
-
 /**
  * Collection of dependencies for auto version on promotion
  */
@@ -34,7 +32,7 @@ class AutoVersioningContext {
     /**
      * List of dependency configurations
      */
-    List<AutoVersioningDependency> dependencies = []
+    List dependencies = []
 
     /**
      * Adds a Git branch
@@ -52,107 +50,23 @@ class AutoVersioningContext {
         // Logging
         logger("yaml = $yaml")
         // Dependencies as a collection
-        yaml.dependencies.each {
-            def map = it as Map
-            logger("config map = $map")
-            dependency(map)
-        }
+        dependencies += yaml
     }
 
     /**
      * Defines a dependency
      */
     void dependency(Map<String, ?> params) {
-
-        String targetPath
         def path = params.path
-        if (!path) {
-            throw new IllegalArgumentException("Missing parameter: path")
-        } else if (path instanceof Collection) {
-            targetPath = path.join(",")
-        } else {
-            targetPath = path as String
-        }
-
-        String sourceProject = ParamUtils.getParam(params, "project")
-        String sourceBranch = ParamUtils.getParam(params, "branch")
-        String sourcePromotion = ParamUtils.getParam(params, "promotion")
-        String targetRegex = params.regex
-        String targetProperty = params.property
-        String targetPropertyRegex = params.propertyRegex
-        String targetPropertyType = params.propertyType
-        Boolean autoApproval = params.autoApproval as Boolean
-        String validationStamp = params.validationStamp
-        String upgradeBranchPattern = params.upgradeBranchPattern
-        String autoApprovalMode = params.autoApprovalMode
-        String qualifier = params.qualifier
-        String versionSource = params.versionSource
-        String prTitleTemplate = params.prTitleTemplate
-        String prBodyTemplate = params.prBodyTemplate
-        String prBodyTemplateFormat = params.prBodyTemplateFormat
-        List<String> reviewers = params.reviewers as List<String> ?: []
-        Boolean disabled = params.disabled as Boolean
-
-        List<AutoVersioningNotification> notifications = null
-        def notificationsArray = params.notifications
-        if (notificationsArray) {
-            notifications = notificationsArray.collect {
-                new AutoVersioningNotification(
-                        it.channel as String,
-                        it.config,
-                        it.scope as List<String>,
-                        it.notificationTemplate as String,
-                )
+        if (path) {
+            if (path instanceof Collection) {
+                params.targetPath = path.join(",")
+            } else {
+                params.targetPath = path as String
             }
         }
-
-        List<AutoVersioningDependencyPath> additionalPaths = null
-        def additionalPathsArray = params.additionalPaths
-        if (additionalPathsArray) {
-            additionalPaths = additionalPathsArray.collect {
-                new AutoVersioningDependencyPath(
-                        it.path as String,
-                        it.regex as String,
-                        it.property as String,
-                        it.propertyRegex as String,
-                        it.propertyType as String,
-                        it.versionSource as String,
-                )
-            }
-        }
-
-        String postProcessing = params.postProcessing
-        def postProcessingConfig = params.postProcessingConfig as Map<String, ?> ?: [:]
-
-        // Config object
-        def config = new AutoVersioningDependency(
-                sourceProject,
-                sourceBranch,
-                sourcePromotion,
-                targetPath,
-                targetRegex,
-                targetProperty,
-                targetPropertyRegex,
-                targetPropertyType,
-                autoApproval,
-                upgradeBranchPattern,
-                validationStamp,
-                postProcessing,
-                postProcessingConfig as Map<String, ?>,
-                autoApprovalMode,
-                qualifier,
-                versionSource,
-                prTitleTemplate,
-                prBodyTemplate,
-                prBodyTemplateFormat,
-                reviewers,
-                notifications,
-                additionalPaths,
-                disabled,
-        )
-
         // Adding this configuration to the list
-        dependencies.add(config)
+        dependencies.add(params)
     }
 
 }

@@ -4,13 +4,15 @@ This step allows to configure the current branch for auto versioning.
 
 > This step relies strongly on [`ontrackCliSetup`](ontrackCliSetup.md) having been called but this is not strictly required and all parameters can be provided explicitly.
 
+> This step is redundant when using the new [`ontrackCliCiConfig`](ontrackCliCIConfig.md) step.
+
 ### Usage
 
 This step accepts a Groovy `Closure` for its configuration, either programmatically or from a YAML file.
 
 Methods for this closure are:
 
-* `branch(value)` - defines a regular expression which restricts the setup to the branches matching this regular expression. Several calls to this method are possible (to define several regular expressions)
+* `branch(value)` - defines a regular expression which restricts the setup to the branches matching this regular expression. Several calls to this method are possible (to define several regular expressions). Only one of these regular expressions must match the current branch for the auto-versioning to be applied.
 
 * `dependency(map)` - defines a dependency as a `Map` of parameter values
 
