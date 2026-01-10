@@ -19,11 +19,11 @@ class CIConfigHelper {
         def expandedConfigText = yaml.dump(configData)
         // Escape backslashes for the template engine
         expandedConfigText = expandedConfigText.replace('\\', '\\\\')
+        // Escape all ${...} to preserve them for other systems (like Ontrack)
+        expandedConfigText = expandedConfigText.replace('${', '\\${')
         // Unquote template expressions so they can be rendered as literals (important for type preservation)
-        expandedConfigText = expandedConfigText.replaceAll(/'(\$\{[^']+\})'/, '$1')
-        expandedConfigText = expandedConfigText.replaceAll(/'(\$[^']+)'/, '$1')
+        expandedConfigText = expandedConfigText.replaceAll(/'(<%=[^']+%>)'/, '$1')
         // Restore backslashes inside template expressions
-        expandedConfigText = expandedConfigText.replaceAll(/\$\{[^}]+\}/) { it.replace('\\\\', '\\') }
         expandedConfigText = expandedConfigText.replaceAll(/<%[^%>]+%>/) { it.replace('\\\\', '\\').replace("''", "'") }
 
         def engine = new SimpleTemplateEngine()

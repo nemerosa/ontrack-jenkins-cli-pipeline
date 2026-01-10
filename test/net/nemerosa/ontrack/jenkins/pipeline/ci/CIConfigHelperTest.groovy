@@ -289,7 +289,7 @@ emptyMap: {}
     @Test
     void expandConfig_template_with_vars() {
         // Given
-        String configText = 'project: $project'
+        String configText = 'project: <%= project %>'
         // When
         String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [project: 'test'])
         // Then
@@ -301,7 +301,7 @@ emptyMap: {}
     void expandConfig_template_with_env() {
         // Given
         def environment = [[name: 'BRANCH_NAME', value: 'main']]
-        String configText = 'branch: $BRANCH_NAME'
+        String configText = 'branch: <%= BRANCH_NAME %>'
         // When
         String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:], environment)
         // Then
@@ -313,7 +313,7 @@ emptyMap: {}
     void expandConfig_template_with_env_list() {
         // Given
         def environment = [[name: 'GIT_COMMIT', value: '123456']]
-        String configText = 'commit: ${environment.find { it.name == "GIT_COMMIT" }.value}'
+        String configText = 'commit: <%= environment.find { it.name == "GIT_COMMIT" }.value %>'
         // When
         String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:], environment)
         // Then
@@ -325,7 +325,7 @@ emptyMap: {}
     void expandConfig_template_with_variables_list() {
         // Given
         def vars = [MY_VAR: 'my-value']
-        String configText = 'var: ${variables.find { it.name == "MY_VAR" }.value}'
+        String configText = 'var: <%= variables.find { it.name == "MY_VAR" }.value %>'
         // When
         String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, vars)
         // Then
@@ -342,7 +342,7 @@ settings: '@settings.yaml'
 """
         // And: the referenced file content containing a template variable
         String settingsContent = """
-timeout: \${TIMEOUT}
+timeout: <%= TIMEOUT %>
 """
 
         // And: configure the mock
@@ -407,5 +407,25 @@ literal: <% print '\\\\\\\\path\\\\\\\\to\\\\\\\\file' %>
         def resultData = yaml.load(result)
         assertEquals('\\d+', resultData.regex)
         assertEquals('\\\\path\\\\to\\\\file', resultData.literal)
+    }
+
+    @Test
+    void expandConfig_complex_template_preservation() {
+        // Given
+        String configText = """
+contentTemplate: |
+  Yontrack <%= build %> has been released.
+
+  \${promotionRun.changelog?title=true&commitsOption=OPTIONAL}
+"""
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, { println it }, [build: 'v1'])
+
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals("""Yontrack v1 has been released.
+
+\${promotionRun.changelog?title=true&commitsOption=OPTIONAL}
+""", resultData.contentTemplate)
     }
 }

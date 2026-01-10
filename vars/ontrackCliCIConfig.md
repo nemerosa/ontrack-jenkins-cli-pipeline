@@ -25,6 +25,12 @@ try to get it by running `git rev-parse HEAD`. Use `skipGitCommit: false` to dis
 The YAML configuration file is treated as a template and rendered using the Groovy `SimpleTemplateEngine`.
 This also applies to any file referenced using the `@` syntax in the YAML configuration.
 
+For variables that Jenkins should expand, the recommended syntax is `<%= variable %>` (for simple values)
+or `<% print variable %>` (for more complex logic).
+
+The `${...}` syntax is **reserved** for templates that are intended for Yontrack (like notification templates)
+and will be preserved as-is in the final output.
+
 The following variables are available in the template:
 
 * any environment variable like `GIT_COMMIT`, `BRANCH_NAME`, etc.
@@ -41,7 +47,7 @@ configuration:
     properties:
       - type: net.nemerosa.ontrack.extension.general.Property
         data:
-          description: "Built from ${BRANCH_NAME}"
+          description: "Built from <%= BRANCH_NAME %>"
 ```
 
 Using custom variables:
@@ -53,7 +59,7 @@ configuration:
     properties:
       - type: net.nemerosa.ontrack.extension.general.Property
         data:
-          description: "Project ${PROJECT_LABEL}"
+          description: "Project <%= PROJECT_LABEL %>"
 ```
 
 Using the `variables` collection:
@@ -65,8 +71,30 @@ configuration:
     properties:
       - type: net.nemerosa.ontrack.extension.general.Property
         data:
-          description: "Release ${variables.find { it.name == 'RELEASE_VERSION' }.value}"
+          description: "Release <%= variables.find { it.name == 'RELEASE_VERSION' }.value %>"
 ```
+
+Preserving Yontrack expressions:
+
+```yaml
+version: v1
+configuration:
+  branch:
+    notifications:
+      - channel: slack
+        channelConfig:
+          channel: "#alerts"
+        events:
+          - promotion_run
+        contentTemplate: |
+          Yontrack <%= build %> has been released.
+
+          ${promotionRun.changelog?title=true&commitsOption=OPTIONAL}
+```
+
+In this example:
+* `<%= build %>` is expanded by Jenkins.
+* `${promotionRun.changelog...}` is preserved and will be used by Yontrack.
 
 ### Outputs
 
