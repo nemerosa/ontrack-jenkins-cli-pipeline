@@ -428,4 +428,57 @@ contentTemplate: |
 \${promotionRun.changelog?title=true&commitsOption=OPTIONAL}
 """, resultData.contentTemplate)
     }
+
+    @Test
+    void 'Expand context with conditions'() {
+        // Given
+        String configText = """
+branch:
+  validations:
+    - build
+    <% if (testEnabled) { %>
+    - tests
+    <% } %>
+"""
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, { println it }, [testEnabled: true])
+
+        // Then
+        assertEquals("""branch:
+    validations:
+      - build
+      - tests
+""",
+                result
+        )
+    }
+
+    @Test
+    void 'Expand context with conditions in included file'() {
+        // Given
+        String configText = """
+branch:
+  validations: '@validations.yaml'
+"""
+
+        String validationText = """
+- build
+<% if (testEnabled) { %>
+- tests
+<% } %>
+"""
+        dslMock.readFile = { Map args ->
+            if (args.file == 'validations.yaml') {
+                return validationText
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, { println it }, [testEnabled: true])
+
+        // Then
+        def resultData = yaml.load(result)
+        assertEquals(['build', 'tests'], resultData.branch.validations)
+    }
 }
