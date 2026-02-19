@@ -15,7 +15,7 @@ def call(Map<String, ?> params = [:]) {
     String project = ParamUtils.getParam(params, "project", env.ONTRACK_PROJECT_NAME as String)
     String branch = ParamUtils.getParam(params, "branch", env.ONTRACK_BRANCH_NAME as String)
     String build = ParamUtils.getParam(params, "build", env.ONTRACK_BUILD_NAME as String)
-    String version = ParamUtils.getParam(params, "version", env.VERSION as String)
+    String release = ParamUtils.getParam(params, "version", env.VERSION as String)
 
     // GraphQL query
 
@@ -30,7 +30,7 @@ def call(Map<String, ?> params = [:]) {
 				project: $project,
 				branch: $branch,
 				build: $build,
-				name: $version,
+				release: $release,
 			}) {
 				errors {
 					message
@@ -45,7 +45,7 @@ def call(Map<String, ?> params = [:]) {
             project: project,
             branch: branch,
             build: build,
-            version: version,
+            release: release,
     ]
 
     // GraphQL call
