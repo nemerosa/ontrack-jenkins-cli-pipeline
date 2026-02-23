@@ -481,4 +481,29 @@ branch:
         def resultData = yaml.load(result)
         assertEquals(['build', 'tests'], resultData.branch.validations)
     }
+
+    @Test
+    void 'Expand with regular expressions'() {
+        String configText = '''
+configurations:
+  - sourceProject: dep
+    sourceBranch: master
+    sourcePromotion: BRONZE
+    targetPath: Dockerfile
+    targetRegex: '^FROM docker\\.yontrack\\.com\\/yontrack\\/dep:(.*)$'
+'''
+        String result = CIConfigHelper.expandConfig(dslMock, configText, { println it }, [:])
+        assertEquals(
+                "Unchanged rendering",
+                '''\
+configurations:
+  - sourceProject: dep
+    sourceBranch: master
+    sourcePromotion: BRONZE
+    targetPath: Dockerfile
+    targetRegex: ^FROM docker\\.yontrack\\.com\\/yontrack\\/dep:(.*)$
+''',
+                result,
+        )
+    }
 }

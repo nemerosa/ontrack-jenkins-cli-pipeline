@@ -42,7 +42,7 @@ class CIConfigHelper {
         // Escape backslashes for the template engine
         String text = configText.replace('\\', '\\\\')
         // Escape all ${...} to preserve them for other systems (like Ontrack)
-        text = text.replace('${', '\\${')
+        text = text.replace('$', '\\$')
         // Unquote template expressions so they can be rendered as literals (important for type preservation)
         text = text.replaceAll(/'(<%=[^']+%>)'/, '$1')
         // Restore backslashes inside template expressions
