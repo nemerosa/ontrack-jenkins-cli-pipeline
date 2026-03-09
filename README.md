@@ -119,6 +119,7 @@ In this example, we use the `main` branch of the pipeline library but it's bette
   creating common environment variables to initializing project and branch in Ontrack for your pipeline.
 * [`ontrackCliSetupSonarQube`](vars/ontrackCliSetupSonarQube.md) - setup of SonarQube properties at project level
 * [`ontrackCliCIConfig`](vars/ontrackCliCIConfig.md) - uses the CI context to setup the project, the branch and the build in Yontrack (V5 only)
+* [`ontrackCliCIConfigBranch`](vars/ontrackCliCIConfigBranch.md) - same as [`ontrackCliCIConfig`](vars/ontrackCliCIConfig.md), but configures the branch only
 
 ### Creating Ontrack items
 

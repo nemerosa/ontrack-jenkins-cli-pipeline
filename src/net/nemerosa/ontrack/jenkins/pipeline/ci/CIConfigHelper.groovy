@@ -8,6 +8,44 @@ class CIConfigHelper {
 
     static private def engine = new SimpleTemplateEngine()
 
+    static CIConfig buildCIConfig(def dsl, Closure logger, String configPath, Map<String, ?> vars, boolean skipGitCommit = false) {
+        logger("Reading CI config at $configPath")
+        def configText = dsl.readFile(file: configPath)
+        logger("CI config: $configText")
+
+        // Collecting the environment
+        List<CIConfigEnv> environment = dsl.env.getEnvironment().findAll { k, _ ->
+            k.startsWith('GIT_') ||
+                    k.startsWith('JOB_') ||
+                    k.startsWith('NODE_') ||
+                    k.startsWith('BUILD_') ||
+                    k == "JENKINS_URL" ||
+                    k == "BRANCH_NAME" ||
+                    k == "VERSION"
+        }.collect { k, v ->
+            CIConfigEnv(k, v)
+        } + [
+                CIConfigEnv('GIT_URL', dsl.env.GIT_URL) // Not part of the env.getEnvironment()
+        ]
+
+        // GIT_COMMIT maybe not be injected correctly
+        def existingGitCommit = environment.find { it.name == "GIT_COMMIT" }?.value
+        if (!existingGitCommit && !skipGitCommit) {
+            def gitCommit = dsl.sh(
+                    returnStdout: true,
+                    script: 'git rev-parse HEAD'
+            ).trim()
+            if (gitCommit) {
+                environment += CIConfigEnv('GIT_COMMIT', gitCommit)
+            }
+        }
+
+        def expandedConfigText = expandConfig(this, configText, logger, vars, environment)
+        logger("CI expanded config: $expandedConfigText")
+
+        return new CIConfig(expandedConfigText, environment)
+    }
+
     static String expandConfig(def dsl, String configText, Closure logger, Map<String, ?> vars = [:], List<Map<String, String>> environment = []) {
         def binding = vars + environment.collectEntries { [it.name, it.value] }
         binding.environment = environment
