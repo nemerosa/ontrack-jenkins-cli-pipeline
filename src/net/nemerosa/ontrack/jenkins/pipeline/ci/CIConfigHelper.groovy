@@ -1,5 +1,6 @@
 package net.nemerosa.ontrack.jenkins.pipeline.ci
 
+
 import groovy.text.SimpleTemplateEngine
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
@@ -23,9 +24,9 @@ class CIConfigHelper {
                     k == "BRANCH_NAME" ||
                     k == "VERSION"
         }.collect { k, v ->
-            CIConfigEnv(k, v)
+            CIConfigEnv.of(k as String, v as String)
         } + [
-                CIConfigEnv('GIT_URL', dsl.env.GIT_URL) // Not part of the env.getEnvironment()
+                CIConfigEnv.of('GIT_URL', dsl.env.GIT_URL as String) // Not part of the env.getEnvironment()
         ]
 
         // GIT_COMMIT maybe not be injected correctly
@@ -36,17 +37,17 @@ class CIConfigHelper {
                     script: 'git rev-parse HEAD'
             ).trim()
             if (gitCommit) {
-                environment += CIConfigEnv('GIT_COMMIT', gitCommit)
+                environment += CIConfigEnv.of('GIT_COMMIT', gitCommit as String)
             }
         }
 
-        def expandedConfigText = expandConfig(this, configText, logger, vars, environment)
+        def expandedConfigText = expandConfig(dsl, configText, logger, vars, environment)
         logger("CI expanded config: $expandedConfigText")
 
         return new CIConfig(expandedConfigText, environment)
     }
 
-    static String expandConfig(def dsl, String configText, Closure logger, Map<String, ?> vars = [:], List<Map<String, String>> environment = []) {
+    static String expandConfig(def dsl, String configText, Closure logger, Map<String, ?> vars = [:], List<CIConfigEnv> environment = []) {
         def binding = vars + environment.collectEntries { [it.name, it.value] }
         binding.environment = environment
         binding.variables = vars.collect { k, v -> [name: k, value: v] }

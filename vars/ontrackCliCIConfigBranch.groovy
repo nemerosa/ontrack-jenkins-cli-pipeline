@@ -60,7 +60,7 @@ def call(Map<String, ?> params = [:]) {
     GraphQL.checkForMutationErrors(response, 'configureBranch', ontrackCliIgnoreErrors() as boolean)
 
     // Logging of the outcome
-    def branch = response.data?.configureBuild?.branch
+    def branch = response.data?.configureBranch?.branch
     if (!branch) ontrackCliError("[ontrackCliCIConfigBranch] No branch was returned")
     logger("Branch: ${branch}")
 

@@ -8,4 +8,8 @@ class CIConfigEnv {
         this.name = name
         this.value = value
     }
+
+    static CIConfigEnv of(String name, String value) {
+        return new CIConfigEnv(name, value)
+    }
 }
