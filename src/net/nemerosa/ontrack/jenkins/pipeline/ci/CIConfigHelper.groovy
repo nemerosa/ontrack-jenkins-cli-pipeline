@@ -20,9 +20,12 @@ class CIConfigHelper {
                     k.startsWith('JOB_') ||
                     k.startsWith('NODE_') ||
                     k.startsWith('BUILD_') ||
+                    k.startsWith('YONTRACK_CI_') ||
                     k == "JENKINS_URL" ||
                     k == "BRANCH_NAME" ||
-                    k == "VERSION"
+                    k == "VERSION" ||
+                    // Legacy (Y)Ontrack environment variables
+                    k == 'ONTRACK_SCM_ISSUES'
         }.collect { k, v ->
             CIConfigEnv.of(k as String, v as String)
         } + [

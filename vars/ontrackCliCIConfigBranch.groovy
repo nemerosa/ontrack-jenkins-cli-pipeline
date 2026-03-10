@@ -14,7 +14,7 @@ def call(Map<String, ?> params = [:]) {
         }
     }
 
-    def ciConfig = CIConfigHelper.buildCIConfig(this, logger, configPath, params.vars ?: [:])
+    def ciConfig = CIConfigHelper.buildCIConfig(this, logger, configPath, params.vars ?: [:], true)
 
     // Launching the configuration
     def response = ontrackCliGraphQL(

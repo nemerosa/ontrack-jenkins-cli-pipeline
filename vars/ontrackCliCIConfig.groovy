@@ -15,39 +15,7 @@ def call(Map<String, ?> params = [:]) {
         }
     }
 
-    logger("Reading CI config at $configPath")
-    def configText = readFile(file: configPath)
-    logger("CI config: $configText")
-
-    // Collecting the environment
-    def environment = env.getEnvironment().findAll { k, _ ->
-        k.startsWith('GIT_') ||
-                k.startsWith('JOB_') ||
-                k.startsWith('NODE_') ||
-                k.startsWith('BUILD_') ||
-                k == "JENKINS_URL" ||
-                k == "BRANCH_NAME" ||
-                k == "VERSION"
-    }.collect { k, v ->
-        [name: k, value: v]
-    } + [
-            [name: 'GIT_URL', value: env.GIT_URL], // Not part of the env.getEnvironment()
-    ]
-
-    // GIT_COMMIT maybe not be injected correctly
-    def existingGitCommit = environment.find { it.name == "GIT_COMMIT" }?.value
-    if (!existingGitCommit && !skipGitCommit) {
-        def gitCommit = sh(
-                returnStdout: true,
-                script: 'git rev-parse HEAD'
-        ).trim()
-        if (gitCommit) {
-            environment += [name: 'GIT_COMMIT', value: gitCommit]
-        }
-    }
-
-    def expandedConfigText = CIConfigHelper.expandConfig(this, configText, logger, params.vars ?: [:], environment)
-    logger("CI expanded config: $expandedConfigText")
+    def ciConfig = CIConfigHelper.buildCIConfig(this, logger, configPath, params.vars ?: [:], false)
 
     // Launching the configuration
     def response = ontrackCliGraphQL(
@@ -86,10 +54,10 @@ def call(Map<String, ?> params = [:]) {
                 }
             ''',
             variables: [
-                    config: expandedConfigText,
+                    config: ciConfig.expandedConfigText,
                     ci    : 'jenkins',
                     scm   : scm,
-                    env   : environment,
+                    env   : ciConfig.environment,
             ],
             logging: logging,
     )
