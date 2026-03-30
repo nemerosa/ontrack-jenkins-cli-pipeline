@@ -506,4 +506,304 @@ configurations:
                 result,
         )
     }
+
+    @Test
+    void 'Include macro with basic usage'() {
+        // Given
+        String configText = """
+title: Main Config
+<% out << include("header", 0, [:]) %>
+"""
+
+        String headerContent = """
+name: Test
+version: '1.0'
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'header.yaml') {
+                return headerContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+
+        // Then
+        assertEquals("Including template file: header.yaml", loggerCalls[0])
+        def resultData = yaml.load(result)
+        assertEquals("Main Config", resultData.title)
+        assertEquals("Test", resultData.name)
+        assertEquals("1.0", resultData.version)
+    }
+
+    @Test
+    void 'Include macro with indentation'() {
+        // Given
+        String configText = """
+config:
+<% out << include("header", 2, [:]) %>
+"""
+
+        String headerContent = """
+name: Test
+version: '1.0'
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'header.yaml') {
+                return headerContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+
+        // Then
+        assertEquals("Including template file: header.yaml", loggerCalls[0])
+        assertTrue(result.contains("  name: Test"))
+        assertTrue(result.contains("  version: '1.0'"))
+    }
+
+    @Test
+    void 'Include macro with extra context variables'() {
+        // Given
+        String configText = """
+title: Main Config
+<% out << include("header", 0, [title: "My Page"]) %>
+"""
+
+        String headerContent = """
+page: <%= title %>
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'header.yaml') {
+                return headerContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+
+        // Then
+        assertEquals("Including template file: header.yaml", loggerCalls[0])
+        def resultData = yaml.load(result)
+        assertEquals("Main Config", resultData.title)
+        assertEquals("My Page", resultData.page)
+    }
+
+    @Test
+    void 'Include macro with current context inheritance'() {
+        // Given
+        String configText = """
+title: Main Config
+<% out << include("header", 0, [:]) %>
+"""
+
+        String headerContent = """
+inherited: <%= project %>
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'header.yaml') {
+                return headerContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [project: "MyProject"])
+
+        // Then
+        assertEquals("Including template file: header.yaml", loggerCalls[0])
+        def resultData = yaml.load(result)
+        assertEquals("Main Config", resultData.title)
+        assertEquals("MyProject", resultData.inherited)
+    }
+
+    @Test
+    void 'Include macro with current context override'() {
+        // Given
+        String configText = """
+title: Main Config
+<% out << include("header", 0, [project: "OverriddenProject"]) %>
+"""
+
+        String headerContent = """
+name: <%= project %>
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'header.yaml') {
+                return headerContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [project: "OriginalProject"])
+
+        // Then
+        assertEquals("Including template file: header.yaml", loggerCalls[0])
+        def resultData = yaml.load(result)
+        assertEquals("Main Config", resultData.title)
+        assertEquals("OverriddenProject", resultData.name)
+    }
+
+    @Test
+    void 'Include macro with indentation and template variables'() {
+        // Given
+        String configText = """
+environments:
+<% out << include("env-config", 2, [envName: "production", replicas: 3]) %>
+"""
+
+        String envConfigContent = """
+name: <%= envName %>
+replicas: <%= replicas %>
+enabled: true
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'env-config.yaml') {
+                return envConfigContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+
+        // Then
+        assertEquals("Including template file: env-config.yaml", loggerCalls[0])
+        def resultData = yaml.load(result)
+        assertEquals("production", resultData.environments.name)
+        assertEquals(3, resultData.environments.replicas)
+        assertEquals(true, resultData.environments.enabled)
+    }
+
+    @Test
+    void 'Include macro multiple times'() {
+        // Given
+        String configText = """
+config:
+  first:
+<% out << include("item", 4, [name: "Item 1"]) %>
+  second:
+<% out << include("item", 4, [name: "Item 2"]) %>
+"""
+
+        String itemContent = """
+name: <%= name %>
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'item.yaml') {
+                return itemContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+
+        // Then
+        assertEquals(2, loggerCalls.size())
+        assertEquals("Including template file: item.yaml", loggerCalls[0])
+        assertEquals("Including template file: item.yaml", loggerCalls[1])
+        def resultData = yaml.load(result)
+        assertEquals("Item 1", resultData.config.first.name)
+        assertEquals("Item 2", resultData.config.second.name)
+    }
+
+    @Test
+    void 'ninclude macro with basic usage'() {
+        // Given
+        String configText = """
+config:<% out << ninclude("content", 2, [:]) %>
+"""
+
+        String contentTemplate = """
+name: Test
+value: 42
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'content.yaml') {
+                return contentTemplate
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+
+        // Then
+        assertEquals("Including template file: content.yaml", loggerCalls[0])
+        def resultData = yaml.load(result)
+        assertEquals("Test", resultData.config.name)
+        assertEquals(42, resultData.config.value)
+    }
+
+    @Test
+    void 'ninclude macro prepends newline'() {
+        // Given
+        String configText = """
+config:<% out << ninclude("item", 2, [name: "TestItem"]) %>
+"""
+
+        String itemContent = """
+name: <%= name %>
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'item.yaml') {
+                return itemContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+
+        // Then: result should have newline after "config:" before indented content
+        def resultData = yaml.load(result)
+        assertEquals("TestItem", resultData.config.name)
+        // Verify the raw output has proper formatting with newline and indent
+        assertTrue(result.contains("config:"))
+        assertTrue(result.contains("name: TestItem"))
+    }
+
+    @Test
+    void 'ninclude macro with extra context variables'() {
+        // Given
+        String configText = """
+environments:<% out << ninclude("env-spec", 2, [envName: "staging", port: 8080]) %>
+"""
+
+        String envSpecContent = """
+name: <%= envName %>
+port: <%= port %>
+"""
+
+        dslMock.readFile = { Map args ->
+            if (args.file == 'env-spec.yaml') {
+                return envSpecContent
+            }
+            throw new RuntimeException("Unexpected file: ${args.file}")
+        }
+
+        // When
+        String result = CIConfigHelper.expandConfig(dslMock, configText, loggerMock, [:])
+
+        // Then
+        assertEquals("Including template file: env-spec.yaml", loggerCalls[0])
+        def resultData = yaml.load(result)
+        assertEquals("staging", resultData.environments.name)
+        assertEquals(8080, resultData.environments.port)
+    }
 }

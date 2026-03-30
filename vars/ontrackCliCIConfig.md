@@ -96,6 +96,58 @@ In this example:
 * `<%= build %>` is expanded by Jenkins.
 * `${promotionRun.changelog...}` is preserved and will be used by Yontrack.
 
+#### Including templates
+
+You can include other template files using the `include` or `ninclude` macros:
+
+```yaml
+version: v1
+configuration:
+  branch:
+<% out << include("header", 2, [title: "My Page"]) %>
+```
+
+Both macros take three parameters:
+
+* `name` - The name of the file to include (without the `.yaml` extension). For example, `include("header", ...)` will include `header.yaml`.
+* `indent` - The number of spaces to indent each line of the included content. This is useful for maintaining proper YAML indentation.
+* `vars` - A map of additional variables to pass to the included template. These variables are merged with the current context, with the new variables taking precedence.
+
+Example with `header.yaml`:
+
+```yaml
+name: <%= title %>
+description: "Branch <%= BRANCH_NAME %>"
+```
+
+When rendered with `include("header", 2, [title: "My Page"])`, each line will be indented by 2 spaces and `title` will be set to "My Page".
+
+**Difference between `include` and `ninclude`:**
+
+* `include("template", 2, [:])` - Includes the template with indentation
+* `ninclude("template", 2, [:])` - Includes the template with indentation **and prepends a newline**
+
+The `ninclude` macro is particularly useful when you want to include content after a YAML key on the same line:
+
+```yaml
+config:<% out << ninclude("settings", 2, [:]) %>
+```
+
+This will produce:
+```yaml
+config:
+  name: value
+  other: setting
+```
+
+Whereas using `include` in the same position would produce invalid YAML by not having a newline after `config:`.
+
+The included template:
+* Has access to all current context variables (environment variables, `vars`, etc.)
+* Can override context variables using the `vars` parameter
+* Is rendered as a Groovy template before being included
+* Can include other templates (nested includes)
+
 ### Outputs
 
 All the following environment variables are set:

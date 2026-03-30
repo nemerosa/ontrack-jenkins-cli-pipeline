@@ -55,6 +55,14 @@ class CIConfigHelper {
         binding.environment = environment
         binding.variables = vars.collect { k, v -> [name: k, value: v] }
 
+        // Add include function to binding
+        binding.include = { String name, int indent = 0, Map<String, ?> extraVars = [:] ->
+            includeTemplate(dsl, name, indent, false, logger, binding, extraVars)
+        }
+        binding.ninclude = { String name, int indent = 0, Map<String, ?> extraVars = [:] ->
+            includeTemplate(dsl, name, indent, true, logger, binding, extraVars)
+        }
+
         def configYaml = renderTemplate(dsl, configText, logger, binding)
         
         def options = new DumperOptions()
@@ -91,6 +99,48 @@ class CIConfigHelper {
         text = text.replaceAll(/<%[^%>]+%>/) { it.replace('\\\\', '\\').replace("''", "'") }
         // Actual processing
         engine.createTemplate(text).make(binding).toString()
+    }
+
+    /**
+     * Includes a template file, renders it with the current context plus extra variables,
+     * and indents each line of the result
+     * @param dsl The Jenkins Pipeline DSL
+     * @param name The name of the file to include (without .yaml extension)
+     * @param indent Number of spaces to indent each line
+     * @param prependNewline If true, prepend a newline before the content (ninclude behavior)
+     * @param logger Logger closure for debug output
+     * @param binding Current template binding/context
+     * @param extraVars Additional variables to add to the context
+     * @return The rendered and indented content
+     */
+    private static String includeTemplate(def dsl, String name, int indent, boolean prependNewline, Closure logger, Map<String, ?> binding, Map<String, ?> extraVars) {
+        // Construct the filename
+        String filename = "${name}.yaml"
+        logger("Including template file: ${filename}")
+
+        // Read the file
+        String fileContent = dsl.readFile(file: filename)
+
+        // Merge binding with extra variables
+        def mergedBinding = binding + extraVars
+
+        // Render the template
+        String rendered = renderText(fileContent, mergedBinding)
+
+        // Apply indentation to each line
+        if (indent > 0) {
+            String indentation = ' ' * indent
+            rendered = rendered.split('\n').collect { line ->
+                line.isEmpty() ? line : indentation + line
+            }.join('\n')
+        }
+
+        // Prepend newline if requested (ninclude behavior)
+        if (prependNewline) {
+            rendered = '\n' + rendered
+        }
+
+        return rendered
     }
 
     /**
