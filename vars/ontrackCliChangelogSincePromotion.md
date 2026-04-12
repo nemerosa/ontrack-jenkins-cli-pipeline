@@ -4,15 +4,15 @@ This step returns a changelog from the current build since a last promotion.
 
 ### Parameters
 
-| Parameter   | Type        | Default                                     | Description                                          |
-|-------------|-------------|---------------------------------------------|------------------------------------------------------|
-| `project`   | String      | `ONTRACK_PROJECT_NAME` environment variable | Name of the project in Ontrack to target             |
-| `branch`    | String      | `ONTRACK_BRANCH_NAME` environment variable  | Name of the branch in Ontrack to target              |
-| `build`     | String      | `ONTRACK_BUILD_NAME` environment variable   | Name of the build to validate in Ontrack             |
-| `logging`   | boolean     | `false`                                     | Set to `true` to display debug / logging information |
-| `promotion` | String      | _Required_                                  | Promotion to get the changelog from                  |
-| `renderer`  | String      | `plain`                                     | Renderer for the changelog (1)                       |
-| `config`    | _See below_ | _See below_                                 | Configuration for the rendering                      |
+| Parameter   | Type        | Default                                     | Description                                              |
+|-------------|-------------|---------------------------------------------|----------------------------------------------------------|
+| `project`   | String      | `ONTRACK_PROJECT_NAME` environment variable | Name of the project in Ontrack to target                 |
+| `branch`    | String      | `ONTRACK_BRANCH_NAME` environment variable  | Name of the branch in Ontrack to target                  |
+| `build`     | String      | `ONTRACK_BUILD_NAME` environment variable   | Name or display name of the build to validate in Ontrack |
+| `logging`   | boolean     | `false`                                     | Set to `true` to display debug / logging information     |
+| `promotion` | String      | _Required_                                  | Promotion to get the changelog from                      |
+| `renderer`  | String      | `plain`                                     | Renderer for the changelog (1)                           |
+| `config`    | _See below_ | _See below_                                 | Configuration for the rendering                          |
 
 (1) Available renderers: `plain`, `markdown`, `html`, `jira`, `slack`, ...
 

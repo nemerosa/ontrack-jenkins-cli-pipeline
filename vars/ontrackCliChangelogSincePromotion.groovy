@@ -27,6 +27,15 @@ def call(Map<String, ?> params = [:]) {
             build: build,
             logging: logging,
     )
+    if (!currentBuild) {
+        // Trying with the version
+        currentBuild = ontrackCliGetBuildByVersion(
+                project: project,
+                branch: branch,
+                version: build,
+                logging: logging,
+        )
+    }
     if (logging) {
         echo("[ontrackCliChangelogSincePromotion] Current build = $currentBuild")
     }
