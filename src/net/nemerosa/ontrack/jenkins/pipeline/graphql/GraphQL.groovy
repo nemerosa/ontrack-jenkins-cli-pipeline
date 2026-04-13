@@ -22,44 +22,49 @@ class GraphQL {
         logger("Query = $query")
         logger("Variables = $variables")
         logger("Ignoring errors = $ignoreErrors")
-        def graphQLURL = new URL("$url/graphql")
+        // Payload (built once, reused across redirects)
+        def payload = [query: query]
+        if (variables) {
+            payload.variables = variables
+        }
+        def jsonPayload = JsonUtils.toJSON(payload)
+        logger("Payload = $jsonPayload")
+        def targetURL = new URL("$url/graphql")
+        int redirectCount = 0
         try {
-            def connection = graphQLURL.openConnection() as HttpURLConnection
-            return connection.with { con ->
-                con.doInput = true
-                con.doOutput = true
-                con.requestMethod = 'POST'
-                con.setRequestProperty('X-Ontrack-Token', token)
-                con.setRequestProperty('Content-Type', 'application/json')
-                // Payload
-                def payload = [
-                        query: query,
-                ]
-                if (variables) {
-                    payload.variables = variables
-                }
-                // JSON representation
-                def jsonPayload = JsonUtils.toJSON(payload)
-                // Logging
-                logger("Payload = $jsonPayload")
-                // Body
-                con.outputStream.write(jsonPayload.bytes)
+            while (true) {
+                def connection = targetURL.openConnection() as HttpURLConnection
+                connection.instanceFollowRedirects = false
+                connection.doInput = true
+                connection.doOutput = true
+                connection.requestMethod = 'POST'
+                connection.setRequestProperty('X-Ontrack-Token', token)
+                connection.setRequestProperty('Content-Type', 'application/json')
+                connection.outputStream.write(jsonPayload.bytes)
                 // Gets the response code
-                def code = con.responseCode
+                def code = connection.responseCode
                 logger("HTTP Code = $code)")
+                // Follow redirects manually (HttpURLConnection does not follow them for POST)
+                if (code in [301, 302, 307, 308] && redirectCount < 5) {
+                    def location = connection.getHeaderField('Location')
+                    logger("Redirect ($code) to $location")
+                    targetURL = new URL(location)
+                    redirectCount++
+                    continue
+                }
                 // Gets the response as text
                 def jsonResponse
                 if (code >= 400) {
                     // For error responses, read from errorStream
-                    jsonResponse = con.errorStream?.text ?: "No error response body"
+                    jsonResponse = connection.errorStream?.text ?: "No error response body"
                 } else {
-                    jsonResponse = con.inputStream.text
+                    jsonResponse = connection.inputStream.text
                 }
                 // Logging
                 logger("Response = $jsonResponse)")
                 // Error mgt
                 if (code != 200) {
-                    throw new RuntimeException("GraphQL HTTP $code error: ${con.responseMessage}")
+                    throw new RuntimeException("GraphQL HTTP $code error: ${connection.responseMessage}")
                 }
                 // Parsing
                 def response = new JsonSlurper().parseText(jsonResponse)
@@ -70,7 +75,7 @@ class GraphQL {
                     throw new RuntimeException("GraphQL errors:\n$message")
                 }
                 // OK
-                response
+                return response
             }
         } catch (Exception ex) {
             if (ignoreErrors) {
