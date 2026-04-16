@@ -3,6 +3,14 @@ import net.nemerosa.ontrack.jenkins.pipeline.graphql.GraphQL
 import net.nemerosa.ontrack.jenkins.pipeline.utils.ParamUtils
 
 def call(Map<String, ?> params = [:]) {
+    if (ontrackCliFailsafe()) return
+
+    // Not for pull requests
+    if (env.BRANCH_NAME ==~ 'PR-.*') {
+        echo "No Ontrack build for pull requests."
+        return null
+    }
+
     String configPath = ParamUtils.getParam(params, 'config', '.yontrack/ci.yaml')
     String scm = params.scm
     boolean skipGitCommit = ParamUtils.getBooleanParam(params, 'skipGitCommit', false)
